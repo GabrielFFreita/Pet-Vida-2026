@@ -7,10 +7,10 @@ error_reporting(E_ALL);
 
 // Isso aqui em cima liga os "erros", pq senão o php quando der erro aparece apenas uma tela branca.
 
-$host = "localhost";
-$dbname = "petvida";
-$usuario = "root";
-$senha = "";
+$host = "tini.click";
+$dbname = "petvida_db";
+$usuario = "petvida_db";
+$senha = "4287816f7bc22c82a83f70ad492266db";
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $usuario, $senha);

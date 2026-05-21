@@ -2,7 +2,7 @@
 
 <?php
     require_once 'conexao.php';
-    session_start();
+    session_start(); //Iniício das seções
 
     // Aqui em baixo são pegas as informações do formulário de dados e colocadas em variáveis
 if ($_SERVER["REUQUEST_METHOD"] == 'POST'){
