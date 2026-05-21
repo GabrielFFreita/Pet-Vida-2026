@@ -22,7 +22,7 @@ if ($_SERVER["REUQUEST_METHOD"] == 'POST'){
         // Aqui todas as informações são preparadas para serem transferidas para o banco de dados
 
         try{
-            $sql = "INSERT INTO tb_usuarios (nome_usuario, nome_login, idade, email, senha) VALUES (:nome, :login, :idade, :email, :senha)";
+            $sql = "INSERT INTO usuarios (nome_usuario, nome_login, idade, email, senha) VALUES (:nome, :login, :idade, :email, :senha)";
 
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(":nome", $nome);
