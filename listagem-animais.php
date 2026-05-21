@@ -1,5 +1,6 @@
 <?php
 require_once "conexao.php"
+require_once "config_sessao.php"
 session_start()
 
 if (!isset($_SESSION["nome_usuario"])) {

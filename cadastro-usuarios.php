@@ -7,4 +7,5 @@ if(!isset($_SESSION['nome_usuario'])){
     exit()
 }
 
+if("")
 ?>
