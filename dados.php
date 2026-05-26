@@ -1,11 +1,9 @@
-<!-- Essa página vai ser dedicada a fazer a inserção dos dados do sql pelo formulário -->
-
 <?php
     require_once 'conexao.php';
     session_start(); //Iniício das seções
 
     // Aqui em baixo são pegas as informações do formulário de dados e colocadas em variáveis
-if ($_SERVER["REUQUEST_METHOD"] == 'POST'){
+if ($_SERVER["REQUEST_METHOD"] == 'POST'){
      $nome = trim($_POST['nome_usuario'] ?? "");
      $nome_login = trim($_POST['nome_login'] ?? "");
      $idade = trim($_POST['idade'] ?? "");
@@ -22,14 +20,12 @@ if ($_SERVER["REUQUEST_METHOD"] == 'POST'){
         // Aqui todas as informações são preparadas para serem transferidas para o banco de dados
 
         try{
-            $sql = "INSERT INTO usuarios (nome_usuario, nome_login, idade, email, senha) VALUES (:nome, :login, :idade, :email, :senha)";
+            $sql = "INSERT INTO usuario (nome, email, senha) VALUES (:nome, :email, :senha)";
 
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(":nome", $nome);
-            $stmt->bindParam(":login", $nome_login);
-            $stmt->bindParam(":idade", $idade);
             $stmt->bindParam(":email", $email);
-            $stmt->bindParam(":senha", $senha);
+            $stmt->bindParam(":senha", $senhaHash);
 
             $stmt->execute();
 

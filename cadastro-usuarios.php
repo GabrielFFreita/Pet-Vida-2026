@@ -7,5 +7,8 @@ if(!isset($_SESSION['nome_usuario'])){
     exit();
 }
 
-if("")
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+    header("Location: listagem-usuarios.php");
+    exit();
+}
 ?>

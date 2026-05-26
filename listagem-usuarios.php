@@ -8,7 +8,7 @@ if (!isset($_SESSION["nome_usuario"])) {
 }
 // Selecionando a tabela de usuários e listando eles com o select
 try{
-    $sql = "SELECT * FROM usuarios";
+    $sql = "SELECT * FROM usuario";
 
     $stmt = $pdo ->query($sql);
     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -23,17 +23,17 @@ $data_cadastro = trim($_POST['data_cadastro']);
 $origem        = trim($_POST['origem_animal']);
 
 // variável com o código em sql
-$sql = "INSERT INTO animais (
-    nm_animal, 
-    ds_especie, 
-    ds_raca, 
-    nr_idade, 
-    ds_sexo, 
-    ds_descricao, 
-    vl_peso, 
-    ds_porte, 
-    dt_cadastro, 
-    ds_origem
+$sql = "INSERT INTO animais_adocao (
+    nome, 
+    especie, 
+    raca, 
+    idade, 
+    sexo, 
+    descricao, 
+    peso, 
+    porte, 
+    data_cadastro, 
+    origem
 ) VALUES (
     :nome, 
     :especie, 

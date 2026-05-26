@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($login_digitado) && !empty($senha_digitada)) {
         try {
             // Procura o usuário pelo login informado
-            $sql = "SELECT * FROM usuarios WHERE nome_login = :login LIMIT 1";
+            $sql = "SELECT * FROM usuario WHERE email = :login LIMIT 1";
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(":login", $login_digitado);
             $stmt->execute();
@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($usuario && password_verify($senha_digitada, $usuario['senha'])) {
                 
                 // LOGIN REALIZADO COM SUCESSO: Cria as variáveis na sessão
-                $_SESSION["nome_usuario"] = $usuario['nome_usuario'];
+                $_SESSION["nome_usuario"] = $usuario['nome'];
                 $_SESSION['ultima_atividade'] = time();
 
                 // Direciona para o painel principal do sistema
@@ -35,8 +35,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo "<script>alert('Preencha todos os campos!'); window.history.back();</script>";
     }
-} else {
-    header("Location: entrar.php");
-    exit();
 }
 ?>

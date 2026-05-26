@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Aqui inicia a estrutura try/catch para tentar buscar as informações completas do animal direto no banco de dados
     try {
         // Prepara a consulta SQL para selecionar o animal específico que possui o ID recebido
-        $sql = "SELECT * FROM tb_animal WHERE id = :id";
+        $sql = "SELECT * FROM animais_adocao WHERE id_animal = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":id", $id_animal);
         $stmt->execute();
@@ -29,16 +29,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Aqui em baixo as informações completas vindas do banco de dados são extraídas e guardadas em suas variáveis correspondentes
-    $nome          = $animal["nm_animal"];     
-    $especie       = $animal["ds_especie"];    
-    $raca          = $animal["ds_raca"];       
-    $idade         = $animal["nr_idade"];
-    $sexo          = $animal["ds_sexo"];
-    $descricao     = $animal["ds_descricao"];
-    $peso          = $animal["vl_peso"];
-    $porte         = $animal["ds_porte"];
-    $data_cadastro = $animal["dt_cadastro"];
-    $origem        = $animal["ds_origem"];
+    $nome          = $animal["nome"];     
+    $especie       = $animal["especie"];    
+    $raca          = $animal["raca"];       
+    $idade         = $animal["idade"];
+    $sexo          = $animal["sexo"];
+    $descricao     = $animal["descricao"];
+    $peso          = $animal["peso"];
+    $porte         = $animal["porte"];
+    $data_cadastro = $animal["data_cadastro"];
+    $origem        = $animal["origem"];
 
     
     // Aqui é feita a verificação se o item já foi adicionado aos favoritos da sessão
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ];
         
     } else {
-        // Caso ele já esteja na lista, o item é removido dos favoritos da sessão (ação de desmarcar o coração)
+        // Caso ele já esteja na lista, o item é removido dos favoritos da sessão (ação de desmarkar o coração)
         unset($_SESSION['favoritos'][$id_animal]);
     }
     
