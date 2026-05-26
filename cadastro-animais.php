@@ -1,14 +1,16 @@
 <?php
-require_once "conexao.php"
-session_start()// Início da sessão
+require_once "conexao.php";
+session_start();// Início da sessão
 
 // Verificação se o usuário está ativo
-if (!isset($_SESSION['nome_usuario']))
+if (!isset($_SESSION['nome_usuario'])){
     header("Location: index.html");
-    exit()
+    exit();
+}
+    
 
     // Busca das informações colocadas no form do html, dentro de variávies do php
-if (!isset("REQUEST_METHOD") == "POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
 $nome          = trim($_POST['nome_animal']);
 $especie       = trim($_POST['especie_animal']);
 $raca          = trim($_POST['raca_animal']);
@@ -43,7 +45,7 @@ $sql = "INSERT INTO animais (
     :porte, 
     :data_cadastro, 
     :origem
-);"
+);";
 // Preparação do código em sql
 $stmt = $pdo->prepare($sql);
 
