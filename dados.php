@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST'){
 
         // Aqui acontece a transformação da senha em hash
         $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-
+        
         // Aqui todas as informações são preparadas para serem transferidas para o banco de dados
 
         try{
