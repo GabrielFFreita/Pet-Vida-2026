@@ -1,11 +1,9 @@
 <?php
 require_once "conexao.php";
-session_start();
+require_once "config_sessao.php";
+verificarLogado();
 
-if (!isset($_SESSION["nome_usuario"])) {
-    header("Location: index.html");
-    exit();
-}
+
 // Selecionando a tabela de usuários e listando eles com o select
 try{
     $sql = "SELECT * FROM usuario";

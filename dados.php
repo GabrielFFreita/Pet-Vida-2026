@@ -1,6 +1,7 @@
 <?php
     require_once 'conexao.php';
-    session_start(); //Iniício das seções
+    require_once "config_sessao.php"; 
+ 
 
     // Aqui em baixo são pegas as informações do formulário de dados e colocadas em variáveis
 if ($_SERVER["REQUEST_METHOD"] == 'POST'){
@@ -23,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST'){
             $sql = "INSERT INTO usuario (nome, email, senha) VALUES (:nome, :email, :senha)";
 
             $stmt = $pdo->prepare($sql);
+
             $stmt->bindParam(":nome", $nome);
             $stmt->bindParam(":email", $email);
             $stmt->bindParam(":senha", $senhaHash);
@@ -35,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST'){
             echo "
             <script>
                 alert('Cadastro realizado com sucesso!');
-                window.location.href='entrar.php';
+                window.location.href='index.html';
             </script>
             ";
         } catch (PDOException $e) {

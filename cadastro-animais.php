@@ -1,12 +1,10 @@
 <?php
 require_once "conexao.php";
-session_start();// Início da sessão
+require_once "config_sessao.php";
+verificarLogado();
 
 // Verificação se o usuário está ativo
-if (!isset($_SESSION['nome_usuario'])){
-    header("Location: index.html");
-    exit();
-}
+
     
 
     // Busca das informações colocadas no form do html, dentro de variávies do php

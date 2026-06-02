@@ -1,6 +1,7 @@
 <?php
 require_once 'conexao.php';
-require_once 'config_sessao.php';
+require_once "config_sessao.php";
+verificarLogado();
 // Aqui são pegas as variávis do form do html
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $login_digitado = trim($_POST['nome_login'] ?? "");
