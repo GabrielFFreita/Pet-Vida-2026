@@ -1,2 +1,3 @@
 1-Preciso adicionar e mexer no dados.php, quando tiver o form do html, para assim poder atualizar os dados e colocar novas variáveis
 
+2-No formulário html, é preciso ter essa linha : <form action="processa_upload.php" method="POST" enctype="multipart/form-data">
