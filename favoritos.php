@@ -1,6 +1,7 @@
 <?php
 require_once "conexao.php"; 
-session_start(); // Início das sessões
+require_once "config_sessao.php";
+verificarLogado();
 
 // Verificação para garantir que os dados estão vindo através do envio de um formulário POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

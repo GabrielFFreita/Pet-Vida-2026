@@ -1,11 +1,7 @@
 <?php
 require_once "conexao.php";
 require_once "config_sessao.php";
-
-if (!isset($_SESSION["nome_usuario"])) {
-    header("Location: index.html");
-    exit();
-}
+verificarLogado();
 
 // Buscando os animais na tabela de animais e fazendo sua listagem no painel admin
 try{

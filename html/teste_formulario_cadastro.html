@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Animal para Adoção</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 700px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: #2c5e43;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccd5ae;
+            border-radius: 6px;
+            background-color: #fcfdfa;
+            font-size: 15px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2c5e43;
+            box-shadow: 0 0 0 3px rgba(44, 94, 67, 0.15);
+            background-color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Estilização customizada para o campo de arquivo (Imagem) */
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 25px;
+            border: 2px dashed #2c5e43;
+            border-radius: 8px;
+            background-color: #f9fbf9;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-drop-area:hover {
+            background-color: #f0f5f1;
+        }
+
+        .file-drop-area input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-message {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .file-message strong {
+            color: #2c5e43;
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #2c5e43;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #1e422e;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsividade para telas menores (celulares) */
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Cadastrar Novo Pet</h2>
+    <p class="subtitle">Insira os dados do animal para publicação no sistema de adoção</p>
+
+    <form action="../cadastro-animais.php" method="POST" enctype="multipart/form-data">
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nome_animal">Nome do Animal</label>
+                <input type="text" id="nome_animal" name="nome_animal" placeholder="Ex: Mel, Thor" required>
+            </div>
+            <div class="form-group">
+                <label for="especie_animal">Espécie</label>
+                <select id="especie_animal" name="especie_animal" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="Cachorro">Cachorro</option>
+                    <option value="Gato">Gato</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="raca_animal">Raça</label>
+                <input type="text" id="raca_animal" name="raca_animal" placeholder="Ex: Vira-lata, Poodle" required>
+            </div>
+            <div class="form-group">
+                <label for="idade_animal">Idade aproximada</label>
+                <input type="text" id="idade_animal" name="idade_animal" placeholder="Ex: 2 anos, 5 meses" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="sexo_animal">Sexo</label>
+                <select id="sexo_animal" name="sexo_animal" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Fêmea">Fêmea</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="porte_animal">Porte</label>
+                <select id="porte_animal" name="porte_animal" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="Pequeno">Pequeno</option>
+                    <option value="Médio">Médio</option>
+                    <option value="Grande">Grande</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="peso_animal">Peso (kg)</label>
+                <input type="text" id="peso_animal" name="peso_animal" placeholder="Ex: 8.5" required>
+            </div>
+            <div class="form-group">
+                <label for="data_cadastro">Data de Cadastro</label>
+                <input type="date" id="data_cadastro" name="data_cadastro" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="descricao_animal">Descrição / Histórico do Pet</label>
+            <textarea id="descricao_animal" name="descricao_animal" placeholder="Conte um pouco sobre o temperamento, comportamento e a história do animal..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Foto do Animal (Enviada direto para o ImgBB)</label>
+            <div class="file-drop-area">
+                <span class="file-message">Clique aqui ou arraste a <strong>imagem do pet</strong></span>
+                <input type="file" name="image" id="image" accept="image/*" required onchange="updateFileName(this)">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Salvar Cadastro do Animal</button>
+    </form>
+</div>
+
+<script>
+    // Script simples para dar um feedback visual mostrando o nome do arquivo selecionado
+    function updateFileName(input) {
+        const messageSpan = input.previousElementSibling;
+        if (input.files && input.files[0]) {
+            messageSpan.innerHTML = "Arquivo selecionado: <strong>" + input.files[0].name + "</strong>";
+        } else {
+            messageSpan.innerHTML = "Clique aqui ou arraste a <strong>imagem do pet</strong>";
+        }
+    }
+
+    // Define automaticamente a data de hoje no campo de data_cadastro ao carregar a página
+    document.getElementById('data_cadastro').valueAsDate = new Date();
+</script>
+
+</body>
+</html>
