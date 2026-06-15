@@ -6,9 +6,10 @@
     // Aqui em baixo são pegas as informações do formulário de dados e colocadas em variáveis
 if ($_SERVER["REQUEST_METHOD"] == 'POST'){
      $nome = trim($_POST['nome_usuario'] ?? "");
+     $email = trim($_POST['email'] ?? "");
      $nome_login = trim($_POST['nome_login'] ?? "");
      $idade = trim($_POST['idade'] ?? "");
-     $email = trim($_POST['email'] ?? "");
+     
      $senha = trim($_POST['senha'] ?? "");
         // Agora serão verificados se os campos foram preenchidos e nenhuma informação está indo vazia
         if (empty($nome) || empty($idade) || empty($email) || empty($senha)){
