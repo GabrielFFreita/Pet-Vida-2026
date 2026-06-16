@@ -1,2 +1,21 @@
 1-Preciso adicionar e mexer no dados.php, quando tiver o form do html, para assim poder atualizar os dados e colocar novas variáveis
 2-Para fazer o upload das imagens no html para o php, o html precisa ter essa ação: <form method="POST" enctype="multipart/form-data">
+
+Estrutura da página de adimn
+
+a página admin vai ter: 
+dashboard geral
+usuarios
+abrigos
+
+dentro de abrigos vai ter:
+informações do abrigo
+cadastro de animais
+listagem de animais 
+edição de animais
+exclusão de animais
+
+dentro de usuarios vai ter:
+listagem de usuarios 
+edição de usuarios
+exclusão de usuarios

@@ -1,7 +1,7 @@
 <?php
 require_once "conexao.php";
-require_once "config_sessao.php";
-verificarLogado();
+// require_once "config_sessao.php";
+// verificarLogado();
 
 // Verificação se o usuário está ativo
 
