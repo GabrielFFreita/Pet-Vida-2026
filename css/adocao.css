@@ -82,30 +82,16 @@ header {
 }
 
 /* Logo */
+.logo-img {
+  height: 55px;
+  width: auto;
+  display: block;
+}
+
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  flex-shrink: 0;
-  color: var(--verde-esc);
 }
-
-.logo-icon { font-size: 1.4rem; }
-
-.logo-text {
-  font-family: 'Fraunces', serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--verde-esc);
-  line-height: 1.1;
-}
-
-.logo-text em {
-  font-style: italic;
-  color: var(--laranja);
-}
-
 /* ── Busca na Navbar ────────────────────────────────────────── */
 .nav-busca-wrapper {
   flex: 1;
