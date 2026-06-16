@@ -9,100 +9,111 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/adocao.css">
+  <link rel="stylesheet" href="css/adocao.css">
 </head>
 <body>
 
   <!-- ===== HEADER ===== -->
   <header role="banner">
     <div class="header-inner">
+
+      <!-- Logo -->
       <a href="index.html" class="logo" aria-label="Adote com Amor — Página inicial">
         <span class="logo-icon" aria-hidden="true">🐾</span>
         <span class="logo-text">Adote <em>com Amor</em></span>
       </a>
 
-      <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="nav-principal">
+      <!-- Campo de busca centralizado na navbar -->
+      <div class="nav-busca-wrapper">
+        <div class="nav-busca-inner">
+          <label for="busca-pet" class="sr-only">Buscar pets por nome ou raça</label>
+          <svg class="busca-icone" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="busca-pet" placeholder="Buscar por nome ou raça…" autocomplete="off">
+          <button class="busca-limpar" id="busca-limpar" aria-label="Limpar busca" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Botão hamburguer mobile -->
+      <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-acoes">
         <span></span><span></span><span></span>
       </button>
 
-      <nav class="nav-principal" id="nav-principal" role="navigation" aria-label="Menu principal">
-        <a href="#">Início</a>
-        <a href="#">Sobre</a>
-        <a href="#" class="nav-ativo" aria-current="page">Animais</a>
-        <a href="#">Como adotar</a>
-        <a href="#">Contato</a>
-      </nav>
+      <!-- Ações da nav -->
+      <div class="nav-acoes" id="nav-acoes">
+        <!-- Botão Favoritos -->
+        <button class="btn-favoritos" id="btn-favoritos" aria-label="Ver pets favoritos">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>Favoritos</span>
+          <span class="favoritos-count" id="favoritos-count" hidden>0</span>
+        </button>
 
-      <a href="#lista-pets" class="btn-cta">
-        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        Quero adotar
-      </a>
+        <!-- Botão Pet Quiz -->
+        <button class="btn-cta" aria-label="Pet Quiz">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Pet Quiz
+        </button>
+      </div>
+
     </div>
   </header>
 
-  <!-- ===== OVERLAY & SIDEBAR ===== -->
+  <!-- ===== BARRA DE FILTROS HORIZONTAL ===== -->
+  <div class="filtros-bar" id="filtros-bar" role="region" aria-label="Filtros de busca">
+    <div class="filtros-bar-inner">
+
+      <!-- Filtros por abrigo -->
+      <div class="filtros-grupo" role="group" aria-label="Filtrar por abrigo">
+        <button data-filtro-abrigo="todos" class="filtro-pill filtro-ativo" id="filtro-todos">Todos os abrigos</button>
+        <button data-filtro-abrigo="centro" class="filtro-pill" id="filtro-centro">Abrigo Centro</button>
+        <button data-filtro-abrigo="norte" class="filtro-pill" id="filtro-norte">Zona Norte</button>
+        <button data-filtro-abrigo="sul" class="filtro-pill" id="filtro-sul">Zona Sul</button>
+        <button data-filtro-abrigo="leste" class="filtro-pill" id="filtro-leste">Zona Leste</button>
+      </div>
+
+      <!-- Separador -->
+      <div class="filtros-separador" aria-hidden="true"></div>
+
+      <!-- Filtros por tipo -->
+      <div class="filtros-grupo" role="group" aria-label="Filtrar por tipo de pet">
+        <button data-filtro-tipo="todos" class="filtro-pill filtro-ativo" id="filtro-tipo-todos">🐾 Todos</button>
+        <button data-filtro-tipo="cachorro" class="filtro-pill" id="filtro-cachorro">🐶 Cachorros</button>
+        <button data-filtro-tipo="gato" class="filtro-pill" id="filtro-gato">🐱 Gatos</button>
+      </div>
+
+      <!-- Botão limpar filtros -->
+      <button class="filtro-limpar" id="btn-limpar-filtros" aria-label="Limpar todos os filtros">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.87"/></svg>
+        Limpar
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ===== OVERLAY (para modal favoritos) ===== -->
   <div class="overlay" id="overlay" role="presentation"></div>
 
-  <aside id="sidebar-filtros" aria-label="Filtros de busca" aria-hidden="true">
-    <div class="sidebar-header">
-      <h2>Filtros</h2>
-      <button class="sidebar-fechar" id="sidebar-fechar" aria-label="Fechar painel de filtros">
+  <!-- ===== MODAL DE FAVORITOS ===== -->
+  <div class="modal-favoritos" id="modal-favoritos" aria-label="Meus favoritos" aria-hidden="true" role="dialog">
+    <div class="modal-fav-header">
+      <h2>❤️ Meus Favoritos</h2>
+      <button class="modal-fav-fechar" id="modal-fav-fechar" aria-label="Fechar painel de favoritos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-
-    <div class="grupo-filtros">
-      <h3>
-        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        Abrigo
-      </h3>
-      <div class="filtro-opcoes" role="group" aria-label="Filtrar por abrigo">
-        <button data-filtro-abrigo="todos" class="filtro-ativo" id="filtro-todos">Todos os abrigos</button>
-        <button data-filtro-abrigo="centro" id="filtro-centro">Abrigo Centro</button>
-        <button data-filtro-abrigo="norte" id="filtro-norte">Abrigo Zona Norte</button>
-        <button data-filtro-abrigo="sul" id="filtro-sul">Abrigo Zona Sul</button>
-        <button data-filtro-abrigo="leste" id="filtro-leste">Abrigo Zona Leste</button>
-      </div>
+    <div class="modal-fav-body" id="modal-fav-body">
+      <!-- Cards dos favoritos renderizados via JS -->
     </div>
-
-    <div class="grupo-filtros">
-      <h3>
-        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
-        Tipo de pet
-      </h3>
-      <div class="filtro-opcoes tipo-opcoes" role="group" aria-label="Filtrar por tipo">
-        <button data-filtro-tipo="todos" class="filtro-ativo" id="filtro-tipo-todos">🐾 Todos</button>
-        <button data-filtro-tipo="cachorro" id="filtro-cachorro">🐶 Cachorros</button>
-        <button data-filtro-tipo="gato" id="filtro-gato">🐱 Gatos</button>
-      </div>
+    <div class="modal-fav-vazio" id="modal-fav-vazio" hidden>
+      <div class="modal-fav-vazio-icone" aria-hidden="true">🐾</div>
+      <p>Você ainda não adicionou nenhum pet aos favoritos.</p>
+      <p>Clique no coração (♡) nos cards para favoritar!</p>
     </div>
-
-    <button class="btn-limpar-filtros" id="btn-limpar-filtros">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.87"/></svg>
-      Limpar filtros
-    </button>
-  </aside>
-
-  <!-- ===== FAB FILTROS ===== -->
-  <button class="fab-filtros" id="fab-filtros" aria-label="Mostrar filtros de busca" title="Filtros">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-    <span class="fab-tooltip" role="tooltip">Filtros</span>
-  </button>
+  </div>
 
   <!-- ===== MAIN CONTENT ===== -->
   <main class="conteudo-principal" id="conteudo-principal" role="main">
-
-    <!-- Barra de busca -->
-    <div class="barra-busca-wrapper" id="barra-busca">
-      <div class="barra-busca-inner">
-        <label for="busca-pet" class="sr-only">Buscar pets por nome ou raça</label>
-        <svg class="busca-icone" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" id="busca-pet" placeholder="Buscar por nome ou raça…" autocomplete="off">
-        <button class="busca-limpar" id="busca-limpar" aria-label="Limpar busca" hidden>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    </div>
 
     <!-- Lista de pets -->
     <div id="lista-pets">
@@ -118,6 +129,7 @@
         <!-- ===== PET: Bobby ===== -->
         <article
             class="pet-card cachorro centro"
+            data-id="bobby_centro"
             data-nome="Bobby"
             data-tipo="Cachorro"
             data-raca="Vira-lata Caramelo"
@@ -137,6 +149,8 @@
             <div class="card-img-loader" aria-hidden="true"></div>
             <img src="static/Vira-lata-caramelo.jpg" alt="Bobby, Vira-lata Caramelo" loading="lazy">
             <span class="badge novo">Novo</span>
+            <!-- Botão de favorito -->
+            <button class="btn-fav-card" aria-label="Favoritar Bobby" data-id="bobby_centro">♡</button>
           </div>
           <div class="card-body">
             <h3 class="pet-nome">Bobby</h3>
@@ -152,6 +166,7 @@
         <!-- ===== PET: Luna ===== -->
         <article
             class="pet-card gato centro"
+            data-id="luna_centro"
             data-nome="Luna"
             data-tipo="Gata"
             data-raca="Siamês"
@@ -171,6 +186,7 @@
             <div class="card-img-loader" aria-hidden="true"></div>
             <img src="static/siames.jpg" alt="Luna, gata Siamês" loading="lazy">
             <span class="badge novo">Novo</span>
+            <button class="btn-fav-card" aria-label="Favoritar Luna" data-id="luna_centro">♡</button>
           </div>
           <div class="card-body">
             <h3 class="pet-nome">Luna</h3>
@@ -186,6 +202,7 @@
         <!-- ===== PET: Thor ===== -->
         <article
             class="pet-card cachorro sul"
+            data-id="thor_sul"
             data-nome="Thor"
             data-tipo="Cachorro"
             data-raca="Pastor Alemão"
@@ -205,6 +222,7 @@
             <div class="card-img-loader" aria-hidden="true"></div>
             <img src="static/pastor1.jpg" alt="Thor, Pastor Alemão" loading="lazy">
             <span class="badge urgente">Em adoção</span>
+            <button class="btn-fav-card" aria-label="Favoritar Thor" data-id="thor_sul">♡</button>
           </div>
           <div class="card-body">
             <h3 class="pet-nome">Thor</h3>
@@ -220,6 +238,7 @@
         <!-- ===== PET: Mel ===== -->
         <article
             class="pet-card gato leste"
+            data-id="mel_leste"
             data-nome="Mel"
             data-tipo="Gata"
             data-raca="Persa"
@@ -239,6 +258,7 @@
             <div class="card-img-loader" aria-hidden="true"></div>
             <img src="static/persa1.jpg" alt="Mel, gata Persa" loading="lazy">
             <span class="badge novo">Novo</span>
+            <button class="btn-fav-card" aria-label="Favoritar Mel" data-id="mel_leste">♡</button>
           </div>
           <div class="card-body">
             <h3 class="pet-nome">Mel</h3>
@@ -254,6 +274,7 @@
         <!-- ===== PET: Rex ===== -->
         <article
             class="pet-card cachorro sul"
+            data-id="rex_sul"
             data-nome="Rex"
             data-tipo="Cachorro"
             data-raca="Rottweiler"
@@ -272,6 +293,7 @@
           <div class="card-img-wrapper">
             <div class="card-img-loader" aria-hidden="true"></div>
             <img src="static/Rottweiler.jpg.avif" alt="Rex, Rottweiler" loading="lazy">
+            <button class="btn-fav-card" aria-label="Favoritar Rex" data-id="rex_sul">♡</button>
           </div>
           <div class="card-body">
             <h3 class="pet-nome">Rex</h3>
@@ -287,6 +309,7 @@
         <!-- ===== PET: Mimi ===== -->
         <article
             class="pet-card gato norte"
+            data-id="mimi_norte"
             data-nome="Mimi"
             data-tipo="Gata"
             data-raca="Vira-lata"
@@ -306,6 +329,7 @@
             <div class="card-img-loader" aria-hidden="true"></div>
             <img src="static/gato1.avif" alt="Mimi, gata Vira-lata" loading="lazy">
             <span class="badge novo">Novo</span>
+            <button class="btn-fav-card" aria-label="Favoritar Mimi" data-id="mimi_norte">♡</button>
           </div>
           <div class="card-body">
             <h3 class="pet-nome">Mimi</h3>
@@ -315,98 +339,6 @@
               Abrigo Zona Norte
             </p>
             <button class="btn-detalhes" aria-label="Ver detalhes de Mimi">Ver Detalhes</button>
-          </div>
-        </article>
-
-        <!-- ===== PET: Max ===== -->
-
-        <article
-            class="pet-card cachorro norte"
-            data-nome="Max"
-            data-tipo="Cachorro"
-            data-raca="Golden Retriever"
-            data-sexo="Macho"
-            data-peso="32,0 kg"
-            data-altura="58 cm"
-            data-idade="4 anos"
-            data-porte="Grande"
-            data-vacinado="V10, Antirrábica, Giárdia"
-            data-castrado="Sim"
-            data-deficiencia="Nenhuma"
-            data-abrigo="norte"
-            data-status="Disponível para adoção"
-            data-descricao="Max é um cão extremamente dócil, carinhoso e sociável. Adora brincar ao ar livre, passear e receber atenção das pessoas. Convive bem com crianças e outros animais, sendo uma ótima companhia para famílias que procuram um amigo leal e cheio de energia."
-            data-fotos='["static/gol.jpg","static/golden1.jpg","static/golden2.jpg"]'>
-
-          <div class="card-img-wrapper">
-            <div class="card-img-loader" aria-hidden="true"></div>
-            <img src="static/gol.jpg" alt="Max, Golden Retriever" loading="lazy">
-            <span class="badge novo">Novo</span>
-          </div>
-
-          <div class="card-body">
-            <h3 class="pet-nome">Max</h3>
-            <p class="pet-info">
-              <span class="tag-tipo">🐶 Cachorro</span> · Grande · 4 anos
-            </p>
-
-            <p class="pet-localizacao">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              Abrigo Zona Norte
-            </p>
-
-            <button class="btn-detalhes" aria-label="Ver detalhes de Max">
-              Ver Detalhes
-            </button>
-          </div>
-        </article>
-
-        <!-- ===== PET: Kira ===== -->
-
-        <article
-            class="pet-card gato sul"
-            data-nome="Kira"
-            data-tipo="Gato"
-            data-raca="Siamês"
-            data-sexo="Fêmea"
-            data-peso="4.0 kg"
-            data-altura="30 cm"
-            data-idade="7 meses"
-            data-porte="Pequeno"
-            data-vacinado="Não"
-            data-castrado="Não"
-            data-deficiencia="Nenhuma"
-            data-abrigo="sul"
-            data-status="Em andamento"
-            data-descricao="Gatinha amorosa e brincalhona, tem os horários para andar e se comporta bem em casas pequenas."
-            data-fotos='["static/kira.jpg","static/kira2.jpg","static/kira3.jpg"]'>
-
-          <div class="card-img-wrapper">
-            <div class="card-img-loader" aria-hidden="true"></div>
-            <img src="static/kira.jpg" alt="Max, Golden Retriever" loading="lazy">
-            <span class="badge urgente">Em adoção</span>
-          </div>
-
-          <div class="card-body">
-            <h3 class="pet-nome">Kira</h3>
-            <p class="pet-info">
-              <p class="pet-info"><span class="tag-tipo">🐱 Gata</span> · Pequeno · 7 meses</p>
-            </p>
-
-            <p class="pet-localizacao">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              Abrigo Zona Sul
-            </p>
-
-            <button class="btn-detalhes" aria-label="Ver detalhes de Kira">
-              Ver Detalhes
-            </button>
           </div>
         </article>
 
@@ -437,7 +369,7 @@
         <a href="mailto:contato@petvida.org.br">contato@petvida.org.br</a>
         <a href="tel:+554799756519">(47) 99756-5199</a>
         <div class="footer-social">
-          <a href="#" aria-label="Facebook">
+          <a href="#" aria-label="Email">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
           </a>
           <a href="#" aria-label="Instagram">
