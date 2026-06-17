@@ -261,6 +261,7 @@ function getNomePetPorId(id) {
   return card ? (card.dataset.nome || 'Pet') : 'Pet';
 }
 
+// [ALTERADO #7] Atualiza o contador e dispara animação de "pop" quando há mudança
 function atualizarContadorFavoritos() {
   const count = qs('#favoritos-count');
   if (!count) return;
@@ -268,6 +269,10 @@ function atualizarContadorFavoritos() {
   if (favoritos.length > 0) {
     count.textContent = favoritos.length;
     count.hidden = false;
+    // Animação sutil de pop ao adicionar/remover favorito
+    count.classList.remove('pop');
+    void count.offsetWidth; // reflow para reiniciar a animação
+    count.classList.add('pop');
   } else {
     count.hidden = true;
   }

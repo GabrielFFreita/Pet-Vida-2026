@@ -181,16 +181,17 @@ header {
   flex-shrink: 0;
 }
 
-/* [ALTERADO #4] Botão Favoritos — toggle inline, sem sidebar */
+/* [ALTERADO #7] Botão Favoritos — redesenho moderno: pill arredondada, sombra suave,
+   hover com gradiente elegante. Mantém toggle inline (sem sidebar) */
 .btn-favoritos {
   display: flex;
   align-items: center;
   gap: 7px;
-  background: transparent;
+  background: var(--branco);
   color: var(--verde);
   border: 1.5px solid var(--verde);
   padding: 9px 18px;
-  border-radius: var(--radius);
+  border-radius: 999px;
   font-family: 'Inter', sans-serif;
   font-size: .875rem;
   font-weight: 600;
@@ -198,6 +199,7 @@ header {
   white-space: nowrap;
   transition: var(--transition);
   position: relative;
+  box-shadow: 0 2px 8px rgba(45,106,79,.1);
 }
 
 .btn-favoritos .fav-icon-nav {
@@ -208,16 +210,21 @@ header {
 }
 
 .btn-favoritos:hover {
-  background: var(--verde);
+  background: linear-gradient(135deg, var(--verde) 0%, var(--verde-esc) 100%);
   color: var(--branco);
+  border-color: var(--verde-esc);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(45,106,79,.3);
 }
 
 .btn-favoritos:hover .fav-icon-nav { stroke: var(--branco); }
 
 /* Estado ativo do toggle Favoritos */
 .btn-favoritos.ativo {
-  background: var(--verde);
+  background: linear-gradient(135deg, var(--verde) 0%, var(--verde-esc) 100%);
   color: var(--branco);
+  border-color: var(--verde-esc);
+  box-shadow: 0 4px 14px rgba(45,106,79,.3);
 }
 
 .btn-favoritos.ativo .fav-icon-nav {
@@ -225,33 +232,47 @@ header {
   stroke: var(--branco);
 }
 
-/* Counter badge */
+/* [ALTERADO #7] Counter badge — gradiente laranja + animação de "pop" ao atualizar */
 .favoritos-count {
-  background: var(--laranja);
+  background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-esc) 100%);
   color: var(--branco);
-  font-size: .65rem;
+  font-size: .68rem;
   font-weight: 700;
-  min-width: 18px;
-  height: 18px;
+  min-width: 19px;
+  height: 19px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 5px;
   line-height: 1;
+  box-shadow: 0 2px 6px rgba(224,123,57,.45);
+  border: 1.5px solid var(--branco);
 }
 
-/* ── [ALTERADO #5] Botão Pet Quiz — gradiente, padding generoso, hover suave ── */
+/* [ALTERADO #7] Animação sutil de "pop" quando o contador muda (favoritar/desfavoritar) */
+@keyframes favCountPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.favoritos-count.pop {
+  animation: favCountPop .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+/* [ALTERADO #5] Botão Pet Quiz — sem ícone, mais "gordinho" (padding generoso), gradiente, hover suave */
 .btn-cta {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: linear-gradient(135deg, var(--laranja) 0%, #c9602a 100%);
   color: var(--branco);
-  padding: 10px 22px;
+  padding: 14px 30px;
   border-radius: var(--radius);
   font-family: 'Inter', sans-serif;
-  font-size: .875rem;
+  font-size: .9375rem;
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
@@ -262,8 +283,6 @@ header {
   letter-spacing: .02em;
   box-shadow: 0 2px 8px rgba(224,123,57,.35);
 }
-
-.btn-cta svg { width: 16px; height: 16px; }
 
 .btn-cta:hover {
   background: linear-gradient(135deg, #d4752f 0%, var(--laranja-esc) 100%);
