@@ -2,19 +2,14 @@
 
 include("conexao.php");
 
-// [ALTERADO #4/#6] Suporta tanto o formato original (JSON array via fetch)
-// quanto um envio de formulário HTML tradicional (POST com nomes de campo),
-// sem alterar a lógica de pontuação ou a consulta SQL abaixo.
 $jsonInput = json_decode(
     file_get_contents("php://input"),
     true
 );
 
 if (is_array($jsonInput) && isset($jsonInput[0])) {
-    // Formato original: array JSON posicional
     $dados = $jsonInput;
 } else {
-    // Formato de formulário HTML: monta o array posicional a partir do $_POST
     $dados = [
         $_POST['rotina']       ?? null,
         $_POST['frequencia']   ?? null,
@@ -42,7 +37,6 @@ $pontosCachorro = 0;
 
 
 if($rotina == "Muito corrida"){
-
     $pontosGato += 3;
 }
 elseif($rotina == "Moderada"){
@@ -116,7 +110,6 @@ $sql = "
 SELECT *
 FROM animais_adocao
 WHERE status_adocao='Disponível'
-
 ";
 
 if($perfil != "Ambos"){
@@ -160,10 +153,12 @@ if($sexo != "Não tenho preferência"){
 }
 
 
-$resultado = mysqli_query(
-    $conexao,
-    $sql
-);
+try {
+    $stmt = $pdo->query($sql);
+    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Erro na consulta: " . $e->getMessage());
+}
 
 ?>
 
@@ -176,12 +171,10 @@ $resultado = mysqli_query(
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<!-- [ALTERADO #5] adocao.css é importado dentro de style_buscar.css para que os cards fiquem idênticos -->
 <link rel="stylesheet" href="../css/style_buscar.css">
 </head>
 <body>
 
-<!-- ===== HEADER SIMPLES (resultado do quiz) ===== -->
 <header class="resultado-header" role="banner">
   <div class="resultado-header-inner">
     <a href="../adocao.html" class="logo" aria-label="Página inicial">
@@ -193,33 +186,26 @@ $resultado = mysqli_query(
 <main class="resultado-main">
 
 <?php
-// [ALTERADO #5] Título sem emojis/ícones — apenas texto
 if($perfil == "Gato"){
-
     echo "
     <h1 class='titulo'>
        Seu perfil combina mais com gatos
     </h1>
     ";
-
 }
 elseif($perfil == "Cachorro"){
-
     echo "
     <h1 class='titulo'>
         Seu perfil combina mais com cães
     </h1>
     ";
-
 }
 else{
-
     echo "
     <h1 class='titulo'>
        Seu perfil combina com cães e gatos
     </h1>
     ";
-
 }
 ?>
 
@@ -228,38 +214,21 @@ Confira os animais disponíveis que combinam com seu perfil.
 </p>
 
 <?php
-
-if(mysqli_num_rows($resultado) == 0){
-
+if(count($resultado) == 0){
     echo "
-
     <div class='sem-resultado'>
         <h2>
             Nenhum animal encontrado
         </h2>
-
         <p>
             Tente refazer o quiz alterando algumas respostas.
         </p>
     </div>
-
     ";
-
 }else{
-/* ==========================================================================
-        [ALTERADO #5] Cards agora usam o MESMO HTML/classes de adocao.html
-        (.pet-card, .card-img-wrapper, .card-body, .tag-tipo, .pet-localizacao,
-        .btn-detalhes), para que o visual fique idêntico ao restante do site.
-        Campos que não existem na tabela animais_adocao (abrigo, peso, altura,
-        vacinado, castrado, deficiência, fotos extras) usam valores de
-        fallback para não quebrar o layout.
-========================================================================== */
     echo "<div class='pets-container'>";
 
-    while(
-        $animal = mysqli_fetch_assoc($resultado)
-    ){
-        // Fallbacks seguros para campos que podem não existir na tabela
+    foreach($resultado as $animal){
         $idAnimal      = htmlspecialchars($animal['id'] ?? '');
         $nome          = htmlspecialchars($animal['nome'] ?? '');
         $especie       = htmlspecialchars($animal['especie'] ?? '');
@@ -271,18 +240,14 @@ if(mysqli_num_rows($resultado) == 0){
         $foto          = htmlspecialchars($animal['foto'] ?? '');
         $abrigoNome    = htmlspecialchars($animal['abrigo'] ?? 'Abrigo Pet Vida');
 
-        // Classe de tipo (cachorro/gato) e tag visual, igual à página de adoção
         $classeTipo = ($especie === 'Gato') ? 'gato' : 'cachorro';
         $tagClasse  = ($especie === 'Gato') ? 'tag-gato' : 'tag-cachorro';
 
         echo "
-
         <article class='pet-card {$classeTipo}' data-id='{$idAnimal}'>
-
             <div class='card-img-wrapper'>
                 <img src='../imagens/{$foto}' alt='{$nome}, {$raca}' loading='lazy'>
             </div>
-
             <div class='card-body'>
                 <h3 class='pet-nome'>{$nome}</h3>
                 <p class='pet-info'>
@@ -297,21 +262,15 @@ if(mysqli_num_rows($resultado) == 0){
                 </p>
                 <button class='btn-detalhes' onclick=\"window.location.href='../adocao.html'\">Ver Detalhes</button>
             </div>
-
         </article>
-
         ";
-
     }
 
     echo "</div>";
-
 }
-
 ?>
 
 <div class="acoes">
-
     <button
         class="botao"
         onclick="window.location.href='../quiz.html'"
@@ -325,7 +284,6 @@ if(mysqli_num_rows($resultado) == 0){
     >
         Ver todos os pets
     </a>
-
 </div>
 
 </main>

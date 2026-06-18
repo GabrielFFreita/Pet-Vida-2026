@@ -74,7 +74,7 @@ async function carregarAnimais(containerId, limite = null, filtros = {}) {
     let animais = result;
     if (limite) animais = animais.slice(0, limite);
     
-    if (animais.length === 0) {
+    if (!animais || animais.length === 0) {
         container.innerHTML = '<p style="text-align:center;">Nenhum animal disponível para adoção no momento.</p>';
         return;
     }
@@ -88,8 +88,10 @@ async function carregarAnimais(containerId, limite = null, filtros = {}) {
 
 function criarCardAnimal(animal) {
     const sexoClass = animal.sexo === 'Macho' ? 'macho' : 'femea';
-    const idadeFormatada = animal.idade ? `${animal.idade} ${animal.idade === 1 ? 'ano' : 'anos'}` : 'Idade não informada';
-    const foto = animal.foto || 'https://placehold.co/400x400?text=Sem+Foto';
+    const idadeFormatada = animal.idade ? `${animal.idade} ${animal.idade == 1 ? 'ano' : 'anos'}` : 'Idade não informada';
+    
+    // CORREÇÃO: Mapeia para ds_img buscando na pasta uploads/ igual ao index.php
+    const foto = animal.ds_img ? 'uploads/' + animal.ds_img : 'https://placehold.co/400x400?text=Sem+Foto';
     
     return `
         <div class="cartao-animal" data-id="${animal.id_animal}" onclick="abrirDetalhesAnimal(${animal.id_animal})">
@@ -278,7 +280,9 @@ async function abrirDetalhesAnimal(id) {
     }
     
     animalSelecionado = result;
-    const foto = animalSelecionado.foto || 'https://placehold.co/400x400?text=Sem+Foto';
+    
+    // CORREÇÃO: Ajustado também no modal de detalhes
+    const foto = animalSelecionado.ds_img ? 'uploads/' + animalSelecionado.ds_img : 'https://placehold.co/400x400?text=Sem+Foto';
     
     document.getElementById('modalAnimalImg').src = foto;
     document.getElementById('modalAnimalNome').textContent = animalSelecionado.nome;
@@ -458,10 +462,9 @@ async function fazerLogout() {
 // ========== AJUDA ==========
 function alternarDuvida(elemento) {
     elemento.classList.toggle('ativo');
-    const conteudo = elemento.nextElementSibling;
+    const conteudo = elemento.nextElementSibling; // CORRIGIDO: de element para elemento
     conteudo.classList.toggle('aberto');
 }
-
 function abrirCentralAjuda() {
     const modal = document.getElementById('modal-Ajuda');
     if (modal) modal.style.display = 'flex';

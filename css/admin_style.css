@@ -1,0 +1,593 @@
+:root {
+    --primaria: #2D6A4F;
+    --primaria-escura: #1B4332;
+    --primaria-clara: #52B788;
+    --laranja: #E07B39;
+    --fundo-claro: #F8F4EE;
+    --fundo-card: #FFFFFF;
+    --texto: #1C1917;
+    --texto-leve: #6B7280;
+    --borda: #EDE8DF;
+    --raio: 12px;
+    --sombra: 0 4px 14px rgba(0, 0, 0, 0.06);
+    --transicao: all 0.3s ease;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', 'Poppins', Arial, sans-serif;
+    background-color: #fffef8;
+    color: var(--texto);
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+  }
+  
+  /* --- LAYOUT DA ESTRUTURA --- */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background-color: var(--primaria-escura);
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sidebar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 40px;
+    padding-left: 10px;
+    border-left: 4px solid var(--laranja);
+  }
+  
+  .sidebar ul {
+    list-style: none;
+  }
+  
+  .sidebar ul li {
+    margin-bottom: 12px;
+  }
+  
+  .sidebar ul li a {
+    color: #E2E8F0;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 12px 15px;
+    display: block;
+    border-radius: 8px;
+    transition: var(--transicao);
+  }
+  
+  .sidebar ul li a:hover, 
+  .sidebar ul li.active a {
+    background-color: var(--primaria);
+    color: white;
+    font-weight: 500;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 40px;
+    background-color: #FAF8F5;
+    min-width: 0;
+  }
+  
+  /* --- CORREÇÃO DO HEADER E ALINHAMENTO DO BOTÃO --- */
+  .header-acoes-admin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .content h1 {
+    font-family: 'Fraunces', 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--primaria-escura);
+    margin-bottom: 6px;
+  }
+  
+  .subtitulo {
+    color: var(--texto-leve);
+    font-size: 16px;
+    margin-bottom: 0; /* Controlado pelo margin do pai */
+  }
+  
+  .btn-adicionar-novo {
+    background-color: var(--primaria);
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--sombra);
+    transition: var(--transicao);
+  }
+  
+  .btn-adicionar-novo:hover {
+    background-color: var(--primaria-escura);
+    transform: translateY(-1px);
+  }
+  
+  /* --- CARDS DE SÍNTESE/METRICAS --- */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+    width: 100%;
+  }
+  
+  .card-metrica {
+    background: var(--fundo-card);
+    padding: 24px;
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+    transition: var(--transicao);
+  }
+  
+  /* --- CARDS DE LISTAGEM RECONFIGURADOS --- */
+  .grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    width: 100%;
+  }
+  
+  .admin-card {
+    background: var(--fundo-card);
+    border-radius: var(--raio);
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+    display: flex;
+    flex-direction: column;
+    transition: var(--transicao);
+  }
+  
+  .admin-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  }
+  
+  .card-header-img {
+    height: 160px;
+    background-color: var(--fundo-claro);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .card-header-img .placeholder-icon {
+    font-size: 48px;
+    color: var(--primaria-clara);
+  }
+  
+  .card-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--primaria);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .card-corpo {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  .card-titulo {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--texto);
+    margin-bottom: 8px;
+  }
+  
+  .card-detalhe {
+    font-size: 14px;
+    color: var(--texto-leve);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .card-acoes-btn {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid var(--borda);
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-admin {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: var(--transicao);
+  }
+  
+  .btn-editar {
+    background-color: var(--fundo-claro);
+    color: var(--primaria-escura);
+    font-weight: 500;
+  }
+  
+  .btn-editar:hover {
+    background-color: var(--borda);
+  }
+  
+  /* --- LISTAGEM EM TABELA (Mantenha compatível para a view de Usuários) --- */
+  .tabela-container {
+    background: var(--fundo-card);
+    border-radius: var(--raio);
+    border: 1px solid var(--borda);
+    box-shadow: var(--sombra);
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    font-size: 15px;
+  }
+  
+  .admin-table th {
+    background-color: #FAF8F5;
+    color: var(--primaria-escura);
+    font-weight: 600;
+    padding: 18px 24px;
+    border-bottom: 2px solid var(--borda);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.8px;
+  }
+  
+  .admin-table td {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--borda);
+    color: var(--texto);
+    vertical-align: middle;
+  }
+  
+  /* --- MODAL FLUTUANTE (FIXO) --- */
+  .modal-admin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(28, 25, 23, 0.45);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal-admin-overlay.ativo {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .modal-admin-content {
+    background: var(--fundo-card);
+    width: 100%;
+    max-width: 540px;
+    border-radius: var(--raio);
+    border: 1px solid var(--borda);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+  
+  .modal-admin-overlay.ativo .modal-admin-content {
+    transform: translateY(0);
+  }
+  
+  .modal-admin-header {
+    background-color: #FAF8F5;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--borda);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modal-admin-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    color: var(--primaria-escura);
+  }
+  
+  .btn-modal-fechar {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--texto-leve);
+    cursor: pointer;
+  }
+  
+  .btn-modal-fechar:hover {
+    color: #EF4444;
+  }
+  
+  .modal-admin-form {
+    padding: 24px;
+  }
+  
+  .form-grupo {
+    margin-bottom: 16px;
+  }
+  
+  .form-linha-dupla {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .form-grupo label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--texto);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .form-grupo input,
+  .form-grupo textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background-color: #FFFDFB;
+    transition: var(--transicao);
+  }
+  
+  .form-grupo input:focus,
+  .form-grupo textarea:focus {
+    outline: none;
+    border-color: var(--primaria-clara);
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+  }
+  
+  .modal-admin-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid var(--borda);
+    padding-top: 16px;
+  }
+  
+  .btn-modal-cancelar {
+    background-color: #F3F4F6;
+    color: #374151;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .btn-modal-cancelar:hover {
+    background-color: #E5E7EB;
+  }
+  
+  .btn-modal-salvar {
+    background-color: var(--primaria);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .btn-modal-salvar:hover {
+    background-color: var(--primaria-escura);
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; min-width: 100%; height: auto; }
+  }
+  /* --- ESTILOS DO PERFIL DO ABRIGO --- */
+.container-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+}
+
+.card-info-abrigo {
+    background: var(--fundo-card);
+    padding: 30px;
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+}
+
+.card-info-abrigo h2 {
+    font-family: 'Fraunces', serif;
+    color: var(--primaria-escura);
+    margin-bottom: 15px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.info-item strong {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--texto-leve);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.info-item p {
+    font-size: 16px;
+    color: var(--texto);
+}
+
+/* Ajuste para selects no formulário do modal */
+.form-grupo select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background-color: #FFFDFB;
+    transition: var(--transicao);
+}
+.form-grupo select:focus {
+    outline: none;
+    border-color: var(--primaria-clara);
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+}
+/* --- GRID DE ANIMAIS DENTRO DO PERFIL --- */
+.secao-animais-abrigo {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.secao-animais-abrigo h2 {
+    font-family: 'Fraunces', serif;
+    color: var(--primaria-escura);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Grid dinâmico para os cards de animais */
+.grid-animais-perfil {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* Card compacto e moderno para o Animal */
+.card-animal-pequeno {
+    background: var(--fundo-card);
+    border-radius: var(--raio);
+    border: 1px solid var(--borda);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transicao);
+}
+
+.card-animal-pequeno:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.animal-thumb {
+    height: 150px;
+    background-color: var(--fundo-claro);
+    position: relative;
+}
+
+.animal-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.badge-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: var(--primaria-clara);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.animal-corpo {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.animal-nome {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--texto);
+}
+
+.animal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.tag-info {
+    background-color: #F3F4F6;
+    color: var(--texto-leve);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.tag-info.marcador {
+    background-color: rgba(82, 183, 136, 0.12);
+    color: var(--primaria-escura);
+}

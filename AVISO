@@ -19,3 +19,13 @@ dentro de usuarios vai ter:
 listagem de usuarios 
 edição de usuarios
 exclusão de usuarios
+
+//Responsabilidades Gabriel hj:
+
+-Realizar o cadastro dos animais e fazer sua inserção no banco de dados
+-Fazer a página de entrada.php ser redirecionar ao login 
+-Fazer um esboço do painel admin, com a aba de usuarios e abrigos, para testar o cadastro de animais, 
+a listagem de usuarios, abrigos e animais
+-Fazer a parte de alteração e exclusão das listagens, 
+-Fazer a mudança de status do animal dentro do banco de dados, quando ele mudar para em adoção
+-Verificar as sessões dos usuários, nas páginas que é necessário o login

@@ -2,9 +2,13 @@
 require_once "conexao.php";
 session_start();
 
-// Buscar animais do banco de dados para carregamento inicial
 try {
-    $sql = "SELECT * FROM animais_adocao WHERE status_adocao = 'Disponível' LIMIT 4";
+    // Faz o JOIN com a tabela foto_animal para trazer a coluna ds_img correspondente
+    $sql = "SELECT a.*, f.ds_img 
+            FROM animais_adocao a 
+            LEFT JOIN foto_animal f ON a.id_animal = f.id_animal 
+            WHERE a.status_adocao = 'Disponível' 
+            LIMIT 4";
     $stmt = $pdo->query($sql);
     $animais_destaque = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -106,7 +110,11 @@ try {
                 <?php foreach ($animais_destaque as $animal): ?>
                 <div class="cartao-animal" data-id="<?= $animal['id_animal'] ?>" onclick="abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
                     <div class="imagem-animal">
-                        <img src="<?= htmlspecialchars($animal['foto'] ?? 'https://placehold.co/400x400?text=Sem+Imagem') ?>" alt="<?= htmlspecialchars($animal['nome']) ?>">
+                    <?php 
+                        // Verifica se há foto cadastrada no banco; se sim, aponta para a pasta uploads/
+                        $fotoExibicao = !empty($animal['ds_img']) ? 'uploads/' . $animal['ds_img'] : 'https://placehold.co/400x400?text=Sem+Imagem';
+                    ?>
+                    <img src="<?= htmlspecialchars($fotoExibicao) ?>" alt="<?= htmlspecialchars($animal['nome']) ?>">
                         <span class="etiqueta-sexo <?= $animal['sexo'] === 'Macho' ? 'macho' : 'femea' ?>"><?= $animal['sexo'] === 'Macho' ? '♂' : '♀' ?> <?= htmlspecialchars($animal['sexo']) ?></span>
                         <button class="btn-favorito" onclick="event.stopPropagation(); toggleFavorito(<?= $animal['id_animal'] ?>, this)">
                             <i class="fas fa-heart"></i>
