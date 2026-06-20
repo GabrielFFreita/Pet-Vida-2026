@@ -269,10 +269,10 @@ header {
   gap: 8px;
   background: linear-gradient(135deg, var(--laranja) 0%, #c9602a 100%);
   color: var(--branco);
-  padding: 14px 30px;
+  padding: 10px 22px;
   border-radius: var(--radius);
   font-family: 'Inter', sans-serif;
-  font-size: .9375rem;
+  font-size: .85rem;
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
@@ -712,7 +712,7 @@ footer {
 }
 
 .footer-marca { display: flex; flex-direction: column; gap: 10px; }
-.footer-marca .logo-icon { font-size: 2rem; }
+.footer-marca .footer-logo-img { height: 50px; width: auto; display: block; filter: brightness(0) invert(1); opacity: .95; }
 
 .footer-slogan {
   font-family: 'Fraunces', serif;

@@ -317,6 +317,14 @@ function toggleFavorito(id, btn) {
 
   salvarFavoritos();
   atualizarContadorFavoritos();
+
+  // [FIX] Se a lista de favoritos zerou e o filtro "mostrar favoritos" está
+  // ativo, desativa o filtro automaticamente para não deixar a grade vazia.
+  if (favoritos.length === 0 && mostrandoFavoritos) {
+    mostrandoFavoritos = false;
+    atualizarBotaoFavoritos();
+    aplicarFiltros();
+  }
 }
 
 // ── [ALTERADO #4] Toggle de Favoritos Inline ─────────────────
