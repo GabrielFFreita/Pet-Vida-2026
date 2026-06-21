@@ -174,84 +174,177 @@ function solicitarAdocao() {
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
 }
-
 function cadastrarUsuario() {
     global $pdo;
     try {
-        $data = json_decode(file_get_contents('php://input'), true);
-        
-        if (empty($data['nome']) || empty($data['email']) || empty($data['senha'])) {
-            echo json_encode(['success' => false, 'error' => 'Campos obrigatórios vazios']);
-            return;
-        }
-        
-        // Verificar se e-mail já existe
-        $stmt = $pdo->prepare("SELECT id_usuario FROM usuarios WHERE email = :email");
-        $stmt->execute([':email' => $data['email']]);
-        if ($stmt->fetch()) {
-            echo json_encode(['success' => false, 'error' => 'E-mail já cadastrado']);
-            return;
-        }
-        
-        $sql = "INSERT INTO usuarios (nome, email, senha, telefone, cpf, cidade, estado, tipo_usuario, data_cadastro) 
-                VALUES (:nome, :email, :senha, :telefone, :cpf, :cidade, :estado, 'Cliente', CURDATE())";
-        
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ':nome' => $data['nome'],
-            ':email' => $data['email'],
-            ':senha' => password_hash($data['senha'], PASSWORD_DEFAULT),
-            ':telefone' => $data['telefone'] ?? null,
-            ':cpf' => $data['cpf'] ?? null,
-            ':cidade' => $data['cidade'] ?? null,
-            ':estado' => $data['estado'] ?? null
-        ]);
-        
-        echo json_encode(['success' => true]);
-    } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-    }
-}
+        // Limpa qualquer saída ou aviso acidental antes de entregar o JSON
+        if (ob_get_length()) ob_clean();
 
+        $data = json_decode(file_get_contents("php://input"), true);
+        
+        // Coleta ABSOLUTAMENTE TODOS os campos enviados pelo JavaScript
+        $nome            = trim($data['nome_usuario'] ?? "");
+       
+        $idade           = !empty($data['idade']) ? intval($data['idade']) : null;
+        $email           = trim($data['email'] ?? "");
+        $senha           = trim($data['senha'] ?? "");
+        $telefone        = trim($data['telefone'] ?? "");
+        $cpf             = trim($data['cpf'] ?? "");
+        $data_nascimento = trim($data['data_nascimento'] ?? "");
+        $endereco        = trim($data['endereco'] ?? "");
+        $cidade          = trim($data['cidade'] ?? "");
+        $estado          = trim($data['estado'] ?? "");
+
+        // Validação dos campos essenciais
+        if (empty($nome) || empty($email) || empty($senha)) {
+            echo json_encode(['success' => false, 'error' => 'Preencha os campos obrigatórios (Nome, E-mail e Senha)!']);
+            return;
+        }
+
+        // Criptografia segura da senha
+        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+
+        // SQL COMPLETO: Incluindo todas as colunas da sua especificação
+        $sql = "INSERT INTO usuarios (nome, idade, email, senha, telefone, cpf, data_nascimento, endereco, cidade, estado,  perfil) 
+                VALUES (:nome,  :idade, :email, :senha, :telefone, :cpf, :data_nascimento, :endereco, :cidade, :estado, 'user')";
+
+        $stmt = $pdo->prepare($sql);
+        
+        // Vinculando todos os parâmetros um por um
+        $stmt->bindParam(":nome", $nome);
+       
+        $stmt->bindParam(":idade", $idade, PDO::PARAM_INT);
+        $stmt->bindParam(":email", $email);
+        $stmt->bindParam(":senha", $senhaHash);
+        $stmt->bindParam(":telefone", $telefone);
+        $stmt->bindParam(":cpf", $cpf);
+        $stmt->bindParam(":data_nascimento", $data_nascimento);
+        $stmt->bindParam(":endereco", $endereco);
+        $stmt->bindParam(":cidade", $cidade);
+        $stmt->bindParam(":estado", $estado);
+
+        $stmt->execute();
+
+        // Configura a sessão para logar automaticamente o usuário cadastrado
+        $_SESSION["id_usuario"] = $pdo->lastInsertId();
+        $_SESSION["nome_usuario"] = $nome;
+        $_SESSION["email"] = $email;
+        $_SESSION['ultima_atividade'] = time();
+        
+        echo json_encode(["success" => true]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Erro no banco de dados: ' . $e->getMessage()]);
+    }
+    exit;
+}
 function login() {
     global $pdo;
     try {
-        $data = json_decode(file_get_contents('php://input'), true);
-        
-        if (empty($data['email']) || empty($data['senha'])) {
-            echo json_encode(['success' => false, 'error' => 'Preencha todos os campos']);
+        // Limpa qualquer aviso ou espaço em branco gerado pelo PHP antes da hora
+        if (ob_get_length()) ob_clean();
+
+        $data = json_decode(file_get_contents("php://input"), true);
+        $email = trim($data['email'] ?? "");
+        $senha = trim($data['senha'] ?? "");
+
+        if (empty($email) || empty($senha)) {
+            echo json_encode(['success' => false, 'error' => 'Preencha e-mail e senha!']);
             return;
         }
-        
+
+        // Busca o usuário pelo e-mail na tabela correta 'usuarios'
         $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email");
-        $stmt->execute([':email' => $data['email']]);
+        $stmt->execute([':email' => $email]);
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($usuario && password_verify($data['senha'], $usuario['senha'])) {
-            unset($usuario['senha']); // Remove por segurança
-            $_SESSION['usuario'] = $usuario;
-            echo json_encode(['success' => true, 'usuario' => $usuario]);
+
+        // Verifica se o usuário existe e se a senha descriptografada bate
+        if ($usuario && password_verify($senha, $usuario['senha'])) {
+            
+            // Grava os dados na sessão (importante para manter o usuário logado)
+            $_SESSION["id_usuario"] = $usuario['id_usuario'];
+            $_SESSION["nome_usuario"] = $usuario['nome'];
+            $_SESSION["email"] = $usuario['email'];
+            $_SESSION["perfil"] = $usuario['perfil']; // Garante o nível de acesso (user/admin)
+            $_SESSION['ultima_atividade'] = time();
+
+            // Retorna o sucesso para o JavaScript
+            echo json_encode([
+                "success" => true,
+                "usuario" => [
+                    "id" => $usuario['id_usuario'],
+                    "nome" => $usuario['nome'],
+                    "perfil" => $usuario['perfil']
+                ]
+            ]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'E-mail ou senha incorretos']);
+            echo json_encode(['success' => false, 'error' => 'E-mail ou senha incorretos!']);
         }
     } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Erro no banco de dados: ' . $e->getMessage()]);
+    }
+    exit; // Impede que qualquer código depois imprima algo e quebre o JSON
+}
+function logout() {
+    try {
+        if (ob_get_length()) ob_clean();
+
+        // Destrói todas as variáveis de sessão de forma limpa
+        $_SESSION = array();
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+
+        session_destroy();
+        echo json_encode(["success" => true]);
+    } catch (Exception $e) {
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
+    exit;
 }
-
-function logout() {
-    session_destroy();
-    echo json_encode(['success' => true]);
-}
-
 function verificarSessao() {
-    if (isset($_SESSION['usuario'])) {
-        echo json_encode(['success' => true, 'usuario' => $_SESSION['usuario']]);
-    } else {
-        echo json_encode(['success' => false]);
-    }
-}
+    global $pdo;
+    try {
+        // Limpa saídas residuais para garantir um JSON puro
+        if (ob_get_length()) ob_clean();
 
+        // Verifica se a sessão com o ID do usuário está ativa
+        if (isset($_SESSION['id_usuario'])) {
+            
+            // Busca os dados atualizados usando 'id_usuario' que é o nome real da sua coluna
+            $stmt = $pdo->prepare("SELECT id_usuario, nome, email, perfil FROM usuarios WHERE id_usuario = :id");
+            $stmt->execute([':id' => $_SESSION['id_usuario']]);
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuario) {
+                // Atualiza o tempo de atividade da sessão
+                $_SESSION['ultima_atividade'] = time();
+
+                echo json_encode([
+                    "success" => true,
+                    "logged_in" => true,
+                    "usuario" => [
+                        "id" => $usuario['id_usuario'],
+                        "nome" => $usuario['nome'],
+                        "perfil" => $usuario['perfil']
+                    ]
+                ]);
+                return;
+            }
+        }
+
+        // Se não houver sessão ativa ou usuário não for encontrado
+        echo json_encode(["success" => true, "logged_in" => false]);
+
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Erro na sessão: ' . $e->getMessage()]);
+    }
+    exit;
+}
 function registrarDoacao() {
     global $pdo;
     try {

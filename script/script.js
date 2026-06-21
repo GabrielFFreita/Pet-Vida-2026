@@ -575,7 +575,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Eventos de formulário
-    const cadastroForm = document.getElementById('cadastroForm');
+const cadastroForm = document.getElementById('cadastroForm');
     if (cadastroForm) {
         cadastroForm.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -583,38 +583,45 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.disabled = true;
             btn.innerHTML = 'Cadastrando...';
             
+            // Lendo TODOS os campos do formulário atualizado
+            const dadosCadastro = {
+                nome_usuario: document.getElementById('nome')?.value,
+                nome_login: document.getElementById('nome_login')?.value,
+                idade: document.getElementById('idade')?.value,
+                email: document.getElementById('email')?.value,
+                senha: document.getElementById('senha')?.value,
+                telefone: document.getElementById('telefone')?.value,
+                cpf: document.getElementById('cpf')?.value,
+                data_nascimento: document.getElementById('data_nascimento')?.value,
+                endereco: document.getElementById('endereco')?.value,
+                cidade: document.getElementById('cidade')?.value,
+                estado: document.getElementById('estado')?.value
+            };
+            
             const result = await fetchAPI('api.php?acao=cadastrar_usuario', {
                 method: 'POST',
-                body: JSON.stringify({
-                    nome: document.getElementById('nome')?.value,
-                    email: document.getElementById('email')?.value,
-                    senha: document.getElementById('senha')?.value,
-                    telefone: document.getElementById('telefone')?.value,
-                    cpf: document.getElementById('cpf')?.value,
-                    cidade: document.getElementById('cidade')?.value,
-                    estado: document.getElementById('estado')?.value
-                })
+                body: JSON.stringify(dadosCadastro)
             });
             
             if (result.success) {
                 const successMsg = document.getElementById('cadastroSuccess');
                 if (successMsg) {
+                    successMsg.textContent = 'Cadastro realizado com sucesso!';
                     successMsg.style.display = 'block';
-                    successMsg.textContent = 'Cadastro realizado! Faça login.';
                 }
-                document.getElementById('nome').value = '';
-                document.getElementById('email').value = '';
-                document.getElementById('senha').value = '';
-                setTimeout(() => alternarFormulario('login'), 1500);
+                setTimeout(() => {
+                    alternarFormulario('login');
+                    if (successMsg) successMsg.style.display = 'none';
+                    cadastroForm.reset();
+                }, 2000);
             } else {
-                alert('Erro ao cadastrar: ' + (result.error || 'Verifique os dados.'));
+                alert(result.error || 'Erro ao realizar cadastro.');
             }
             
             btn.disabled = false;
             btn.innerHTML = 'Cadastrar';
         });
     }
-    
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {

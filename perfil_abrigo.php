@@ -235,7 +235,7 @@ try {
                     </div>
                     <div class="form-grupo">
                         <label for="idade_animal">Idade</label>
-                        <input type="number" id="idade_animal" name="idade_animal" required placeholder="Ex: 3">
+                        <input type="text" id="idade_animal" name="idade_animal" required placeholder="Ex: 3 anos">
                     </div>
                 </div>
 

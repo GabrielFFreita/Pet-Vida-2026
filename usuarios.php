@@ -1,9 +1,9 @@
 <?php
 require_once "conexao.php";
 session_start();
-
 try {
-    $sql = "SELECT id, nome, email, telefone, perfil, data_cadastro FROM usuarios ORDER BY id DESC";
+    // Corrigido: id_usuario no lugar de id, e removido o data_cadastro que não existe
+    $sql = "SELECT id_usuario, nome, email, telefone, perfil FROM usuarios ORDER BY id_usuario DESC";
     $stmt = $pdo->query($sql);
     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -38,7 +38,7 @@ try {
 
     <main class="content">
         <h1>Gerenciar Usuários</h1>
-        <p class="subtitulo">Consulte, altere permissões ou remova contas cadastradas no sistema.</p>
+      
 
         <div class="tabela-container">
             <table class="admin-table">
@@ -62,7 +62,7 @@ try {
                     <?php else: ?>
                         <?php foreach ($usuarios as $user): ?>
                             <tr>
-                                <td>#<?php echo htmlspecialchars($user['id']); ?></td>
+                                <td>#<?php echo htmlspecialchars($user['id_usuario']); ?></td>
                                 <td><strong><?php echo htmlspecialchars($user['nome']); ?></strong></td>
                                 <td><?php echo htmlspecialchars($user['email']); ?></td>
                                 <td><?php echo htmlspecialchars($user['telefone'] ?? 'Não informado'); ?></td>
@@ -73,14 +73,13 @@ try {
                                 </td>
                                 <td>
                                     <div class="table-acoes">
-                                        <a href="editar_usuario.php?id=<?php echo $user['id']; ?>" class="btn-table btn-table-editar">Editar</a>
-                                        <button class="btn-table btn-table-excluir" onclick="if(confirm('Tem certeza que deseja excluir este usuário?')) window.location.href='excluir_usuario.php?id=<?php echo $user['id']; ?>'">Excluir</button>
+                                        <a href="editar_usuario.php?id=<?php echo $user['id_usuario']; ?>" class="btn-table btn-table-editar">Editar</a>
+                                        <button class="btn-table btn-table-excluir" onclick="if(confirm('Tem certeza que deseja excluir este usuário?')) window.location.href='excluir_usuario.php?id=<?php echo $user['id_usuario']; ?>'">Excluir</button>
                                     </div>
                                 </td>
                             </tr>
-                            <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
+                        <?php endforeach; ?>
+                    <?php endif; ?> </tbody>
             </table>
         </div>
     </main>

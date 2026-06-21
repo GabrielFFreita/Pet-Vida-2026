@@ -3,24 +3,30 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$tempo_limite = 120; // 2 minutos de inatividade
+$tempo_limite = 1800; // 30 minutos de inatividade
 
 if (isset($_SESSION['ultima_atividade'])) {
     $inatividade = time() - $_SESSION['ultima_atividade'];
     
     if ($inatividade > $tempo_limite) {
+        // Marca na sessão que a queda foi por inatividade antes de limpar
+        session_start();
+        $_SESSION['sessao_expirada_por_tempo'] = true;
+        
         session_unset();
         session_destroy();
-        echo "<script>alert('A sua sessão expirou por inatividade.'); window.location.href='entrar.php';</script>";
-        exit();
     }
 }
 
-$_SESSION['ultima_atividade'] = time();
+// Se a sessão ainda existir, atualiza o tempo da última atividade
+if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['nome_usuario'])) {
+    $_SESSION['ultima_atividade'] = time();
+}
 
 function verificarLogado() {
     if (!isset($_SESSION["nome_usuario"])) {
-        header("Location: entrar.php");
+        // Para páginas PHP restritas (como painel admin), manda de volta de forma segura
+        header("Location: index.php");
         exit();
     }
 }

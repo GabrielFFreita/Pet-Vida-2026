@@ -441,11 +441,11 @@ try {
         </div>
     </div>
 
-    <!-- Modal Login/Cadastro -->
-    <div id="modalLogin" class="modal">
-        <div class="modal-box">
+   <div id="modalLogin" class="modal">
+        <div class="modal-box" style="max-height: 85vh; overflow-y: auto; padding-right: 10px;">
             <button class="close" onclick="fecharModal('modalLogin')">&times;</button>
             <h2 class="modal-title" id="modalTitle" style="color: var(--primaria); text-align: center;">Crie sua Conta</h2>
+            
             <div id="formCadastro" style="display: block;">
                 <form id="cadastroForm">
                     <div class="form-group">
@@ -453,44 +453,84 @@ try {
                         <input type="text" class="form-control" id="nome" required>
                         <span class="error-msg" id="nomeError"></span>
                     </div>
+                    
+
+                    <div class="form-group">
+                        <label>Idade</label>
+                        <input type="number" class="form-control" id="idade" min="0" max="120">
+                    </div>
+
                     <div class="form-group">
                         <label>E-mail</label>
                         <input type="email" class="form-control" id="email" required>
                         <span class="error-msg" id="emailError"></span>
                     </div>
+
                     <div class="form-group">
                         <label>Senha</label>
                         <input type="password" class="form-control" id="senha" required>
                         <span class="error-msg" id="senhaError"></span>
                     </div>
+
                     <div class="form-group">
                         <label>Telefone</label>
-                        <input type="text" class="form-control" id="telefone">
+                        <input type="text" class="form-control" id="telefone" required placeholder="(00) 00000-0000">
                     </div>
+
                     <div class="form-group">
                         <label>CPF</label>
-                        <input type="text" class="form-control" id="cpf">
+                        <input type="text" class="form-control" id="cpf" required placeholder="000.000.000-00">
                     </div>
+
+                    <div class="form-group">
+                        <label>Data de Nascimento</label>
+                        <input type="date" class="form-control" id="data_nascimento" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Endereço</label>
+                        <input type="text" class="form-control" id="endereco" required placeholder="Rua, número e bairro">
+                    </div>
+
                     <div class="form-group">
                         <label>Cidade</label>
-                        <input type="text" class="form-control" id="cidade">
+                        <input type="text" class="form-control" id="cidade" required>
                     </div>
+
                     <div class="form-group">
                         <label>Estado</label>
-                        <select class="form-control" id="estado">
-                            <option value="">Selecione</option>
-                            <option value="SP">São Paulo</option>
-                            <option value="RJ">Rio de Janeiro</option>
-                            <option value="MG">Minas Gerais</option>
-                            <option value="RS">Rio Grande do Sul</option>
-                            <option value="SC">Santa Catarina</option>
-                            <option value="PR">Paraná</option>
+                        <select class="form-control" id="estado" required>
+                            <option value="" disabled selected>Selecione seu estado</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
                             <option value="BA">Bahia</option>
-                            <option value="PE">Pernambuco</option>
                             <option value="CE">Ceará</option>
                             <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
                         </select>
                     </div>
+
                     <p class="success" id="cadastroSuccess" style="display: none;"></p>
                     <button type="submit" class="btn">Cadastrar</button>
                 </form>
@@ -498,6 +538,7 @@ try {
                     Já tem conta? <a href="#" class="link" onclick="alternarFormulario('login')">Faça Login</a>
                 </div>
             </div>
+
             <div id="formLogin" style="display: none;">
                 <form id="loginForm">
                     <div class="form-group">
