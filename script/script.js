@@ -56,7 +56,17 @@ async function fetchAPI(endpoint, options = {}) {
 async function carregarAnimais(containerId, limite = null, filtros = {}) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    
+
+    // Se o PHP já renderizou cards, não sobrescreve — apenas atualiza favoritos
+    const temCardsPhp = container.querySelectorAll('.cartao-animal').length > 0;
+    if (temCardsPhp && Object.keys(filtros).length === 0) {
+        container.querySelectorAll('.cartao-animal').forEach(card => {
+            const id = card.dataset.id;
+            if (id) atualizarIconeFavorito(id);
+        });
+        return;
+    }
+
     container.innerHTML = '<div class="loading"><div class="spinner"></div> Carregando...</div>';
     
     let url = 'api.php?acao=listar_animais';
@@ -414,14 +424,41 @@ function voltarParaHome() {
     window.scrollTo(0, 0);
 }
 
-// ========== SISTEMA DE LOGIN ==========
 function atualizarInterfaceUsuario() {
-    const textoUsuario = document.getElementById('textoUsuario');
-    if (textoUsuario) {
-        textoUsuario.textContent = usuarioLogado ? usuarioLogado.nome.split(' ')[0] : 'Entrar/Cadastrar';
+    const botaoUsuario = document.getElementById('botaoUsuario');
+    if (!botaoUsuario) return;
+
+    // Garante que o wrapper sempre seja row (não herda column do acao-cabecalho)
+    botaoUsuario.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:20px;cursor:pointer;background:none;border:none;padding:0;';
+
+    if (usuarioLogado) {
+        botaoUsuario.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;line-height:1;">
+                <i class="far fa-user" id="iconeUsuario" style="font-size:1.4rem;margin-bottom:4px;color:#2d3748;"></i>
+                <span id="textoUsuario" style="font-size:0.8rem;font-weight:600;color:#333;white-space:nowrap;">${usuarioLogado.nome}</span>
+            </div>
+            <button id="btnSairEfetivo" onclick="deslogarUsuario(event)"
+                style="display:inline-flex;flex-direction:row;align-items:center;gap:6px;background:transparent;border:none;outline:none;color:#e53e3e;padding:0;font-size:1rem;font-weight:700;text-transform:uppercase;cursor:pointer;white-space:nowrap;">
+                <i class="fas fa-sign-out-alt" style="font-size:1.3rem;color:#e53e3e;"></i> Sair
+            </button>
+        `;
+    } else {
+        botaoUsuario.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;line-height:1;">
+                <i class="far fa-user" id="iconeUsuario" style="font-size:1.4rem;margin-bottom:4px;color:#2d3748;"></i>
+                <span id="textoUsuario" style="font-size:0.8rem;font-weight:600;color:#333;white-space:nowrap;">Entrar/Cadastrar</span>
+            </div>
+        `;
     }
 }
 
+// Trata o clique no botão Sair sem abrir o modal de login
+function deslogarUsuario(event) {
+    event.stopPropagation();
+    usuarioLogado = null;
+    atualizarInterfaceUsuario();
+    alert('Sessão encerrada com sucesso.');
+}
 function abrirLogin() {
     document.getElementById('modalLogin').style.display = 'flex';
     alternarFormulario('cadastro');
@@ -451,12 +488,10 @@ function alternarFormulario(tipo) {
 
 async function fazerLogout() {
     const result = await fetchAPI('api.php?acao=logout');
-    if (result.success) {
-        usuarioLogado = null;
-        atualizarInterfaceUsuario();
-        voltarParaHome();
-        alert('Logout realizado com sucesso!');
-    }
+    usuarioLogado = null;
+    atualizarInterfaceUsuario();
+    alert('Sessão encerrada com sucesso!');
+    window.location.href = 'index.php'; // Força o redirecionamento imediato e limpa o estado
 }
 
 // ========== AJUDA ==========
@@ -554,9 +589,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // CORREÇÃO LOGOUT / LOGIN DINÂMICO: Trata o clique no container conforme estado da sessão
     const botaoUsuario = document.getElementById('botaoUsuario');
     if (botaoUsuario) {
-        botaoUsuario.addEventListener('click', abrirLogin);
+        botaoUsuario.addEventListener('click', function(e) {
+            if (usuarioLogado) {
+                // Se clicou especificamente no gatilho interno ou se o clique veio do botão Sair
+                if (e.target.id === 'btnSairEfetivo' || e.target.closest('#btnSairEfetivo')) {
+                    if (confirm('Deseja realmente sair da sua conta?')) {
+                        fazerLogout();
+                    }
+                }
+            } else {
+                abrirLogin();
+            }
+        });
     }
     
     const btnFavoritos = document.getElementById('btnFavoritos');
@@ -575,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Eventos de formulário
-const cadastroForm = document.getElementById('cadastroForm');
+    const cadastroForm = document.getElementById('cadastroForm');
     if (cadastroForm) {
         cadastroForm.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -655,4 +702,4 @@ const cadastroForm = document.getElementById('cadastroForm');
             btn.innerHTML = 'Entrar';
         });
     }
-});
+}); 

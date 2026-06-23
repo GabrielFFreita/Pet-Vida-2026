@@ -4,7 +4,7 @@ session_start();
 
 try {
     // Faz o JOIN com a tabela foto_animal para trazer a coluna ds_img correspondente
-    $sql = "SELECT a.*, f.ds_img 
+    $sql = "SELECT a.id_animal, a.nome, a.idade, a.raca, a.especie, a.sexo, a.porte, a.peso, a.vacinado, a.descricao, a.status_adocao, f.ds_img 
             FROM animais_adocao a 
             LEFT JOIN foto_animal f ON a.id_animal = f.id_animal 
             WHERE a.status_adocao = 'Disponível' 
@@ -39,7 +39,6 @@ try {
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
 
-    <!-- Cabeçalho -->
     <header class="cabecalho-principal">
         <div class="conteudo-cabecalho">
             <div class="logo">
@@ -59,15 +58,18 @@ try {
                 <div class="acao-cabecalho">
                     <button class="botao-doacao"><i class="fas fa-hand-holding-heart"></i> Doe/ajude</button>
                 </div>
-                <div class="acao-cabecalho" id="botaoUsuario">
-                    <i class="far fa-user"></i>
-                    <span id="textoUsuario">Entrar/Cadastrar</span>
+                <div class="acao-cabecalho" style="padding:0;background:none;border:none;">
+                    <div id="botaoUsuario" style="display:flex;flex-direction:row;align-items:center;gap:12px;cursor:pointer;">
+                        <div class="usuario-perfil-bloco" style="display:flex;flex-direction:column;align-items:center;">
+                            <i class="far fa-user" id="iconeUsuario" style="font-size:1.4rem;margin-bottom:4px;"></i>
+                            <span id="textoUsuario" style="font-size:0.8rem;font-weight:600;">Entrar/Cadastrar</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Banner -->
     <section class="banner-principal">
         <div class="slide-banner ativo">
             <img src="img/Petquiz.png" alt="Banner Pet quiz">
@@ -97,7 +99,6 @@ try {
         </div>
     </section>
 
-    <!-- Seção de Animais em Destaque -->
     <section class="animais-destaque" id="secaoAnimais">
         <div class="container-animais">
             <div class="cabecalho-animais">
@@ -107,40 +108,49 @@ try {
                 </button>
             </div>
             <div class="grade-animais" id="gradeAnimaisDestaque">
-                <?php foreach ($animais_destaque as $animal): ?>
-                <div class="cartao-animal" data-id="<?= $animal['id_animal'] ?>" onclick="abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
-                    <div class="imagem-animal">
-                    <?php 
-                        // Verifica se há foto cadastrada no banco; se sim, aponta para a pasta uploads/
-                        $fotoExibicao = !empty($animal['ds_img']) ? 'uploads/' . $animal['ds_img'] : 'https://placehold.co/400x400?text=Sem+Imagem';
+                <?php if (!empty($animais_destaque)): ?>
+                    <?php foreach ($animais_destaque as $animal): ?>
+                    <?php
+                        $foto = !empty($animal['ds_img'])
+                            ? 'uploads/' . htmlspecialchars($animal['ds_img'])
+                            : 'https://placehold.co/400x400?text=Sem+Imagem';
+                        $sexoClass = $animal['sexo'] === 'Macho' ? 'macho' : 'femea';
+                        $sexoIcone = $animal['sexo'] === 'Macho' ? '♂' : '♀';
+                        $especieIcone = $animal['especie'] === 'Cachorro' ? 'dog' : 'cat';
+                        $idadeLabel = ($animal['idade'] == 1) ? '1 ano' : $animal['idade'] . ' anos';
                     ?>
-                    <img src="<?= htmlspecialchars($fotoExibicao) ?>" alt="<?= htmlspecialchars($animal['nome']) ?>">
-                        <span class="etiqueta-sexo <?= $animal['sexo'] === 'Macho' ? 'macho' : 'femea' ?>"><?= $animal['sexo'] === 'Macho' ? '♂' : '♀' ?> <?= htmlspecialchars($animal['sexo']) ?></span>
-                        <button class="btn-favorito" onclick="event.stopPropagation(); toggleFavorito(<?= $animal['id_animal'] ?>, this)">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="info-animal">
-                        <h3 class="nome-animal"><?= htmlspecialchars($animal['nome']) ?></h3>
-                        <div class="raca-animal"><i class="fas fa-tag"></i> <?= htmlspecialchars($animal['raca'] ?? 'SRD') ?></div>
-                        <div class="detalhes-animal">
-                            <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= $animal['idade'] ?> <?= ($animal['idade'] == 1) ? 'ano' : 'anos' ?></div>
-                            <div class="detalhe-item"><i class="fas fa-<?= $animal['especie'] === 'Cachorro' ? 'dog' : 'cat' ?>"></i> <?= htmlspecialchars($animal['especie']) ?></div>
+                    <div class="cartao-animal" data-id="<?= $animal['id_animal'] ?>" onclick="abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
+                        <div class="imagem-animal">
+                            <img src="<?= $foto ?>"
+                                 alt="<?= htmlspecialchars($animal['nome']) ?>"
+                                 onerror="this.src='https://placehold.co/400x400?text=Sem+Imagem'">
+                            <span class="etiqueta-sexo <?= $sexoClass ?>"><?= $sexoIcone ?> <?= htmlspecialchars($animal['sexo']) ?></span>
+                            <button class="btn-favorito" onclick="event.stopPropagation(); toggleFavorito(<?= $animal['id_animal'] ?>, this)">
+                                <i class="fas fa-heart"></i>
+                            </button>
                         </div>
-                        <button class="btn-adotar" onclick="event.stopPropagation(); abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
-                            <i class="fas fa-heart"></i> Quero adotar
-                        </button>
+                        <div class="info-animal">
+                            <h3 class="nome-animal"><?= htmlspecialchars($animal['nome']) ?></h3>
+                            <div class="raca-animal"><i class="fas fa-tag"></i> <?= htmlspecialchars($animal['raca'] ?? 'SRD') ?></div>
+                            <div class="detalhes-animal">
+                                <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= $idadeLabel ?></div>
+                                <div class="detalhe-item"><i class="fas fa-<?= $especieIcone ?>"></i> <?= htmlspecialchars($animal['especie']) ?></div>
+                            </div>
+                            <button class="btn-adotar" onclick="event.stopPropagation(); abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
+                                <i class="fas fa-heart"></i> Quero adotar
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <?php endforeach; ?>
-                <?php if (empty($animais_destaque)): ?>
-                <div class="loading"><div class="spinner"></div> Carregando...</div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="text-align:center; color:#666; padding: 40px 0;">
+                        Nenhum animal disponível para adoção no momento.
+                    </p>
                 <?php endif; ?>
             </div>
         </div>
     </section>
 
-    <!-- Página de Todos os Animais -->
     <div id="paginaTodosAnimais" class="pagina-todos-animais">
         <button class="botao-voltar" onclick="voltarParaHome()">
             <i class="fas fa-arrow-left"></i> Voltar
@@ -182,7 +192,6 @@ try {
         </div>
     </div>
 
-    <!-- Página de Favoritos -->
     <div id="paginaFavoritos" class="pagina-todos-animais">
         <button class="botao-voltar" onclick="voltarParaHome()">
             <i class="fas fa-arrow-left"></i> Voltar
@@ -195,7 +204,6 @@ try {
         </div>
     </div>
 
-    <!-- Seção Sobre - Texto único com botão "Ler mais" geral -->
     <section class="secao-sobre">
         <div class="container-sobre">
             <div class="cabecalho-sobre">
@@ -204,7 +212,6 @@ try {
             </div>
             
             <div class="sobre-conteudo">
-                <!-- TEXTO RESUMIDO (sempre visível) -->
                 <div class="texto-resumido">
                     <h3><i class="fas fa-paw"></i> Nossa Missão</h3>
                     <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo o bem-estar animal e combatendo o abandono.</p>
@@ -219,10 +226,9 @@ try {
                     <p>Sua ajuda viabiliza o resgate de mais animais, cobre custos médicos e mantém o nosso abrigo funcionando. Cada adoção abre espaço para um novo resgate.</p>
                 </div>
                 
-                <!-- TEXTO COMPLETO (inicialmente oculto) -->
                 <div class="texto-completo">
                     <h3><i class="fas fa-paw"></i> Nossa Missão de Resgate e Adoção</h3>
-                    <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo o bem-estar animal e combatendo o abandono. Trabalhamos incansavelmente para garantir que cada animal tenha uma segunda chance e encontre uma família que o ame para sempre. Acreditamos que todo animal merece dignidade, respeito e amor.</p>
+                    <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo o bem-estar animal e combatendo o abandono. Trabalhamos incansavelmente para garantir que cada animal tenha uma segunda chance e encontre uma família que o ame para sempre. Acreditamos que todo animal merece dignidade, respeito and amor.</p>
                     
                     <h3><i class="fas fa-star"></i> Nossos Valores</h3>
                     <ul>
@@ -245,7 +251,6 @@ try {
                     </div>
                 </div>
                 
-                <!-- Botão único "Ler mais / Ler menos" -->
                 <button class="btn-ler-mais-sobre" onclick="toggleLerMaisGeral()">
                     <i class="fas fa-chevron-down"></i> Ler mais
                 </button>
@@ -253,7 +258,6 @@ try {
         </div>
     </section>
 
-    <!-- Seção Equipe -->
     <section class="secao-equipe">
         <div class="container">
             <h2 class="secao-titulo">Nossa Equipe</h2>
@@ -282,7 +286,6 @@ try {
         </div>
     </section>
 
-    <!-- Rodapé -->
     <footer class="rodape-principal">
         <div class="conteudo-rodape">
             <div class="coluna-rodape">
@@ -319,7 +322,6 @@ try {
         <i class="fas fa-question-circle"></i>
     </div>
 
-    <!-- Modal Central de Ajuda -->
     <div id="modal-Ajuda" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button class="close" onclick="fecharModal('modal-Ajuda')">&times;</button>
@@ -410,7 +412,6 @@ try {
         </div>
     </div>
 
-    <!-- Modal Sobre Nós -->
     <div id="modalSobre" class="modal">
         <div class="modal-box">
             <button class="close" onclick="fecharModal('modalSobre')">&times;</button>
@@ -561,7 +562,6 @@ try {
         </div>
     </div>
 
-    <!-- Modal Detalhes do Animal -->
     <div id="modalAnimal" class="modal">
         <div class="modal-animal-box">
             <button class="close" onclick="fecharModalAnimal()">&times;</button>
@@ -589,7 +589,6 @@ try {
         </div>
     </div>
 
-    <!-- Modal Doação -->
     <div id="modalDoacao" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button class="close" onclick="fecharModalDoacao()">&times;</button>
