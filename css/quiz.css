@@ -1,133 +1,146 @@
 /* ============================================================
    PET QUIZ — quiz.css
-   Usa as variáveis e a paleta definidas em adocao.css
-   (verde musgo, bege, laranja · Inter + Fraunces/Playfair)
+   Este arquivo NÃO redefine cores, fontes ou variáveis: ele só
+   consome as custom properties já definidas em adocao.css
+   (--verde, --laranja, --bege, --radius, --shadow, --transition...)
+   para que a tela do Quiz fique com a MESMA identidade visual do
+   restante do site (mesmos tons, mesma tipografia, mesmos botões).
    ============================================================ */
 
+/* ── Estrutura da página ─────────────────────────────────────── */
 .quiz-main {
-  background-color: var(--bege);
   min-height: calc(100vh - var(--header-h));
-  padding: 48px 24px 80px;
+  background: var(--bege);
+  padding: 48px 24px 72px;
 }
 
 .quiz-container {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
-}
-
-/* ── Introdução ─────────────────────────────────────────────── */
-.quiz-intro {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.quiz-titulo {
-  font-family: 'Fraunces', serif;
-  font-size: 2.1rem;
-  font-weight: 600;
-  color: var(--verde-esc);
-  margin-bottom: 12px;
-  line-height: 1.2;
-}
-
-.quiz-subtitulo {
-  font-size: 1rem;
-  color: var(--texto-leve);
-  max-width: 540px;
-  margin: 0 auto;
-}
-
-/* ── Formulário ─────────────────────────────────────────────── */
-.quiz-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.quiz-pergunta {
   background: var(--branco);
   border: 1px solid var(--bege-esc);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  padding: 24px 28px;
-  transition: var(--transition);
+  padding: 44px 48px;
 }
 
-.quiz-pergunta:hover {
-  box-shadow: var(--shadow);
+/* ── Cabeçalho do quiz ────────────────────────────────────────── */
+.quiz-intro {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.quiz-titulo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--verde-esc);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.quiz-subtitulo {
+  font-size: .95rem;
+  color: var(--texto-leve);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Cada pergunta ────────────────────────────────────────────── */
+.quiz-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.quiz-pergunta {
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .quiz-pergunta legend {
   font-family: 'Inter', sans-serif;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--verde-esc);
-  margin-bottom: 16px;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--texto);
+  margin-bottom: 14px;
   padding: 0;
 }
 
+/* ── Opções (estilo "pill", igual aos filtros do site) ───────── */
 .quiz-opcoes {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .quiz-opcao {
+  position: relative;
+  flex: 1 1 200px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 10px;
+  background: var(--bege);
   border: 1.5px solid var(--bege-esc);
   border-radius: var(--radius);
+  padding: 13px 18px;
   cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: .875rem;
+  font-weight: 500;
+  color: var(--texto);
   transition: var(--transition);
-  background: var(--bege);
 }
 
 .quiz-opcao:hover {
-  border-color: var(--verde-claro);
   background: var(--branco);
+  border-color: var(--verde-claro);
+  box-shadow: 0 3px 10px rgba(45, 106, 79, .12);
+  transform: translateY(-1px);
 }
 
 .quiz-opcao input[type="radio"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--verde);
   flex-shrink: 0;
+  accent-color: var(--verde);
   cursor: pointer;
 }
 
 .quiz-opcao span {
-  font-family: 'Inter', sans-serif;
-  font-size: .9375rem;
-  color: var(--texto);
+  line-height: 1.3;
 }
 
-/* Opção selecionada — destaque visual */
+/* Estado selecionado — mesmo padrão visual do .filtro-pill.filtro-ativo */
 .quiz-opcao:has(input:checked) {
+  background: var(--verde);
   border-color: var(--verde);
-  background: rgba(45,106,79,.06);
-  box-shadow: 0 2px 8px rgba(45,106,79,.1);
+  color: var(--branco);
+  box-shadow: 0 3px 10px rgba(45, 106, 79, .25);
 }
 
-.quiz-opcao:has(input:checked) span {
-  color: var(--verde-esc);
-  font-weight: 600;
+/* Fallback para navegadores sem suporte a :has() — o input ainda
+   fica claramente marcado mesmo sem o "pill" mudar de cor */
+.quiz-opcao input[type="radio"]:checked {
+  outline: 2px solid var(--verde);
+  outline-offset: 2px;
 }
 
-/* ── Mensagem de erro de validação ────────────────────────────── */
+/* ── Mensagem de erro de validação ───────────────────────────── */
 .quiz-erro {
-  text-align: center;
+  background: rgba(224, 123, 57, .1);
+  border: 1px solid rgba(224, 123, 57, .3);
   color: var(--laranja-esc);
-  background: rgba(224,123,57,.08);
-  border: 1px solid rgba(224,123,57,.3);
-  border-radius: var(--radius);
+  font-size: .875rem;
+  font-weight: 600;
+  text-align: center;
   padding: 12px 16px;
-  font-size: .9rem;
-  font-weight: 500;
+  border-radius: var(--radius-sm);
 }
 
-/* ── Botão de envio ──────────────────────────────────────────── */
+/* ── Botão de enviar ──────────────────────────────────────────── */
 .quiz-acoes {
   display: flex;
   justify-content: center;
@@ -135,34 +148,61 @@
 }
 
 .btn-enviar-quiz {
-  background: linear-gradient(135deg, var(--verde) 0%, var(--verde-esc) 100%);
+  background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-esc) 100%);
   color: var(--branco);
   border: none;
   border-radius: var(--radius);
-  padding: 16px 48px;
+  padding: 15px 40px;
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: .9375rem;
   font-weight: 700;
   letter-spacing: .02em;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(45,106,79,.3);
+  box-shadow: 0 2px 8px rgba(224, 123, 57, .35);
   transition: var(--transition);
 }
 
 .btn-enviar-quiz:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(45,106,79,.4);
-  background: linear-gradient(135deg, #347a5a 0%, var(--verde-esc) 100%);
+  box-shadow: 0 6px 18px rgba(224, 123, 57, .45);
 }
 
-.btn-enviar-quiz:active {
-  transform: translateY(0);
+.btn-enviar-quiz:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+  transform: none;
 }
 
-/* ── Responsivo ──────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .quiz-main { padding: 32px 16px 60px; }
-  .quiz-titulo { font-size: 1.6rem; }
-  .quiz-pergunta { padding: 18px 18px; }
-  .btn-enviar-quiz { width: 100%; padding: 16px 0; }
+/* ── Responsividade ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .quiz-container {
+    padding: 32px 24px;
+  }
+
+  .quiz-titulo {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quiz-main {
+    padding: 32px 16px 56px;
+  }
+
+  .quiz-container {
+    padding: 26px 18px;
+    border-radius: var(--radius);
+  }
+
+  .quiz-opcoes {
+    flex-direction: column;
+  }
+
+  .quiz-opcao {
+    flex: 1 1 auto;
+  }
+
+  .btn-enviar-quiz {
+    width: 100%;
+  }
 }
