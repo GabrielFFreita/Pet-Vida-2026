@@ -1041,6 +1041,14 @@ body {
     }
 }
 /* =======================================================
+BOTÃO PAINEL ADMIN NO CABEÇALHO
+======================================================= */
+#btnPainelAdmin:hover {
+    background: var(--escura) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* =======================================================
 SISTEMA DE LOGIN - ALINHAMENTO COMPLETO DO USUÁRIO
 ======================================================= */
 

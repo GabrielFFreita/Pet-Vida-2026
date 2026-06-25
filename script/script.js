@@ -432,11 +432,24 @@ function atualizarInterfaceUsuario() {
     botaoUsuario.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:20px;cursor:pointer;background:none;border:none;padding:0;';
 
     if (usuarioLogado) {
+        // Exibe o botão "Painel Admin" apenas se o perfil do usuário for 'admin'
+        const btnAdmin = usuarioLogado.perfil === 'admin'
+            ? `<a href="adimpage.php" id="btnPainelAdmin"
+                    style="display:inline-flex;align-items:center;gap:6px;
+                           background:var(--primaria);color:#fff;border:none;border-radius:20px;
+                           padding:6px 14px;font-size:0.78rem;font-weight:700;
+                           text-decoration:none;white-space:nowrap;cursor:pointer;
+                           transition:background 0.2s,transform 0.2s;">
+                    <i class="fas fa-shield-alt"></i> Painel Admin
+               </a>`
+            : '';
+
         botaoUsuario.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;line-height:1;">
                 <i class="far fa-user" id="iconeUsuario" style="font-size:1.4rem;margin-bottom:4px;color:#2d3748;"></i>
                 <span id="textoUsuario" style="font-size:0.8rem;font-weight:600;color:#333;white-space:nowrap;">${usuarioLogado.nome}</span>
             </div>
+            ${btnAdmin}
             <button id="btnSairEfetivo" onclick="deslogarUsuario(event)"
                 style="display:inline-flex;flex-direction:row;align-items:center;gap:6px;background:transparent;border:none;outline:none;color:#e53e3e;padding:0;font-size:1rem;font-weight:700;text-transform:uppercase;cursor:pointer;white-space:nowrap;">
                 <i class="fas fa-sign-out-alt" style="font-size:1.3rem;color:#e53e3e;"></i> Sair
@@ -702,4 +715,4 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.innerHTML = 'Entrar';
         });
     }
-}); 
+});

@@ -1,19 +1,24 @@
 <?php
 require_once "conexao.php";
 
-$sql = "SELECT
-    a.id_animal,
-    a.nome,
-    a.idade,
-    a.raca,
-    a.especie,
-    a.abrigo,
-    a.descricao,
-    f.ds_img
+// Trazemos todas as colunas necessárias e agrupamos todas as fotos separadas por vírgula
+$sql = "SELECT 
+    a.id_animal, 
+    a.nome, 
+    a.idade, 
+    a.raca, 
+    a.especie, 
+    a.sexo, 
+    a.porte, 
+    a.peso, 
+    a.vacinado, 
+    a.abrigo, 
+    a.descricao, 
+    a.status_adocao,
+    GROUP_CONCAT(f.ds_img SEPARATOR ',') as todas_fotos
 FROM animais_adocao a
-LEFT JOIN foto_animal f
-    ON a.id_animal = f.id_animal
-";
+LEFT JOIN foto_animal f ON a.id_animal = f.id_animal
+GROUP BY a.id_animal";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute();

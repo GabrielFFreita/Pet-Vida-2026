@@ -271,7 +271,7 @@ function login() {
             echo json_encode([
                 "success" => true,
                 "usuario" => [
-                    "id" => $usuario['id_usuario'],
+                    "id_usuario" => $usuario['id_usuario'],
                     "nome" => $usuario['nome'],
                     "perfil" => $usuario['perfil']
                 ]
@@ -309,10 +309,8 @@ function logout() {
 function verificarSessao() {
     global $pdo;
     try {
-        // Limpa saídas residuais para garantir um JSON puro
         if (ob_get_length()) ob_clean();
 
-        // Verifica se a sessão com o ID do usuário está ativa
         if (isset($_SESSION['id_usuario'])) {
             
             // Busca os dados atualizados usando 'id_usuario' que é o nome real da sua coluna
@@ -328,7 +326,7 @@ function verificarSessao() {
                     "success" => true,
                     "logged_in" => true,
                     "usuario" => [
-                        "id" => $usuario['id_usuario'],
+                        "id_usuario" => $usuario['id_usuario'], // CORRIGIDO: de 'id' para 'id_usuario'
                         "nome" => $usuario['nome'],
                         "perfil" => $usuario['perfil']
                     ]

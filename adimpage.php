@@ -1,3 +1,13 @@
+<?php
+require_once "config_sessao.php";
+verificarLogado();
+
+// Proteção extra: bloqueia usuários não-admin mesmo que estejam logados
+if (!isset($_SESSION['perfil']) || $_SESSION['perfil'] !== 'admin') {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -19,7 +29,7 @@
                 <li><a href=".animais.php">Animais</a></li>
                 <li><a href="abrigos.php">Abrigos</a></li>
                 <li><a href="usuarios.php">Usuários</a></li>
-                <li><a href="../index.php">Sair do Painel</a></li>
+                <li><a href="index.php">Sair do Painel</a></li>
             </ul>
         </nav>
     </aside>
