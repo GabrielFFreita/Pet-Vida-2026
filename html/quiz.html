@@ -1,244 +1,55 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pet Quiz — Descubra o pet ideal para você | Pet Vida</title>
-  <meta name="description" content="Responda algumas perguntas rápidas e descubra qual pet combina mais com a sua rotina e seu estilo de vida.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/adocao.css">
-  <link rel="stylesheet" href="../css/quiz.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Quiz - Pet Vida</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/adocao.css">
+    <link rel="stylesheet" href="../css/quiz.css">
 </head>
 <body>
 
-  <!-- ===== HEADER ===== -->
-  <header role="banner">
-    <div class="header-inner">
-      <a href="index.html" class="logo" aria-label="Página inicial">
-        <img src="../img/logo_petvida.png" alt="Pet Vida" class="logo-img">
-        <span class="logo-text">Pet <em>Vida</em></span>
-      </a>
+<div class="quiz-wrapper">
+    <div class="quiz-card">
 
-      <div class="nav-busca-wrapper" aria-hidden="true"></div>
+        <h1 class="quiz-titulo">Pet <em>Quiz</em></h1>
+        <p class="quiz-subtitulo">Descubra quais pets combinam com seu perfil!</p>
 
-      <div class="nav-acoes">
-        <a href="../adocao.html" class="btn-cta" aria-label="Ver todos os pets">
-          Ver todos os pets
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- ===== CONTEÚDO DO QUIZ ===== -->
-  <main class="quiz-main" role="main">
-    <div class="quiz-container">
-
-      <div class="quiz-intro">
-        <h1 class="quiz-titulo">Qual pet combina com você?</h1>
-        <p class="quiz-subtitulo">Responda as perguntas abaixo com sinceridade e descubra o perfil de pet mais indicado para a sua rotina.</p>
-      </div>
-
-      <form id="form-quiz" class="quiz-form" method="post" action="buscar_animais.php" novalidate>
-
-        <!-- Pergunta 1 -->
-        <fieldset class="quiz-pergunta">
-          <legend>1. Como é sua rotina?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="rotina" value="Muito corrida" required>
-              <span>Muito corrida</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="rotina" value="Moderada">
-              <span>Moderada</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="rotina" value="Tranquila">
-              <span>Tranquila</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Pergunta 2 -->
-        <fieldset class="quiz-pergunta">
-          <legend>2. Com que frequência você estará em casa?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="frequencia" value="Todos os dias" required>
-              <span>Todos os dias</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="frequencia" value="Algumas vezes por semana">
-              <span>Algumas vezes por semana</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="frequencia" value="Raramente">
-              <span>Raramente</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Pergunta 3 -->
-        <fieldset class="quiz-pergunta">
-          <legend>3. Quanto você pode investir por mês com o pet?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="investimento" value="Até R$100" required>
-              <span>Até R$100</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="investimento" value="Entre R$100 e R$300">
-              <span>Entre R$100 e R$300</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="investimento" value="Acima de R$300">
-              <span>Acima de R$300</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Pergunta 4 -->
-        <fieldset class="quiz-pergunta">
-          <legend>4. Qual sua principal motivação para adotar?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="motivacao" value="Ter companhia no dia a dia" required>
-              <span>Ter companhia no dia a dia</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="motivacao" value="Compartilhar momentos e atividades">
-              <span>Compartilhar momentos e atividades</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="motivacao" value="Ajudar um animal">
-              <span>Ajudar um animal</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Pergunta 5 -->
-        <fieldset class="quiz-pergunta">
-          <legend>5. Qual tipo de atividade você prefere?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="atividade" value="Relaxar e aproveitar a companhia em casa" required>
-              <span>Relaxar e aproveitar a companhia em casa</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="atividade" value="Um pouco de tudo">
-              <span>Um pouco de tudo</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="atividade" value="Atividades ao ar livre">
-              <span>Atividades ao ar livre</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Pergunta 6 -->
-        <fieldset class="quiz-pergunta">
-          <legend>6. Onde você mora?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="moradia" value="Moro em um espaço pequeno" required>
-              <span>Moro em um espaço pequeno</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="moradia" value="Moro em um espaço médio">
-              <span>Moro em um espaço médio</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="moradia" value="Moro em um espaço grande">
-              <span>Moro em um espaço grande</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Pergunta 7 -->
-        <fieldset class="quiz-pergunta">
-          <legend>7. Quanto tempo livre você tem por dia para cuidar do pet?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="tempoLivre" value="Menos de 1 hora" required>
-              <span>Menos de 1 hora</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="tempoLivre" value="Entre 1 e 3 horas">
-              <span>Entre 1 e 3 horas</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="tempoLivre" value="Mais de 3 horas">
-              <span>Mais de 3 horas</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Pergunta 8 -->
-        <fieldset class="quiz-pergunta">
-          <legend>8. Tem preferência por sexo?</legend>
-          <div class="quiz-opcoes">
-            <label class="quiz-opcao">
-              <input type="radio" name="sexo" value="Não tenho preferência" required>
-              <span>Não tenho preferência</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="sexo" value="Macho">
-              <span>Macho</span>
-            </label>
-            <label class="quiz-opcao">
-              <input type="radio" name="sexo" value="Fêmea">
-              <span>Fêmea</span>
-            </label>
-          </div>
-        </fieldset>
-
-        <p class="quiz-erro" id="quiz-erro" hidden>Por favor, responda todas as perguntas antes de continuar.</p>
-
-        <div class="quiz-acoes">
-          <button type="submit" class="btn-enviar-quiz">Ver pets recomendados</button>
+        <div class="topo-quiz">
+            <span id="contador">Pergunta 1 de 8</span>
+            <div class="linha-progresso" id="linhaProgresso"></div>
         </div>
 
-      </form>
-    </div>
-  </main>
+        <h2 id="pergunta"></h2>
 
-  <!-- ===== FOOTER ===== -->
-  <footer role="contentinfo">
-    <div class="footer-inner">
-      <div class="footer-marca">
-        <span class="logo-icon" aria-hidden="true">🐾</span>
-        <p class="footer-slogan">Adote amor.<br><em>Mude uma vida.</em></p>
-      </div>
-      <div class="footer-links">
-        <h4>Institucional</h4>
-        <a href="index.html">Sobre nós</a>
-        <a href="index.html">Como adotar</a>
-        <a href="index.html">Política de privacidade</a>
-      </div>
-      <div class="footer-links">
-        <h4>Ajuda</h4>
-        <a href="index.html">Dúvidas frequentes</a>
-        <a href="mailto:contato@petvida.org.br">Fale conosco</a>
-      </div>
-      <div class="footer-contato">
-        <h4>Contato</h4>
-        <a href="mailto:contato@petvida.org.br" class="footer-contato-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          contato@petvida.org.br
-        </a>
-        <a href="tel:+554799756519" class="footer-contato-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.557 4.118 1.532 5.851L.057 23.428a.5.5 0 0 0 .614.614l5.594-1.464A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.507-5.234-1.39l-.376-.219-3.892 1.02 1.038-3.786-.233-.391A9.937 9.937 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-          (47) 99756-5199
-        </a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 Adote com Amor · Todos os direitos reservados</p>
-    </div>
-  </footer>
+        <div class="opcoes-quiz" id="opcoes"></div>
 
-  <script src="../js/quiz.js"></script>
+        <div class="botoes-quiz">
+            <button id="voltar">Voltar</button>
+            <button id="btnResultado">Dar Match <i class="fa-solid fa-heart"></i></button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Tela de carregamento (inicialmente oculta) -->
+<div class="carregando-wrapper-total" id="loadingScreen" style="display:none;">
+    <svg class="pata-svg-gigante" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse class="dedo" id="d1" cx="13.5" cy="44" rx="13.5" ry="17.5" />
+        <ellipse class="dedo" id="d2" cx="34.5" cy="17.5" rx="13.5" ry="17.5" />
+        <ellipse class="dedo" id="d3" cx="65.5" cy="17.5" rx="13.5" ry="17.5" />
+        <ellipse class="dedo" id="d4" cx="86.5" cy="44" rx="13.5" ry="17.5" />
+        <path class="almofada-central" d="M 50,40.5 
+                 C 34.5,40.5 27.5,53.5 27.5,60.5
+                 C 27.5,67 15,75.5 15,86
+                 C 15,96 32,100 50,93.5
+                 C 68,100 85,96 85,86
+                 C 85,75.5 72.5,67 72.5,60.5
+                 C 72.5,53.5 65.5,40.5 50,40.5 Z" />
+    </svg>
+</div>
+
+<script src="../js/quiz.js"></script>
 </body>
 </html>
