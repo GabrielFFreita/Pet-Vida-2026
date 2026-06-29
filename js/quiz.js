@@ -79,41 +79,52 @@ const resultadoBtn = document.getElementById("btnResultado");
 const loadingScreen = document.getElementById("loadingScreen");
 
 // ── Funções principais ──────────────────────────────────────
-function carregarPergunta() {
-    const pergunta = perguntas[perguntaAtual];
+function carregarPergunta(comFade = false) {
+    function renderizar() {
+        const pergunta = perguntas[perguntaAtual];
 
-    contadorEl.innerText = `Pergunta ${perguntaAtual + 1} de ${perguntas.length}`;
-    perguntaEl.innerText = pergunta.pergunta;
+        contadorEl.innerText = `Pergunta ${perguntaAtual + 1} de ${perguntas.length}`;
+        perguntaEl.innerText = pergunta.pergunta;
 
-    atualizarProgresso();
+        atualizarProgresso();
 
-    let html = "";
-    pergunta.opcoes.forEach(opcao => {
-        const selecionada = (respostas[perguntaAtual] === opcao) ? "selecionada" : "";
-        const icone = imagens[opcao] || "fa-solid fa-question";
-        html += `
-            <div class="opcao-quiz ${selecionada}" data-opcao="${opcao}">
-                <i class="${icone}"></i>
-                <p>${opcao}</p>
-            </div>
-        `;
-    });
+        let html = "";
+        pergunta.opcoes.forEach(opcao => {
+            const selecionada = (respostas[perguntaAtual] === opcao) ? "selecionada" : "";
+            const icone = imagens[opcao] || "fa-solid fa-question";
+            html += `
+                <div class="opcao-quiz ${selecionada}" data-opcao="${opcao}">
+                    <i class="${icone}"></i>
+                    <p>${opcao}</p>
+                </div>
+            `;
+        });
 
-    opcoesEl.innerHTML = html;
+        opcoesEl.innerHTML = html;
 
-    // Event listeners para as opções (delegação)
-    opcoesEl.querySelectorAll(".opcao-quiz").forEach(el => {
-        el.addEventListener("click", () => selecionarOpcao(el));
-    });
+        opcoesEl.querySelectorAll(".opcao-quiz").forEach(el => {
+            el.addEventListener("click", () => selecionarOpcao(el));
+        });
 
-    // Configura o botão voltar
-    voltarBtn.onclick = (perguntaAtual === 0) ? voltarInicio : voltarPergunta;
+        voltarBtn.onclick = (perguntaAtual === 0) ? voltarInicio : voltarPergunta;
 
-    // Mostra/esconde botão "Dar Match"
-    if (perguntaAtual === perguntas.length - 1 && respostas[perguntaAtual]) {
-        resultadoBtn.style.display = "block";
+        if (perguntaAtual === perguntas.length - 1 && respostas[perguntaAtual]) {
+            resultadoBtn.style.display = "block";
+        } else {
+            resultadoBtn.style.display = "none";
+        }
+
+        if (comFade) {
+            opcoesEl.classList.remove("fade-out");
+            opcoesEl.classList.add("fade-in");
+        }
+    }
+
+    if (comFade) {
+        opcoesEl.classList.add("fade-out");
+        setTimeout(renderizar, 180);
     } else {
-        resultadoBtn.style.display = "none";
+        renderizar();
     }
 }
 
@@ -143,7 +154,7 @@ function selecionarOpcao(elemento) {
     setTimeout(() => {
         if (perguntaAtual < perguntas.length - 1) {
             perguntaAtual++;
-            carregarPergunta();
+            carregarPergunta(true);
         }
     }, 300);
 }
@@ -151,7 +162,7 @@ function selecionarOpcao(elemento) {
 function voltarPergunta() {
     if (perguntaAtual > 0) {
         perguntaAtual--;
-        carregarPergunta();
+        carregarPergunta(true);
     }
 }
 

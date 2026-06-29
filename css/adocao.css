@@ -116,7 +116,7 @@ header {
 /* ── Busca na Navbar ────────────────────────────────────────── */
 .nav-busca-wrapper {
   flex: 1;
-  max-width: 480px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
@@ -250,6 +250,9 @@ header {
   border: 1.5px solid var(--branco);
 }
 
+/* Garante que o atributo hidden esconda o badge mesmo com display: inline-flex */
+.favoritos-count[hidden] { display: none; }
+
 /* [ALTERADO #7] Animação sutil de "pop" quando o contador muda (favoritar/desfavoritar) */
 @keyframes favCountPop {
   0%   { transform: scale(1); }
@@ -325,19 +328,32 @@ header {
 .filtros-bar-inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 12px 24px;
+  padding: 10px 24px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  min-height: 0;
+}
+
+.filtros-bar-inner::-webkit-scrollbar { display: none; }
+
+/* Wrapper que mantém separador + botão Limpar sempre juntos */
+.filtro-limpar-grupo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .filtros-grupo {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 /* [ALTERADO #2] Pills redesenhadas — modernas, sofisticadas, sem emojis */
@@ -706,9 +722,11 @@ footer {
   max-width: 1280px;
   margin: 0 auto;
   padding: 48px 24px 36px;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
-  gap: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 60px;
 }
 
 .footer-marca { display: flex; flex-direction: column; gap: 10px; }
@@ -1196,7 +1214,7 @@ footer {
 
 /* ── Responsividade ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-inner { gap: 40px; }
   .detalhes-container { grid-template-columns: 1fr; gap: 24px; }
   .carrossel-col { position: static; }
 }
@@ -1244,14 +1262,14 @@ footer {
   .filtros-separador { display: none; }
 
   .pets-container { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
-  .footer-inner { grid-template-columns: 1fr 1fr; padding: 32px 20px 24px; }
+  .footer-inner { gap: 32px; padding: 32px 20px 24px; }
   .detalhes-container { padding: 20px 16px 60px; }
   .info-pet { padding: 20px; }
 }
 
 @media (max-width: 480px) {
   .pets-container { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+  .footer-inner { flex-direction: column; align-items: center; gap: 24px; }
   .modal { padding: 32px 20px 24px; }
   .modal-acoes { flex-direction: column; }
   .btn-sim, .btn-nao { width: 100%; text-align: center; }
