@@ -53,7 +53,7 @@ try {
             <div class="acoes-cabecalho">
                 <div class="acao-cabecalho" id="btnFavoritos">
                     <i class="fas fa-heart"></i>
-                    <span>Favoritos</span>
+                    <span>Adote um amigo</span>
                 </div>
                 <div class="acao-cabecalho">
                     <button class="botao-doacao"><i class="fas fa-hand-holding-heart"></i> Doe/ajude</button>
