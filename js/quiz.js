@@ -78,6 +78,8 @@ const voltarBtn = document.getElementById("voltar");
 const resultadoBtn = document.getElementById("btnResultado");
 const loadingScreen = document.getElementById("loadingScreen");
 
+resultadoBtn.addEventListener("click", finalizarQuiz);
+
 // ── Funções principais ──────────────────────────────────────
 function carregarPergunta(comFade = false) {
     function renderizar() {
@@ -167,7 +169,7 @@ function voltarPergunta() {
 }
 
 function voltarInicio() {
-    window.location.href = "../html/adocao.html";
+    window.location.href = "adocao.php";
 }
 
 // ── Finalizar Quiz ───────────────────────────────────────────
@@ -183,27 +185,46 @@ function finalizarQuiz() {
     loadingScreen.style.display = "flex";
     document.body.style.overflow = "hidden";
 
-    // Envia as respostas via POST para quiz.php
+    // Envia as respostas via POST para o quiz.php
     setTimeout(() => {
         fetch("quiz.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(respostas)
         })
-        .then(r => r.text())
+        .then(r => {
+            if (!r.ok) throw new Error("Erro na comunicação com o banco de dados.");
+            return r.text();
+        })
         .then(html => {
-            document.body.innerHTML = html;
+            // Remove a tela de carregamento
+            loadingScreen.style.display = "none";
+            document.body.style.overflow = "";
+
+            // Oculta de forma suave o card do quiz antigo
+            document.querySelector(".quiz-card").style.display = "none";
+
+            // Cria dinamicamente um contêiner limpo para exibir os resultados dentro do wrapper
+            let resultadoContainer = document.getElementById("resultadoQuizContainer");
+            if (!resultadoContainer) {
+                resultadoContainer = document.createElement("div");
+                resultadoContainer.id = "resultadoQuizContainer";
+                resultadoContainer.style.width = "100%";
+                resultadoContainer.style.maxWidth = "1100px";
+                resultadoContainer.style.padding = "10px";
+                document.querySelector(".quiz-wrapper").appendChild(resultadoContainer);
+            }
+
+            // Injeta os cards gerados pelo PHP
+            resultadoContainer.innerHTML = html;
         })
         .catch(err => {
             loadingScreen.style.display = "none";
             document.body.style.overflow = "";
             alert("Ocorreu um erro ao processar o quiz. Tente novamente.");
+            console.error(err);
         });
-    }, 3000); // 3 segundos de carregamento (igual ao original)
+    }, 3000); // 3 segundos de animação da patinha carregando
 }
-
-// ── Event listener do botão "Dar Match" ──────────────────────
-resultadoBtn.addEventListener("click", finalizarQuiz);
-
-// ── Inicialização ─────────────────────────────────────────────
+// ── Inicialização ────────────────────────────────────────────
 carregarPergunta();
