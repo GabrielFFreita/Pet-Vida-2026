@@ -24,7 +24,7 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -42,7 +42,8 @@ try {
     <header class="cabecalho-principal">
         <div class="conteudo-cabecalho">
             <div class="logo">
-                <img src="img/Logo Pet Vida.png" alt="Logo Pet Vida">
+                <img src="img/logo_petvida.png" alt="Logo Pet Vida">
+                <span class="logo-text">Pet <em>Vida</em></span>
             </div>
             
             <div class="barra-busca">
@@ -107,103 +108,8 @@ try {
                     Ver mais animais <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
-            <div class="grade-animais" id="gradeAnimaisDestaque">
-                <?php if (!empty($animais_destaque)): ?>
-                    <?php foreach ($animais_destaque as $animal): ?>
-                    <?php
-                        $foto = !empty($animal['ds_img'])
-                            ? 'uploads/' . htmlspecialchars($animal['ds_img'])
-                            : 'https://placehold.co/400x400?text=Sem+Imagem';
-                        $sexoClass = $animal['sexo'] === 'Macho' ? 'macho' : 'femea';
-                        $sexoIcone = $animal['sexo'] === 'Macho' ? '♂' : '♀';
-                        $especieIcone = $animal['especie'] === 'Cachorro' ? 'dog' : 'cat';
-                        $idadeLabel = ($animal['idade'] == 1) ? '1 ano' : $animal['idade'] . ' anos';
-                    ?>
-                    <div class="cartao-animal" data-id="<?= $animal['id_animal'] ?>" onclick="abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
-                        <div class="imagem-animal">
-                            <img src="<?= $foto ?>"
-                                 alt="<?= htmlspecialchars($animal['nome']) ?>"
-                                 onerror="this.src='https://placehold.co/400x400?text=Sem+Imagem'">
-                            <span class="etiqueta-sexo <?= $sexoClass ?>"><?= $sexoIcone ?> <?= htmlspecialchars($animal['sexo']) ?></span>
-                            <button class="btn-favorito" onclick="event.stopPropagation(); toggleFavorito(<?= $animal['id_animal'] ?>, this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="info-animal">
-                            <h3 class="nome-animal"><?= htmlspecialchars($animal['nome']) ?></h3>
-                            <div class="raca-animal"><i class="fas fa-tag"></i> <?= htmlspecialchars($animal['raca'] ?? 'SRD') ?></div>
-                            <div class="detalhes-animal">
-                                <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= $idadeLabel ?></div>
-                                <div class="detalhe-item"><i class="fas fa-<?= $especieIcone ?>"></i> <?= htmlspecialchars($animal['especie']) ?></div>
-                            </div>
-                            <button class="btn-adotar" onclick="event.stopPropagation(); abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
-                                <i class="fas fa-heart"></i> Quero adotar
-                            </button>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p style="text-align:center; color:#666; padding: 40px 0;">
-                        Nenhum animal disponível para adoção no momento.
-                    </p>
-                <?php endif; ?>
-            </div>
         </div>
     </section>
-
-    <div id="paginaTodosAnimais" class="pagina-todos-animais">
-        <button class="botao-voltar" onclick="voltarParaHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        
-        <h1 style="margin-bottom: 20px; color: var(--primaria);">Todos os Animais para Adoção</h1>
-        
-        <div class="filtros-animais">
-            <div class="grupo-filtro">
-                <label>Espécie</label>
-                <select id="filtroEspecie">
-                    <option value="">Todas</option>
-                    <option value="Cachorro">Cachorro</option>
-                    <option value="Gato">Gato</option>
-                </select>
-            </div>
-            <div class="grupo-filtro">
-                <label>Sexo</label>
-                <select id="filtroSexo">
-                    <option value="">Todos</option>
-                    <option value="Macho">Macho</option>
-                    <option value="Fêmea">Fêmea</option>
-                </select>
-            </div>
-            <div class="grupo-filtro">
-                <label>Porte</label>
-                <select id="filtroPorte">
-                    <option value="">Todos</option>
-                    <option value="Pequeno">Pequeno</option>
-                    <option value="Médio">Médio</option>
-                    <option value="Grande">Grande</option>
-                </select>
-            </div>
-            <button class="btn-filtrar" onclick="filtrarAnimais()">Filtrar</button>
-        </div>
-        
-        <div class="grade-animais" id="gradeTodosAnimais">
-            <div class="loading"><div class="spinner"></div> Carregando...</div>
-        </div>
-    </div>
-
-    <div id="paginaFavoritos" class="pagina-todos-animais">
-        <button class="botao-voltar" onclick="voltarParaHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        
-        <h1 style="margin-bottom: 20px; color: var(--primaria);">Meus Favoritos</h1>
-        
-        <div class="grade-animais" id="gradeFavoritos">
-            <div class="loading"><div class="spinner"></div> Carregando...</div>
-        </div>
-    </div>
-
     <section class="secao-sobre">
         <div class="container-sobre">
             <div class="cabecalho-sobre">

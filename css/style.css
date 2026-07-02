@@ -1,5 +1,5 @@
 :root {
-    --primaria: #429464;
+    --primaria: #1B4332;
     --secundaria: #7ef273;
     --destaque: #f2894c;
     --clara: #fcfbf5;
@@ -49,14 +49,36 @@ body {
 .logo {
     display: flex;
     align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .logo img {
     justify-content: flex-start;
-    height: 100px;
+    height: 56px;
     width: auto;
     max-width: 200px;
     object-fit: contain;
+}
+
+.logo-text {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primaria);
+    letter-spacing: .03em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.logo-text em {
+    font-style: italic;
+    color: var(--destaque);
+    font-weight: 400;
+}
+
+@media (max-width: 600px) {
+    .logo-text { display: none; }
 }
 
 .barra-busca {
@@ -279,46 +301,59 @@ body {
 
 .grade-animais {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 26px;
 }
 
 .cartao-animal {
     background: white;
-    border-radius: var(--raio);
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: var(--sombra);
+    box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    border: 1px solid #eef1e9;
     transition: var(--transicao);
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .cartao-animal:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px) rotate(.3deg);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    border-color: #d9e2d3;
 }
 
 .imagem-animal {
-    height: 250px;
+    aspect-ratio: 4/3;
+    height: auto;
     overflow: hidden;
     position: relative;
+    background: #f0efe5;
 }
 
 .imagem-animal img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: var(--transicao);
+    transition: transform .4s ease;
+}
+
+.cartao-animal:hover .imagem-animal img {
+    transform: scale(1.05);
 }
 
 .etiqueta-sexo {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    top: 12px;
+    right: 12px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
     color: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }
 
 .etiqueta-sexo.macho { background: #4294e0; }
@@ -326,51 +361,65 @@ body {
 
 .btn-favorito {
     position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    font-size: 1.2rem;
+    top: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    font-size: 1.05rem;
     cursor: pointer;
     color: #ccc;
-    transition: var(--transicao);
-    width: 36px;
-    height: 36px;
+    transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease, color .25s ease;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,.12);
 }
 
 .btn-favorito.favoritado {
     color: #ff4444;
+    background: rgba(254, 226, 226, 0.85);
 }
 
 .btn-favorito:hover {
-    transform: scale(1.1);
-    background: white;
+    transform: scale(1.12);
+    background: rgba(255,255,255,.92);
+    color: #ff4444;
 }
 
 .info-animal {
-    padding: 20px;
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 4px;
 }
 
 .nome-animal {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    margin-bottom: 5px;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--escura);
+    margin-bottom: 2px;
 }
 
 .raca-animal {
     color: #718096;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .detalhes-animal {
     display: flex;
     justify-content: space-between;
-    margin: 15px 0;
+    margin: 10px 0;
     padding: 10px 0;
     border-top: 1px solid #e2e8f0;
     border-bottom: 1px solid #e2e8f0;
@@ -397,11 +446,12 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: var(--transicao);
-    margin-top: 10px;
+    margin-top: auto;
 }
 
 .btn-adotar:hover {
     background: #d93d57;
+    transform: translateY(-1px);
 }
 
 /* Página de Todos os Animais */
