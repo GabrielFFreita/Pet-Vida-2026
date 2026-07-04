@@ -1,5 +1,7 @@
 <?php
 require_once "conexao.php";
+require_once "config_sessao.php";
+verificarAdmin();
 
 // 1. VERIFICAÇÃO E BUSCA DOS DADOS DO ABRIGO
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -25,20 +27,37 @@ try {
 // 2. PROCESSAMENTO DO CADASTRO DO ANIMAL
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'cadastrar_animal') {
     
-    $nomeFoto = 'not_image.png';
+    $fotosAnimal = [];
+    $extensoesPermitidas = ["jpg", "jpeg", "png", "webp"];
+    $pasta = "uploads/";
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $extensao = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-        $extensoesPermitidas = array("jpg", "jpeg", "png");
+    if (!is_dir($pasta)) {
+        mkdir($pasta, 0777, true);
+    }
 
-        if (in_array($extensao, $extensoesPermitidas)) {
-            $pasta = "uploads/";
-            if (!is_dir($pasta)) {
-                mkdir($pasta, 0777, true);
+    if (isset($_FILES['images']) && is_array($_FILES['images']['name'])) {
+        foreach ($_FILES['images']['name'] as $indice => $nomeOriginal) {
+            if ($_FILES['images']['error'][$indice] !== UPLOAD_ERR_OK || empty($nomeOriginal)) {
+                continue;
             }
-            $nomeFoto = uniqid() . "_" . basename($_FILES['image']['name']);
-            move_uploaded_file($_FILES['image']['tmp_name'], $pasta . $nomeFoto);
+
+            $extensao = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
+
+            if (!in_array($extensao, $extensoesPermitidas)) {
+                continue;
+            }
+
+            $nomeSeguro = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($nomeOriginal));
+            $nomeFoto = uniqid('', true) . "_" . $nomeSeguro;
+
+            if (move_uploaded_file($_FILES['images']['tmp_name'][$indice], $pasta . $nomeFoto)) {
+                $fotosAnimal[] = $nomeFoto;
+            }
         }
+    }
+
+    if (empty($fotosAnimal)) {
+        $fotosAnimal[] = 'not_image.png';
     }
 
     $nome          = trim($_POST['nome_animal']);
@@ -47,6 +66,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $idade         = trim($_POST['idade_animal']);
     $sexo          = trim($_POST['sexo_animal']);
     $descricao     = trim($_POST['descricao_animal']);
+    $deficiencia   = trim($_POST['deficiencia_animal'] ?? '');
+    $deficiencia   = ($deficiencia === '') ? null : $deficiencia;
     $peso          = trim($_POST['peso_animal']);
     $porte         = trim($_POST['porte_animal']);
     $data_cadastro = date('Y-m-d'); 
@@ -56,9 +77,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
     try {
         $sql = "INSERT INTO animais_adocao (
-            nome, especie, raca, idade, sexo, porte, descricao, status_adocao, castrado, vacinado, peso, abrigo, data_cadastro
+            nome, especie, raca, idade, sexo, porte, descricao, deficiencia, status_adocao, castrado, vacinado, peso, id_abrigo, data_cadastro
         ) VALUES (
-            :nome, :especie, :raca, :idade, :sexo, :porte, :descricao, :status_adocao, :castrado, :vacinado, :peso, :abrigo, :data_cadastro
+            :nome, :especie, :raca, :idade, :sexo, :porte, :descricao, :deficiencia, :status_adocao, :castrado, :vacinado, :peso, :id_abrigo, :data_cadastro
         );";
 
         $stmt = $pdo->prepare($sql);
@@ -69,11 +90,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $stmt->bindParam(":sexo", $sexo);
         $stmt->bindParam(":porte", $porte);
         $stmt->bindParam(":descricao", $descricao);
+        $stmt->bindParam(":deficiencia", $deficiencia);
         $stmt->bindParam(":status_adocao", $status_adocao);
         $stmt->bindParam(":castrado", $castrado);
         $stmt->bindParam(":vacinado", $vacinado);
         $stmt->bindParam(":peso", $peso);
-        $stmt->bindParam(":abrigo", $id_abrigo);
+        $stmt->bindParam(":id_abrigo", $id_abrigo);
         $stmt->bindParam(":data_cadastro", $data_cadastro);
         
         $stmt->execute();
@@ -81,9 +103,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
         $sqlfoto = "INSERT INTO foto_animal (id_animal, ds_img) VALUES (:id_animal, :foto_animal)";
         $stmtFoto = $pdo->prepare($sqlfoto);
-        $stmtFoto->bindParam(":id_animal", $idAnimal);
-        $stmtFoto->bindParam(":foto_animal", $nomeFoto);
-        $stmtFoto->execute();
+
+        foreach ($fotosAnimal as $nomeFoto) {
+            $stmtFoto->execute([
+                ":id_animal" => $idAnimal,
+                ":foto_animal" => $nomeFoto
+            ]);
+        }
 
         echo "<script>alert('Animal cadastrado com sucesso!'); window.location.href='perfil_abrigo.php?id=$id_abrigo';</script>";
     } catch (PDOException $e) {
@@ -93,9 +119,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
 // 3. BUSCA DOS ANIMAIS PERTENCENTES A ESTE ABRIGO (Trazendo a foto associada)
 try {
-    $sql_animais = "SELECT a.*, f.ds_img FROM animais_adocao a 
-                    LEFT JOIN foto_animal f ON a.id_animal = f.id_animal 
-                    WHERE a.abrigo = :id_abrigo 
+    $sql_animais = "SELECT a.*, fp.ds_img FROM animais_adocao a 
+                    LEFT JOIN (
+                        SELECT id_animal, MIN(ds_img) AS ds_img
+                        FROM foto_animal
+                        GROUP BY id_animal
+                    ) fp ON a.id_animal = fp.id_animal 
+                    WHERE a.id_abrigo = :id_abrigo 
                     ORDER BY a.id_animal DESC";
     $stmt_animais = $pdo->prepare($sql_animais);
     $stmt_animais->execute([':id_abrigo' => $id_abrigo]);
@@ -120,7 +150,7 @@ try {
         <nav>
             <ul>
                 <li><a href="adimpage.php">Visão Geral</a></li>
-                <li><a href="animais.php">Animais</a></li>
+                <li><a href="listagem-animais.php">Animais</a></li>
                 <li class="active"><a href="abrigos.php">Abrigos</a></li>
                 <li><a href="usuarios.php">Usuários</a></li>
                 <li><a href="index.php">Sair do Painel</a></li>
@@ -263,8 +293,8 @@ try {
                         <input type="number" step="0.01" id="peso_animal" name="peso_animal" required placeholder="Ex: 32.50">
                     </div>
                     <div class="form-grupo">
-                        <label for="image">Foto do Animal</label>
-                        <input type="file" id="image" name="image" accept="image/*">
+                        <label for="images">Fotos do Animal</label>
+                        <input type="file" id="images" name="images[]" accept="image/*" multiple>
                     </div>
                 </div>
 
@@ -290,6 +320,11 @@ try {
                 <div class="form-grupo">
                     <label for="descricao_animal">Descrição</label>
                     <textarea id="descricao_animal" name="descricao_animal" rows="3" placeholder="Conte mais sobre o comportamento do animal..."></textarea>
+                </div>
+
+                <div class="form-grupo">
+                    <label for="deficiencia_animal">Deficiência (opcional)</label>
+                    <input type="text" id="deficiencia_animal" name="deficiencia_animal" placeholder="Ex: Cego de um olho, três patas... deixe em branco se não houver">
                 </div>
 
                 <div class="modal-admin-footer">

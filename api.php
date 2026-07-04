@@ -58,9 +58,13 @@ function listarAnimais() {
         $porte = isset($_GET['porte']) ? $_GET['porte'] : '';
         
         // CORREÇÃO FINAL: Tiramos o "animais_adocao." de dentro do WHERE e ORDER BY
-        $sql = "SELECT animais_adocao.*, foto_animal.ds_img 
+        $sql = "SELECT animais_adocao.*, fp.ds_img 
                 FROM animais_adocao 
-                LEFT JOIN foto_animal ON animais_adocao.id_animal = foto_animal.id_animal 
+                LEFT JOIN (
+                    SELECT id_animal, MIN(ds_img) AS ds_img
+                    FROM foto_animal
+                    GROUP BY id_animal
+                ) fp ON animais_adocao.id_animal = fp.id_animal 
                 WHERE status_adocao = 'Disponível'";
         $params = [];
         
@@ -100,10 +104,14 @@ function listarFavoritos() {
         }
         
         // CORREÇÃO FINAL: Tiramos o prefixo do status_adocao aqui também
-        $sql = "SELECT animais_adocao.*, foto_animal.ds_img 
+        $sql = "SELECT animais_adocao.*, fp.ds_img 
                 FROM animais_adocao 
                 INNER JOIN favoritos ON animais_adocao.id_animal = favoritos.id_animal 
-                LEFT JOIN foto_animal ON animais_adocao.id_animal = foto_animal.id_animal
+                LEFT JOIN (
+                    SELECT id_animal, MIN(ds_img) AS ds_img
+                    FROM foto_animal
+                    GROUP BY id_animal
+                ) fp ON animais_adocao.id_animal = fp.id_animal
                 WHERE favoritos.id_usuario = :id_usuario AND status_adocao = 'Disponível'";
         
         $stmt = $pdo->prepare($sql);
@@ -121,8 +129,12 @@ function buscarAnimal() {
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
         
         // CORREÇÃO: Adicionado LEFT JOIN para que o modal de detalhes também encontre a foto
-        $sql = "SELECT a.*, f.ds_img FROM animais_adocao a 
-                LEFT JOIN foto_animal f ON a.id_animal = f.id_animal 
+        $sql = "SELECT a.*, fp.ds_img FROM animais_adocao a 
+                LEFT JOIN (
+                    SELECT id_animal, MIN(ds_img) AS ds_img
+                    FROM foto_animal
+                    GROUP BY id_animal
+                ) fp ON a.id_animal = fp.id_animal 
                 WHERE a.id_animal = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
@@ -271,6 +283,7 @@ function login() {
             echo json_encode([
                 "success" => true,
                 "usuario" => [
+                    "id" => $usuario['id_usuario'],
                     "id_usuario" => $usuario['id_usuario'],
                     "nome" => $usuario['nome'],
                     "perfil" => $usuario['perfil']
@@ -309,8 +322,10 @@ function logout() {
 function verificarSessao() {
     global $pdo;
     try {
+        // Limpa saídas residuais para garantir um JSON puro
         if (ob_get_length()) ob_clean();
 
+        // Verifica se a sessão com o ID do usuário está ativa
         if (isset($_SESSION['id_usuario'])) {
             
             // Busca os dados atualizados usando 'id_usuario' que é o nome real da sua coluna
@@ -320,13 +335,18 @@ function verificarSessao() {
 
             if ($usuario) {
                 // Atualiza o tempo de atividade da sessão
+                $_SESSION["id_usuario"] = $usuario['id_usuario'];
+                $_SESSION["nome_usuario"] = $usuario['nome'];
+                $_SESSION["email"] = $usuario['email'];
+                $_SESSION["perfil"] = $usuario['perfil'];
                 $_SESSION['ultima_atividade'] = time();
 
                 echo json_encode([
                     "success" => true,
                     "logged_in" => true,
                     "usuario" => [
-                        "id_usuario" => $usuario['id_usuario'], // CORRIGIDO: de 'id' para 'id_usuario'
+                        "id" => $usuario['id_usuario'],
+                        "id_usuario" => $usuario['id_usuario'],
                         "nome" => $usuario['nome'],
                         "perfil" => $usuario['perfil']
                     ]
