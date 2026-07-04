@@ -1,43 +1,25 @@
 <?php
-/**
- * quiz.php
- * Página única do Pet Quiz: exibe o formulário interativo e, ao final,
- * processa as respostas, calcula o perfil (Gato/Cachorro/Ambos) e busca
- * os animais disponíveis no banco usando PDO com prepared statements.
- *
- * Quando a requisição é um POST com o corpo em JSON (enviado via fetch
- * pelo JavaScript do quiz), a página responde apenas com o fragmento HTML
- * dos resultados (cards), que é injetado dinamicamente na mesma página
- * pelo front-end — sem recarregar e sem perder header/footer.
- */
-
 require_once "conexao.php";
 
-/**
- * Escapa texto para saída segura em HTML.
- */
-function e($valor) {
-    return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
+function e($valor): string
+{
+    return htmlspecialchars((string) $valor, ENT_QUOTES, "UTF-8");
 }
 
-/**
- * Monta o HTML de um card de pet, reaproveitando exatamente as mesmas
- * classes usadas em adocao.html (.pet-card, .card-img-wrapper, .card-body...).
- */
-function renderCardAnimal(array $animal): string {
-    $nome      = e($animal['nome'] ?? 'Sem nome');
-    $especie   = e($animal['especie'] ?? '');
-    $raca      = e($animal['raca'] ?? 'Raça não informada');
-    $idade     = $animal['idade'] !== null ? (int) $animal['idade'] . ' ano(s)' : 'Idade não informada';
-    $sexo      = e($animal['sexo'] ?? '');
-    $porte     = e($animal['porte'] ?? '');
-    $descricao = e($animal['descricao'] ?? '');
-    $abrigo    = !empty($animal['abrigo']) ? e($animal['abrigo']) : 'Localização não informada';
+function renderCardAnimal(array $animal): string
+{
+    $nome = e($animal["nome"] ?? "Sem nome");
+    $raca = e($animal["raca"] ?? "Raca nao informada");
+    $idade = !empty($animal["idade"]) ? e($animal["idade"]) : "Idade nao informada";
+    $sexo = e($animal["sexo"] ?? "Nao informado");
+    $porte = e($animal["porte"] ?? "Nao informado");
+    $descricao = e($animal["descricao"] ?? "Pet especial aguardando um lar.");
+    $abrigo = !empty($animal["abrigo_nome"]) ? e($animal["abrigo_nome"]) : "Nao informado";
+    $foto = !empty($animal["ds_img"]) ? "uploads/" . e($animal["ds_img"]) : "uploads/not_image.png";
 
-    // A tabela animais_adocao não possui campo de foto: usa imagem padrão.
-    $foto = !empty($animal['ds_img']) ? '../uploads/' . e($animal['ds_img']) : '../static/pet-placeholder.jpg';
-
-    $tagClasse = ($especie === 'Gato') ? 'tag-gato' : 'tag-cachorro';
+    $especieNormalizada = mb_strtolower(trim((string) ($animal["especie"] ?? "")), "UTF-8");
+    $tagClasse = $especieNormalizada === "gato" ? "tag-gato" : "tag-cachorro";
+    $tipoLabel = $especieNormalizada === "gato" ? "Gato" : "Cachorro";
 
     return <<<HTML
         <article class="pet-card">
@@ -46,7 +28,7 @@ function renderCardAnimal(array $animal): string {
           </div>
           <div class="card-body">
             <h3 class="pet-nome">{$nome}</h3>
-            <p class="pet-info"><span class="tag-tipo {$tagClasse}">{$especie}</span> · {$porte} · {$idade}</p>
+            <p class="pet-info"><span class="tag-tipo {$tagClasse}">{$tipoLabel}</span> · {$porte} · {$idade}</p>
             <p class="pet-info">{$raca} · {$sexo}</p>
             <p class="pet-localizacao">
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -58,69 +40,81 @@ function renderCardAnimal(array $animal): string {
         HTML;
 }
 
-/**
- * Calcula o perfil do usuário (Gato, Cachorro ou Ambos) a partir das
- * respostas do quiz e busca no banco os animais disponíveis compatíveis.
- * Retorna o fragmento HTML dos resultados.
- */
-function processarQuiz(PDO $pdo, array $respostas): string {
+function processarQuiz(PDO $pdo, array $respostas): string
+{
+    $rotina = $respostas[0] ?? "";
+    $frequencia = $respostas[1] ?? "";
+    $investimento = $respostas[2] ?? "";
+    $motivacao = $respostas[3] ?? "";
+    $atividade = $respostas[4] ?? "";
+    $moradia = $respostas[5] ?? "";
+    $tempoLivre = $respostas[6] ?? "";
+    $sexo = $respostas[7] ?? "";
 
-    $rotina       = $respostas[0] ?? '';
-    $frequencia   = $respostas[1] ?? '';
-    $investimento = $respostas[2] ?? '';
-    $motivacao    = $respostas[3] ?? '';
-    $atividade    = $respostas[4] ?? '';
-    $moradia      = $respostas[5] ?? '';
-    $tempoLivre   = $respostas[6] ?? '';
-    $sexo         = $respostas[7] ?? '';
-
-    $pontosGato     = 0;
+    $pontosGato = 0;
     $pontosCachorro = 0;
 
     if ($rotina === "Muito corrida") {
-        $pontosGato += 3;
+        $pontosGato += 1;
     } elseif ($rotina === "Moderada") {
         $pontosGato += 1;
         $pontosCachorro += 1;
-    } else {
-        $pontosCachorro += 3;
+    } elseif ($rotina === "Tranquila") {
+        $pontosCachorro += 1;
     }
 
     if ($frequencia === "Todos os dias") {
-        $pontosGato += 3;
+        $pontosGato += 1;
     } elseif ($frequencia === "Algumas vezes por semana") {
         $pontosGato += 1;
         $pontosCachorro += 1;
-    } else {
-        $pontosCachorro += 3;
+    } elseif ($frequencia === "Raramente") {
+        $pontosCachorro += 1;
     }
 
-    if ($investimento === "Até R\$100") {
-        $pontosGato += 2;
-    } elseif ($investimento === "Entre R\$100 e R\$300") {
+    if ($investimento === "Até R$100") {
+        $pontosGato += 1;
+    } elseif ($investimento === "Entre R$100 e R$300") {
         $pontosGato += 1;
         $pontosCachorro += 1;
-    } else {
-        $pontosCachorro += 2;
+    } elseif ($investimento === "Mais de R$300") {
+        $pontosCachorro += 1;
     }
 
     if ($motivacao === "Ter companhia no dia a dia") {
-        $pontosGato += 2;
         $pontosCachorro += 1;
     } elseif ($motivacao === "Compartilhar momentos e atividades") {
-        $pontosCachorro += 3;
-    } else {
-        $pontosGato += 2;
-        $pontosCachorro += 2;
+        $pontosGato += 1;
+        $pontosCachorro += 1;
+    } elseif ($motivacao === "Cuidar e oferecer um lar") {
+        $pontosCachorro += 1;
     }
 
     if ($atividade === "Relaxar e aproveitar a companhia em casa") {
-        $pontosGato += 3;
+        $pontosGato += 1;
     } elseif ($atividade === "Um pouco de tudo") {
         $pontosGato += 1;
         $pontosCachorro += 1;
-    } else {
-        $pontosCachorro += 3;
+    } elseif ($atividade === "Brincadeiras e atividades ao ar livre") {
+        $pontosCachorro += 1;
+    }
+
+    if ($moradia === "Moro em um espaço pequeno") {
+        $pontosGato += 1;
+    } elseif ($moradia === "Moro em um espaço médio") {
+        $pontosGato += 1;
+        $pontosCachorro += 1;
+    } elseif ($moradia === "Moro em um espaço grande") {
+        $pontosCachorro += 1;
+    }
+
+    if ($tempoLivre === "Menos de 1 hora") {
+        $pontosGato += 1;
+    } elseif ($tempoLivre === "Entre 1 e 3 horas") {
+        $pontosGato += 1;
+        $pontosCachorro += 1;
+    } elseif ($tempoLivre === "Mais de 3 horas") {
+        $pontosCachorro += 1;
     }
 
     if ($pontosGato > $pontosCachorro) {
@@ -131,15 +125,10 @@ function processarQuiz(PDO $pdo, array $respostas): string {
         $perfil = "Ambos";
     }
 
-        // ── Monta a consulta com PDO + prepared statements ──────────────
-        // Usamos uma subquery correlacionada em vez de JOIN com foto_animal
-        // porque um mesmo animal pode ter várias fotos cadastradas: um JOIN
-        // normal traria uma linha (e um card) para cada foto. A subquery
-        // pega só a foto de menor id_foto (a primeira registrada) de cada
-        // animal, garantindo uma única linha por animal.
-        $sql = "
+    $sql = "
         SELECT
             a.*,
+            ab.nome AS abrigo_nome,
             (
                 SELECT f.ds_img
                 FROM foto_animal f
@@ -148,53 +137,41 @@ function processarQuiz(PDO $pdo, array $respostas): string {
                 LIMIT 1
             ) AS ds_img
         FROM animais_adocao a
+        LEFT JOIN abrigos ab ON ab.id = a.id_abrigo
         WHERE a.status_adocao = 'Disponível'
-        ";
+    ";
 
-        $params = [];
+    $params = [];
 
     if ($perfil !== "Ambos") {
-        $sql .= " AND especie = :especie";
-        $params[':especie'] = $perfil;
-    }
-
-    if ($moradia === "Moro em um espaço pequeno") {
-        $sql .= " AND porte = 'Pequeno'";
-    } elseif ($moradia === "Moro em um espaço médio") {
-        $sql .= " AND porte IN ('Pequeno','Médio')";
-    }
-
-    if ($tempoLivre === "Menos de 1 hora") {
-        $sql .= " AND idade >= 7";
-    } elseif ($tempoLivre === "Entre 1 e 3 horas") {
-        $sql .= " AND idade BETWEEN 2 AND 6";
-    } else {
-        $sql .= " AND idade <= 2";
+        $sql .= " AND a.especie = :especie";
+        $params[":especie"] = $perfil;
     }
 
     if ($sexo !== "Não tenho preferência") {
-        $sql .= " AND sexo = :sexo";
-        $params[':sexo'] = $sexo;
+        $sql .= " AND a.sexo = :sexo";
+        $params[":sexo"] = $sexo;
     }
+
+    $sql .= " ORDER BY a.id_animal DESC";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $animais = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // ── Monta o HTML do resultado ────────────────────────────────────
     if ($perfil === "Gato") {
         $tituloResultado = '<i class="fa-solid fa-cat"></i> Seu perfil combina mais com gatos';
     } elseif ($perfil === "Cachorro") {
-        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina mais com cães';
+        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina mais com caes';
     } else {
-        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina com cães e gatos <i class="fa-solid fa-cat"></i>';
+        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina com caes e gatos <i class="fa-solid fa-cat"></i>';
     }
 
     ob_start();
     ?>
     <div class="resultado-quiz">
         <h1 class="titulo-resultado"><?= $tituloResultado ?></h1>
-        <p class="subtitulo-resultado">Confira os animais disponíveis que combinam com seu perfil.</p>
+        <p class="subtitulo-resultado">Confira os animais disponiveis que combinam com seu perfil.</p>
 
         <?php if (empty($animais)): ?>
             <div class="sem-resultados-quiz">
@@ -215,27 +192,24 @@ function processarQuiz(PDO $pdo, array $respostas): string {
                 <i class="fa-solid fa-rotate-right"></i>
                 Refazer Quiz
             </button>
-            <a href="adocao.html" class="botao-primario-quiz">
+            <a href="adocao.php" class="botao-primario-quiz">
                 <i class="fa-solid fa-paw"></i>
                 Ver todos os pets
             </a>
         </div>
     </div>
     <?php
+
     return ob_get_clean();
 }
 
-// ══════════════════════════════════════════════════════════════════
-// Requisição AJAX (fetch do JS do quiz): processa e devolve só o
-// fragmento HTML dos resultados, sem o restante da página.
-// ══════════════════════════════════════════════════════════════════
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $corpo     = file_get_contents("php://input");
+if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
+    $corpo = file_get_contents("php://input");
     $respostas = json_decode($corpo, true);
 
     if (!is_array($respostas) || count($respostas) < 8) {
         http_response_code(400);
-        echo '<p class="erro-quiz">Não foi possível processar suas respostas. Tente novamente.</p>';
+        echo '<p class="erro-quiz">Nao foi possivel processar suas respostas. Tente novamente.</p>';
         exit;
     }
 
@@ -248,18 +222,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Quiz — Descubra o pet ideal para você | Pet Vida</title>
-    <meta name="description" content="Responda algumas perguntas rápidas e descubra qual pet combina mais com a sua rotina e seu estilo de vida.">
+    <title>Pet Quiz - Descubra o pet ideal para voce | Pet Vida</title>
+    <meta name="description" content="Responda algumas perguntas rapidas e descubra qual pet combina mais com a sua rotina e seu estilo de vida.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="./css/adocao.css">
     <style>
-        /* ── Estilos exclusivos do Pet Quiz, usando as mesmas variáveis
-           de cor/tipografia definidas em adocao.css para manter a
-           identidade visual do site. ── */
-
         .quiz-main {
             max-width: 720px;
             margin: 0 auto;
@@ -332,10 +302,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .opcoes.shake { animation: shakeOpcoes .35s ease; }
+
         @keyframes shakeOpcoes {
             0%, 100% { transform: translateX(0); }
-            25%      { transform: translateX(-6px); }
-            75%      { transform: translateX(6px); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
         }
 
         .opcao {
@@ -349,9 +320,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: var(--transition);
         }
 
-        .opcao i { color: var(--verde); font-size: 1.1rem; width: 22px; text-align: center; }
+        .opcao i {
+            color: var(--verde);
+            font-size: 1.1rem;
+            width: 22px;
+            text-align: center;
+        }
 
-        .opcao:hover { border-color: var(--laranja); background: var(--bege); }
+        .opcao:hover {
+            border-color: var(--laranja);
+            background: var(--bege);
+        }
 
         .opcao.selecionada {
             border-color: var(--laranja);
@@ -360,7 +339,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .opcao.selecionada i { color: var(--laranja); }
 
-        .opcao p { font-size: .95rem; color: var(--texto); }
+        .opcao p {
+            font-size: .95rem;
+            color: var(--texto);
+        }
 
         .botoes {
             display: flex;
@@ -396,9 +378,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: var(--transition);
         }
 
-        #btnResultado:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        #btnResultado:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
 
-        /* ── Carregando ── */
         .carregando-wrapper {
             display: flex;
             flex-direction: column;
@@ -417,12 +401,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             animation: spin .8s linear infinite;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
         .carregando-wrapper p { color: var(--texto-leve); }
 
-        /* ── Resultados ── */
-        .resultado-quiz { max-width: 1280px; margin: 0 auto; }
+        .resultado-quiz {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
 
         .titulo-resultado {
             font-family: 'Fraunces', serif;
@@ -461,7 +449,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 12px;
         }
 
-        .sem-resultados-quiz .sem-resultados-icone { font-size: 3rem; opacity: .3; }
+        .sem-resultados-quiz .sem-resultados-icone {
+            font-size: 3rem;
+            opacity: .3;
+        }
 
         .sem-resultados-quiz h2 {
             font-family: 'Fraunces', serif;
@@ -500,7 +491,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--branco);
         }
 
-        .botao-primario-quiz:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .botao-primario-quiz:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
 
         .botao-secundario-quiz {
             background: var(--bege-esc);
@@ -524,10 +518,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-    <!-- ===== HEADER (mesmo header do site, para manter consistência) ===== -->
     <header role="banner">
         <div class="header-inner">
-            <a href="adocao.php" class="logo" aria-label="Página inicial">
+            <a href="adocao.php" class="logo" aria-label="Pagina inicial">
                 <img src="./img/logo_petvida.png" alt="Pet Vida" class="logo-img">
                 <span class="logo-text">Pet <em>Vida</em></span>
             </a>
@@ -535,7 +528,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="nav-busca-wrapper" aria-hidden="true"></div>
 
             <div class="nav-acoes">
-                <a href="../html/adocao.html" class="btn-cta" aria-label="Ver todos os pets">
+                <a href="adocao.php" class="btn-cta" aria-label="Ver todos os pets">
                     Ver todos os pets
                 </a>
             </div>
@@ -543,12 +536,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <main class="quiz-main" role="main">
-
         <div id="area-quiz">
             <h1 class="titulo-quiz">Pet Quiz</h1>
             <p class="subtitulo-quiz">Descubra quais pets combinam com seu perfil</p>
 
-            <section class="quiz-card" aria-label="Formulário do Pet Quiz">
+            <section class="quiz-card" aria-label="Formulario do Pet Quiz">
                 <div class="topo">
                     <span id="contador">Pergunta 1 de 8</span>
                     <div class="linha-progresso" id="linhaProgresso"></div>
@@ -559,7 +551,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="opcoes" id="opcoes"></div>
 
                 <div class="botoes">
-                    <button id="voltar">← Voltar</button>
+                    <button id="voltar">&larr; Voltar</button>
                     <button id="btnResultado" onclick="finalizarQuiz()" style="display:none;">
                         Dar Match
                         <i class="fa-solid fa-heart"></i>
@@ -569,10 +561,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div id="area-resultado" aria-live="polite"></div>
-
     </main>
 
-    <!-- ===== FOOTER (idêntico ao de adocao.html) ===== -->
     <footer role="contentinfo">
         <div class="footer-inner">
             <div class="footer-marca">
@@ -581,13 +571,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="footer-links">
                 <h4>Institucional</h4>
-                <a href="adocao.html">Sobre nós</a>
-                <a href="adocao.html">Como adotar</a>
-                <a href="adocao.html">Política de privacidade</a>
+                <a href="adocao.php">Sobre nos</a>
+                <a href="adocao.php">Como adotar</a>
+                <a href="adocao.php">Politica de privacidade</a>
             </div>
             <div class="footer-links">
                 <h4>Ajuda</h4>
-                <a href="adocao.html">Dúvidas frequentes</a>
+                <a href="adocao.php">Duvidas frequentes</a>
                 <a href="mailto:contato@petvida.org.br">Fale conosco</a>
             </div>
             <div class="footer-contato">
@@ -603,7 +593,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2025 Adote com Amor · Todos os direitos reservados</p>
+            <p>&copy; 2025 Adote com Amor · Todos os direitos reservados</p>
         </div>
     </footer>
 
@@ -623,31 +613,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "Muito corrida": "fa-solid fa-person-running",
             "Moderada": "fa-solid fa-calendar-days",
             "Tranquila": "fa-solid fa-mug-hot",
-
             "Todos os dias": "fa-solid fa-car",
             "Algumas vezes por semana": "fa-solid fa-store",
             "Raramente": "fa-solid fa-bed",
-
             "Até R$100": "fa-solid fa-coins",
             "Entre R$100 e R$300": "fa-solid fa-wallet",
             "Mais de R$300": "fa-solid fa-sack-dollar",
-
             "Ter companhia no dia a dia": "fa-solid fa-heart",
             "Compartilhar momentos e atividades": "fa-solid fa-dog",
             "Cuidar e oferecer um lar": "fa-solid fa-hand-holding-heart",
-
             "Relaxar e aproveitar a companhia em casa": "fa-solid fa-couch",
             "Um pouco de tudo": "fa-solid fa-scale-balanced",
             "Brincadeiras e atividades ao ar livre": "fa-solid fa-bone",
-
             "Moro em um espaço pequeno": "fa-solid fa-building",
             "Moro em um espaço médio": "fa-solid fa-city",
             "Moro em um espaço grande": "fa-solid fa-house",
-
             "Menos de 1 hora": "fa-regular fa-clock",
             "Entre 1 e 3 horas": "fa-regular fa-clock",
             "Mais de 3 horas": "fa-regular fa-clock",
-
             "Não tenho preferência": "fa-solid fa-paw",
             "Macho": "fa-solid fa-mars",
             "Fêmea": "fa-solid fa-venus"
@@ -670,9 +653,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             let html = "";
             pergunta.opcoes.forEach(opcao => {
-                const selecionada = respostas[perguntaAtual] == opcao ? "selecionada" : "";
+                const selecionada = respostas[perguntaAtual] === opcao ? "selecionada" : "";
                 html += `
-                    <div class="opcao ${selecionada}" onclick="selecionarOpcao(this,'${opcao}')">
+                    <div class="opcao ${selecionada}" data-resposta="${escapeHtml(opcao)}">
                         <i class="${imagens[opcao]}"></i>
                         <p>${opcao}</p>
                     </div>
@@ -680,13 +663,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
 
             document.getElementById("opcoes").innerHTML = html;
+            document.querySelectorAll("#opcoes .opcao").forEach(opcaoEl => {
+                opcaoEl.addEventListener("click", () => {
+                    selecionarOpcao(opcaoEl, opcaoEl.dataset.resposta || "");
+                });
+            });
 
             document.getElementById("voltar").onclick =
                 (perguntaAtual === 0) ? voltarInicio : voltarPergunta;
 
             const btnResultado = document.getElementById("btnResultado");
             btnResultado.style.display =
-                (perguntaAtual === perguntas.length - 1 && respostas[perguntaAtual]) ? "block" : "none";
+                (perguntaAtual === perguntas.length - 1 && respostas[perguntaAtual]) ? "flex" : "none";
         }
 
         function atualizarProgresso() {
@@ -697,13 +685,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById("linhaProgresso").innerHTML = html;
         }
 
+        function escapeHtml(texto) {
+            return texto
+                .replace(/&/g, "&amp;")
+                .replace(/"/g, "&quot;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
         function selecionarOpcao(elemento, resposta) {
             document.querySelectorAll(".opcao").forEach(opcao => opcao.classList.remove("selecionada"));
             elemento.classList.add("selecionada");
             respostas[perguntaAtual] = resposta;
 
             if (perguntaAtual === perguntas.length - 1) {
-                document.getElementById("btnResultado").style.display = "block";
+                document.getElementById("btnResultado").style.display = "flex";
                 return;
             }
 
@@ -721,13 +717,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         function voltarInicio() {
-            window.location.href = "../html/adocao.html";
+            window.location.href = "adocao.php";
         }
 
         function finalizarQuiz() {
             if (!respostas[perguntaAtual]) return;
 
-            const areaQuiz      = document.getElementById("area-quiz");
+            const areaQuiz = document.getElementById("area-quiz");
             const areaResultado = document.getElementById("area-resultado");
 
             areaQuiz.style.display = "none";
