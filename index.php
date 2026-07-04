@@ -52,10 +52,10 @@ try {
             </div>
             
             <div class="acoes-cabecalho">
-                <div class="acao-cabecalho" id="btnFavoritos">
+                <a href="adocao.html" class="botao-adote" id="btnFavoritos">
                     <i class="fas fa-heart"></i>
                     <span>Adote um amigo</span>
-                </div>
+                </a>
                 <div class="acao-cabecalho">
                     <button class="botao-doacao"><i class="fas fa-hand-holding-heart"></i> Doe/ajude</button>
                 </div>
@@ -104,9 +104,55 @@ try {
         <div class="container-animais">
             <div class="cabecalho-animais">
                 <h2><i class="fas fa-paw"></i> Animais para Adoção</h2>
-                <button class="btn-ver-mais" onclick="verTodosAnimais()">
+                <a href="adocao.html" class="btn-ver-mais">
                     Ver mais animais <i class="fas fa-arrow-right"></i>
-                </button>
+                </a>
+            </div>
+
+            <div class="grade-animais">
+                <?php if (!empty($animais_destaque)): ?>
+                    <?php foreach ($animais_destaque as $animal):
+                        $sexo = trim($animal['sexo'] ?? '');
+                        $sexoClasse = mb_strtolower($sexo) === 'macho' ? 'macho' : 'femea';
+                        $imagem = !empty($animal['ds_img']) ? htmlspecialchars($animal['ds_img']) : '';
+                    ?>
+                        <div class="cartao-animal"
+                             data-img="<?= $imagem ?>"
+                             data-nome="<?= htmlspecialchars($animal['nome'] ?? '') ?>"
+                             data-raca="<?= htmlspecialchars($animal['raca'] ?? '') ?>"
+                             data-sexo="<?= htmlspecialchars($sexo) ?>"
+                             data-idade="<?= htmlspecialchars($animal['idade'] ?? '') ?>"
+                             data-especie="<?= htmlspecialchars($animal['especie'] ?? '') ?>"
+                             data-peso="<?= htmlspecialchars($animal['peso'] ?? '') ?>"
+                             data-porte="<?= htmlspecialchars($animal['porte'] ?? '') ?>"
+                             data-vacinado="<?= htmlspecialchars($animal['vacinado'] ?? '') ?>"
+                             data-descricao="<?= htmlspecialchars($animal['descricao'] ?? '') ?>"
+                             onclick="abrirPreviewAnimal(this)">
+                            <div class="imagem-animal">
+                                <?php if ($imagem): ?>
+                                    <img src="<?= $imagem ?>" alt="<?= htmlspecialchars($animal['nome'] ?? 'Animal') ?>" onerror="this.style.display='none'">
+                                <?php endif; ?>
+                                <span class="etiqueta-sexo <?= $sexoClasse ?>"><?= htmlspecialchars($sexo) ?></span>
+                                <button class="btn-favorito" onclick="event.stopPropagation(); this.classList.toggle('favoritado')" aria-label="Favoritar">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="info-animal">
+                                <h3 class="nome-animal"><?= htmlspecialchars($animal['nome'] ?? '') ?></h3>
+                                <p class="raca-animal"><i class="fas fa-dna"></i> <?= htmlspecialchars($animal['raca'] ?? '') ?></p>
+                                <div class="detalhes-animal">
+                                    <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= htmlspecialchars($animal['idade'] ?? '?') ?> anos</div>
+                                    <div class="detalhe-item"><i class="fas fa-weight-hanging"></i> <?= htmlspecialchars($animal['peso'] ?? '?') ?> kg</div>
+                                </div>
+                                <button class="btn-adotar" onclick="event.stopPropagation(); abrirPreviewAnimal(this.closest('.cartao-animal'))">
+                                    <i class="fas fa-paw"></i> Ver Detalhes
+                                </button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="grid-column: 1 / -1; text-align: center; color: #718096;">Nenhum animal disponível para adoção no momento.</p>
+                <?php endif; ?>
             </div>
         </div>
     </section>
@@ -169,22 +215,22 @@ try {
             <h2 class="secao-titulo">Nossa Equipe</h2>
             <div class="equipe-grid">
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Mariana.jpeg" alt="Mariana"></div>
+                    <div class="foto-bolinha"><img src="img/mari.jpeg" alt="Mariana"></div>
                     <div class="nome">Mariana R. Patricio</div>
-                    <div class="cargo">Desenvolvedora Front-end</div>
+                    <div class="cargo">Desenvolvedora <br>Front-end</div>
                 </div>
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Gabriel.jpeg" alt="Gabriel"></div>
-                    <div class="nome">Gabriel F. Fortunato</div>
-                    <div class="cargo">Desenvolvedor Back-end</div>
+                    <div class="foto-bolinha"><img src="img/gabriel.jpeg" alt="Gabriel"></div>
+                    <div class="nome">Gabriel F. Freitas</div>
+                    <div class="cargo">Desenvolvedor <br>Back-end</div>
                 </div>
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Lais.jpeg" alt="Lais"></div>
+                    <div class="foto-bolinha"><img src="img/lais.jpeg" alt="Lais"></div>
                     <div class="nome">Lais V. Meris</div>
-                    <div class="cargo">Desenvolvedora Back-end</div>
+                    <div class="cargo">Desenvolvedora <br>Back-end</div>
                 </div>
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Wellingtom.jpeg" alt="Wellingtom"></div>
+                    <div class="foto-bolinha"><img src="img/welli.jpeg" alt="Wellingtom"></div>
                     <div class="nome">Wellingtom</div>
                     <div class="cargo">Desenvolvedor de Modelagem</div>
                 </div>
@@ -198,29 +244,39 @@ try {
                 <h3>Institucional</h3>
                 <ul class="links-rodape">
                     <li><a onclick="abrirSobreNos()">Sobre nós</a></li>
-                    <li><a onclick="verTodosAnimais()">Animais para Adoção</a></li>
+                    <li><a href="adocao.html">Como adotar</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
                 </ul>
             </div>
             <div class="coluna-rodape">
-                <h3>Atendimento</h3>
+                <h3>Ajuda</h3>
                 <ul class="links-rodape">
-                    <li><a onclick="abrirCentralAjuda()">Central de Ajuda</a></li>
+                    <li><a onclick="abrirCentralAjuda()">Dúvidas frequentes</a></li>
+                    <li><a href="#">Fale conosco</a></li>
                 </ul>
             </div>
             <div class="coluna-rodape">
-                <h3>Fale Conosco</h3>
+                <h3>Contato</h3>
                 <ul class="links-rodape">
-                    <li><i class="fas fa-phone"></i> (47) 99756-5199</li>
-                    <li><i class="fas fa-envelope"></i> contato@petvida.org.br</li>
+                    <li><a href="mailto:contato@petvida.org.br" class="rodape-contato-link">
+                        <i class="fas fa-envelope"></i> contato@petvida.org.br
+                    </a></li>
+                    <li><a href="tel:+554799756519" class="rodape-contato-link">
+                        <i class="fab fa-whatsapp"></i> (47) 99756-5199
+                    </a></li>
+                    <li><a href="#" class="rodape-contato-link">
+                        <i class="fab fa-instagram"></i> @petvida.oficial
+                    </a></li>
                 </ul>
                 <div class="links-sociais">
-                    <a href="#" class="link-social"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="link-social"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:contato@petvida.org.br" class="link-social" aria-label="E-mail"><i class="fas fa-envelope"></i></a>
+                    <a href="#" class="link-social" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="tel:+554799756519" class="link-social" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
         <div class="rodape-inferior">
-            <p>&copy; 2025 Pet Vida - Adote com amor</p>
+            <p>&copy; 2025 Adote com Amor · Todos os direitos reservados</p>
         </div>
     </footer>
 
@@ -556,6 +612,21 @@ try {
 
     <script src="script/script.js"></script>
     <script>
+        // Abre o modal de detalhes a partir de um card de prévia de animal
+        function abrirPreviewAnimal(card) {
+            document.getElementById('modalAnimalImg').src = card.dataset.img || '';
+            document.getElementById('modalAnimalNome').textContent = card.dataset.nome || '';
+            document.getElementById('modalAnimalRaca').textContent = card.dataset.raca || '';
+            document.getElementById('modalAnimalSexo').textContent = card.dataset.sexo || '';
+            document.getElementById('modalAnimalIdade').textContent = card.dataset.idade || '';
+            document.getElementById('modalAnimalEspecie').textContent = card.dataset.especie || '';
+            document.getElementById('modalAnimalPeso').textContent = card.dataset.peso || '';
+            document.getElementById('modalAnimalPorte').textContent = card.dataset.porte || '';
+            document.getElementById('modalAnimalVacinado').textContent = card.dataset.vacinado || '';
+            document.getElementById('modalAnimalDescricao').textContent = card.dataset.descricao || '';
+            document.getElementById('modalAnimal').style.display = 'flex';
+        }
+
         // Corrigir o evento do botão de doação
         document.querySelector('.botao-doacao').addEventListener('click', function(e) {
             e.preventDefault();
