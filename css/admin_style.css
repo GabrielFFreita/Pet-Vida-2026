@@ -891,3 +891,194 @@
         padding: 16px;
     }
 }
+
+.animal-listagem-celula {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.animal-listagem-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 1px solid var(--borda);
+    background-color: #FFFDFB;
+    flex-shrink: 0;
+}
+
+.animal-listagem-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.animal-listagem-texto strong {
+    color: var(--texto);
+    font-size: 0.98rem;
+}
+
+.animal-listagem-texto span {
+    color: var(--texto-leve);
+    font-size: 0.88rem;
+}
+
+.status-inline-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.badge-positivo {
+    background-color: rgba(45, 106, 79, 0.12);
+    color: var(--primaria-escura);
+}
+
+.badge-alerta {
+    background-color: rgba(224, 123, 57, 0.14);
+    color: #9A4F1A;
+}
+
+.badge-neutro {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+
+.bloco-fotos-admin {
+    margin-top: 26px;
+    padding-top: 24px;
+    border-top: 1px solid var(--borda);
+}
+
+.bloco-fotos-admin__topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.bloco-fotos-admin__topo h3 {
+    font-family: 'Fraunces', 'Playfair Display', serif;
+    color: var(--primaria-escura);
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+}
+
+.bloco-fotos-admin__topo p {
+    color: var(--texto-leve);
+    font-size: 0.92rem;
+}
+
+.galeria-admin-fotos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.card-foto-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    background: #FFFDFB;
+    cursor: pointer;
+}
+
+.card-foto-admin img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.card-foto-admin__nome {
+    font-size: 0.8rem;
+    color: var(--texto-leve);
+    word-break: break-word;
+}
+
+.card-foto-admin__acao {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #9A4F1A;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.upload-admin-box {
+    padding: 18px;
+    border: 1px dashed #D9C7AE;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #FFFDFB 0%, #FAF4EC 100%);
+}
+
+.upload-admin-box__label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--primaria-escura);
+    margin-bottom: 10px;
+}
+
+.upload-admin-box input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    background: #FFFFFF;
+}
+
+.upload-admin-box__hint {
+    margin-top: 10px;
+    color: var(--texto-leve);
+    font-size: 0.88rem;
+}
+
+.preview-novas-fotos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.preview-novas-fotos__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    border: 1px solid var(--borda);
+}
+
+.preview-novas-fotos__item img {
+    width: 100%;
+    height: 94px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.preview-novas-fotos__item span {
+    font-size: 0.78rem;
+    color: var(--texto-leve);
+    word-break: break-word;
+}
+
+@media (max-width: 768px) {
+    .animal-listagem-celula,
+    .bloco-fotos-admin__topo {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
