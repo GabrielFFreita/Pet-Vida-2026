@@ -1,3 +1,7 @@
+<?php
+require_once "config_sessao.php";
+verificarAdmin();
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

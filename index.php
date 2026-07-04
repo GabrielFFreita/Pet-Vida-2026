@@ -4,9 +4,13 @@ session_start();
 
 try {
     // Faz o JOIN com a tabela foto_animal para trazer a coluna ds_img correspondente
-    $sql = "SELECT a.*, f.ds_img 
+    $sql = "SELECT a.*, fp.ds_img 
             FROM animais_adocao a 
-            LEFT JOIN foto_animal f ON a.id_animal = f.id_animal 
+            LEFT JOIN (
+                SELECT id_animal, MIN(ds_img) AS ds_img
+                FROM foto_animal
+                GROUP BY id_animal
+            ) fp ON a.id_animal = fp.id_animal 
             WHERE a.status_adocao = 'Disponível' 
             LIMIT 4";
     $stmt = $pdo->query($sql);
@@ -58,6 +62,14 @@ try {
                 </div>
                 <div class="acao-cabecalho">
                     <button class="botao-doacao"><i class="fas fa-hand-holding-heart"></i> Doe/ajude</button>
+                </div>
+                <div class="acao-cabecalho" id="btnPainelAdmin" style="display: none;">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Painel Admin</span>
+                </div>
+                <div class="acao-cabecalho" id="btnSair" style="display: none;">
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Sair</span>
                 </div>
                 <div class="acao-cabecalho" id="botaoUsuario">
                     <i class="far fa-user"></i>

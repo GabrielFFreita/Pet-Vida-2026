@@ -1,6 +1,7 @@
 <?php
 require_once "conexao.php";
-session_start();
+require_once "config_sessao.php";
+verificarAdmin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = filter_input(INPUT_POST, 'nome', FILTER_UNSAFE_RAW);

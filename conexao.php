@@ -1,6 +1,8 @@
-<!-- Essa página vai ser dedeicada para fazer a conexão com o banco de dados -->
-
 <?php
+// Essa página é dedicada a fazer a conexão com o banco de dados.
+// (Comentário movido pra dentro das tags PHP — texto fora do <?php 
+// é impresso literalmente na tela, o que quebra endpoints que precisam
+// devolver JSON puro, como o solicitar_adocao.php e o dashboard.
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -18,4 +20,5 @@ try {
 } catch (PDOException $e) {
     die("Erro na conexão: " . $e->getMessage());
 }
+
 ?>

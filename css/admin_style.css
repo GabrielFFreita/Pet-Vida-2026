@@ -445,9 +445,9 @@
 .card-info-abrigo {
     background: var(--fundo-card);
     padding: 30px;
-    border-radius: var(--raio);
+    border-radius: 18px;
     box-shadow: var(--sombra);
-    border: 1px solid var(--borda);
+    border: 2px solid #D9C7AE;
 }
 
 .card-info-abrigo h2 {

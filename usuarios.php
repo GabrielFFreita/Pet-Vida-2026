@@ -1,6 +1,7 @@
 <?php
 require_once "conexao.php";
-session_start();
+require_once "config_sessao.php";
+verificarAdmin();
 try {
     // Corrigido: id_usuario no lugar de id, e removido o data_cadastro que não existe
     $sql = "SELECT id_usuario, nome, email, telefone, perfil FROM usuarios ORDER BY id_usuario DESC";

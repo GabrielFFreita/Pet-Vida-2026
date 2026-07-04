@@ -30,4 +30,12 @@ function verificarLogado() {
         exit();
     }
 }
+function verificarAdmin() {
+    verificarLogado();
+
+    if (strtolower(trim($_SESSION["perfil"] ?? "")) !== "admin") {
+        header("Location: index.php");
+        exit();
+    }
+}
 ?>

@@ -417,8 +417,20 @@ function voltarParaHome() {
 // ========== SISTEMA DE LOGIN ==========
 function atualizarInterfaceUsuario() {
     const textoUsuario = document.getElementById('textoUsuario');
+    const btnPainelAdmin = document.getElementById('btnPainelAdmin');
+    const btnSair = document.getElementById('btnSair');
+
     if (textoUsuario) {
         textoUsuario.textContent = usuarioLogado ? usuarioLogado.nome.split(' ')[0] : 'Entrar/Cadastrar';
+    }
+
+    if (btnPainelAdmin) {
+        const perfil = (usuarioLogado?.perfil || '').trim().toLowerCase();
+        btnPainelAdmin.style.display = perfil === 'admin' ? 'flex' : 'none';
+    }
+
+    if (btnSair) {
+        btnSair.style.display = usuarioLogado ? 'flex' : 'none';
     }
 }
 
@@ -556,12 +568,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const botaoUsuario = document.getElementById('botaoUsuario');
     if (botaoUsuario) {
-        botaoUsuario.addEventListener('click', abrirLogin);
+        botaoUsuario.addEventListener('click', function() {
+            if (!usuarioLogado) abrirLogin();
+        });
     }
     
     const btnFavoritos = document.getElementById('btnFavoritos');
     if (btnFavoritos) {
         btnFavoritos.addEventListener('click', verFavoritos);
+    }
+
+    const btnPainelAdmin = document.getElementById('btnPainelAdmin');
+    if (btnPainelAdmin) {
+        btnPainelAdmin.addEventListener('click', function() {
+            window.location.href = 'adimpage.php';
+        });
+    }
+
+    const btnSair = document.getElementById('btnSair');
+    if (btnSair) {
+        btnSair.addEventListener('click', fazerLogout);
     }
     
     window.onclick = function(event) {
@@ -642,6 +668,7 @@ const cadastroForm = document.getElementById('cadastroForm');
                 usuarioLogado = result.usuario;
                 atualizarInterfaceUsuario();
                 fecharModal('modalLogin');
+
                 if (document.getElementById('paginaFavoritos').style.display === 'block') {
                     carregarFavoritos();
                 }

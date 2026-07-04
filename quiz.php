@@ -131,9 +131,18 @@ function processarQuiz(PDO $pdo, array $respostas): string {
         $perfil = "Ambos";
     }
 
-    // ── Monta a consulta com PDO + prepared statements ──────────────
-    $sql    = "SELECT * FROM animais_adocao WHERE status_adocao = 'Disponível'";
-    $params = [];
+        // ── Monta a consulta com PDO + prepared statements ──────────────
+        $sql = "
+        SELECT
+            a.*,
+            f.nome_foto
+        FROM animais_adocao a
+        LEFT JOIN foto_animal f
+            ON a.id_animal = f.id_animal
+        WHERE a.status_adocao = 'Disponível'
+        ";
+
+        $params = [];
 
     if ($perfil !== "Ambos") {
         $sql .= " AND especie = :especie";
@@ -236,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- <link rel="stylesheet" href="../css/adocao.css"> -->
+    <link rel="stylesheet" href="./css/adocao.css">
     <style>
         /* ── Estilos exclusivos do Pet Quiz, usando as mesmas variáveis
            de cor/tipografia definidas em adocao.css para manter a
@@ -509,8 +518,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- ===== HEADER (mesmo header do site, para manter consistência) ===== -->
     <header role="banner">
         <div class="header-inner">
-            <a href="adocao.html" class="logo" aria-label="Página inicial">
-                <img src="../img/logo_petvida.png" alt="Pet Vida" class="logo-img">
+            <a href="adocao.php" class="logo" aria-label="Página inicial">
+                <img src="./img/logo_petvida.png" alt="Pet Vida" class="logo-img">
                 <span class="logo-text">Pet <em>Vida</em></span>
             </a>
 
@@ -558,7 +567,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <footer role="contentinfo">
         <div class="footer-inner">
             <div class="footer-marca">
-                <img src="../img/logo_petvida.png" alt="Pet Vida" class="footer-logo-img">
+                <img src="./img/logo_petvida.png" alt="Pet Vida" class="footer-logo-img">
                 <p class="footer-slogan">Adote amor.<br><em>Mude uma vida.</em></p>
             </div>
             <div class="footer-links">

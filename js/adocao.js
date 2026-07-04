@@ -17,39 +17,15 @@ let carrosselFotos  = [];
 let indiceFotoAtual = 0;
 
 // [ALTERADO #2] filtrosAtivos agora inclui sexo
-let filtrosAtivos   = { abrigo: 'todos', tipo: 'todos', sexo: 'todos' };
+// [ALTERADO #8] e agora também raça (pill), igual abrigo/tipo/sexo
+let filtrosAtivos   = { abrigo: 'todos', tipo: 'todos', sexo: 'todos', raca: 'todos' };
 
 let favoritos       = [];
 // [ALTERADO #4] estado do toggle de favoritos
 let mostrandoFavoritos = false;
 
-// ── Dados dos abrigos ────────────────────────────────────────
-const abrigos = {
-  centro: {
-    nome: 'Abrigo Centro',
-    endereco: 'Rua das Flores, 123 — Centro',
-    telefone: '(47) 3221-4567',
-    horario: 'Segunda a Sábado, 9h às 18h'
-  },
-  norte: {
-    nome: 'Abrigo Zona Norte',
-    endereco: 'Av. Norte, 456 — Zona Norte',
-    telefone: '(47) 3221-7890',
-    horario: 'Terça a Domingo, 10h às 17h'
-  },
-  sul: {
-    nome: 'Abrigo Zona Sul',
-    endereco: 'Rua Sul, 789 — Zona Sul',
-    telefone: '(47) 3221-2345',
-    horario: 'Segunda a Sexta, 8h às 17h'
-  },
-  leste: {
-    nome: 'Abrigo Zona Leste',
-    endereco: 'Av. Leste, 101 — Zona Leste',
-    telefone: '(47) 3221-6789',
-    horario: 'Quarta a Domingo, 9h às 16h'
-  }
-};
+// ── Dados dos abrigos (vindos do banco de verdade, injetados pelo PHP) ──
+const abrigos = window.ABRIGOS_DADOS || {};
 
 // ── Helpers ──────────────────────────────────────────────────
 function qs(selector, root = document) { return root.querySelector(selector); }
@@ -138,6 +114,15 @@ function initFiltros() {
     });
   });
 
+  // [ALTERADO #8] Filtros por raça (pills gerados dinamicamente pelo PHP)
+  qsa('[data-filtro-raca]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filtrosAtivos.raca = btn.dataset.filtroRaca;
+      atualizarBotoesAtivos('raca', btn);
+      aplicarFiltros();
+    });
+  });
+
   // Limpar filtros
   qs('#btn-limpar-filtros').addEventListener('click', limparFiltros);
   qs('#btn-mostrar-todos').addEventListener('click', limparFiltros);
@@ -147,22 +132,26 @@ function atualizarBotoesAtivos(grupo, btnAtivo) {
   let seletor;
   if (grupo === 'abrigo') seletor = '[data-filtro-abrigo]';
   else if (grupo === 'tipo') seletor = '[data-filtro-tipo]';
-  else seletor = '[data-filtro-sexo]'; // [ALTERADO #2]
+  else if (grupo === 'sexo') seletor = '[data-filtro-sexo]'; // [ALTERADO #2]
+  else seletor = '[data-filtro-raca]'; // [ALTERADO #8]
 
   qsa(seletor).forEach(b => b.classList.remove('filtro-ativo'));
   btnAtivo.classList.add('filtro-ativo');
 }
 
 function limparFiltros() {
-  filtrosAtivos = { abrigo: 'todos', tipo: 'todos', sexo: 'todos' }; // [ALTERADO #2]
+  filtrosAtivos = { abrigo: 'todos', tipo: 'todos', sexo: 'todos', raca: 'todos' }; // [ALTERADO #2, #8]
 
   qs('#filtro-todos').classList.add('filtro-ativo');
   qs('#filtro-tipo-todos').classList.add('filtro-ativo');
   qs('#filtro-sexo-todos').classList.add('filtro-ativo'); // [ALTERADO #2]
+  const filtroRacaTodos = qs('#filtro-raca-todos'); // [ALTERADO #8] só existe se houver raças
+  if (filtroRacaTodos) filtroRacaTodos.classList.add('filtro-ativo');
 
   qsa('[data-filtro-abrigo]:not(#filtro-todos)').forEach(b => b.classList.remove('filtro-ativo'));
   qsa('[data-filtro-tipo]:not(#filtro-tipo-todos)').forEach(b => b.classList.remove('filtro-ativo'));
   qsa('[data-filtro-sexo]:not(#filtro-sexo-todos)').forEach(b => b.classList.remove('filtro-ativo')); // [ALTERADO #2]
+  qsa('[data-filtro-raca]:not(#filtro-raca-todos)').forEach(b => b.classList.remove('filtro-ativo')); // [ALTERADO #8]
 
   // [ALTERADO #4] Desativa toggle favoritos ao limpar filtros
   if (mostrandoFavoritos) {
@@ -205,10 +194,16 @@ function aplicarFiltros() {
       matchSexo = sexoCard === 'fêmea' || sexoCard === 'femea';
     }
 
+    // [ALTERADO #8] Filtro por raça (pill) — comparação exata, sem diferenciar
+    // maiúsculas/minúsculas, já que o valor do pill vem do mesmo campo do banco
+    // que preenche data-raca no card.
+    const matchRaca = filtrosAtivos.raca === 'todos'
+      || raca === filtrosAtivos.raca.toLowerCase();
+
     // [ALTERADO #4] Filtro de favoritos inline
     const matchFavoritos = !mostrandoFavoritos || favoritos.includes(card.dataset.id);
 
-    const visivel = matchAbrigo && matchTipo && matchBusca && matchSexo && matchFavoritos;
+    const visivel = matchAbrigo && matchTipo && matchBusca && matchSexo && matchRaca && matchFavoritos;
 
     if (visivel) {
       card.style.display = 'flex';
@@ -237,6 +232,17 @@ function carregarFavoritos() {
     favoritos = saved ? JSON.parse(saved) : [];
   } catch (e) {
     favoritos = [];
+  }
+
+  // [FIX] Remove IDs "fantasmas": favoritos salvos que não correspondem
+  // a nenhum pet-card realmente presente na página atual (ex.: animal
+  // removido do banco, ou banco resetado entre testes). Sem essa poda,
+  // o contador soma esses IDs mesmo sem nenhum coração marcado.
+  const idsNaPagina = new Set(qsa('.pet-card').map(card => card.dataset.id));
+  const tamanhoOriginal = favoritos.length;
+  favoritos = favoritos.filter(id => idsNaPagina.has(id));
+  if (favoritos.length !== tamanhoOriginal) {
+    salvarFavoritos();
   }
 
   qsa('.btn-fav-card').forEach(btn => {
@@ -274,6 +280,10 @@ function atualizarContadorFavoritos() {
     void count.offsetWidth; // reflow para reiniciar a animação
     count.classList.add('pop');
   } else {
+    // [FIX] Zera o texto além de esconder — assim, mesmo que algum CSS
+    // externo volte a sobrescrever o comportamento de [hidden], nunca vai
+    // sobrar um número antigo ("1") congelado no contador.
+    count.textContent = '0';
     count.hidden = true;
   }
 }
@@ -392,6 +402,17 @@ function initDetalhes() {
 function verDetalhes(card) {
   petCardAtivo = card;
   const abrigoId = card.dataset.abrigo;
+  let fotos = [];
+
+  try {
+    fotos = JSON.parse(card.dataset.fotos || '[]');
+  } catch (error) {
+    fotos = [];
+  }
+
+  if (!Array.isArray(fotos) || fotos.length === 0) {
+    fotos = ['uploads/not_image.png'];
+  }
 
   petEscolhido = {
     id:         card.dataset.id          || '',
@@ -401,8 +422,7 @@ function verDetalhes(card) {
     tipo:       card.dataset.tipo        || 'Não informado',
     raca:       card.dataset.raca        || 'Não informada',
     sexo:       card.dataset.sexo        || 'Não informado',
-    peso:       card.dataset.peso        || 'Não informado',
-    altura:     card.dataset.altura      || 'Não informada',
+    weight:     card.dataset.peso        || 'Não informado',
     idade:      card.dataset.idade       || 'Não informada',
     porte:      card.dataset.porte       || 'Não informado',
     vacinado:   card.dataset.vacinado    || 'Sim',
@@ -410,7 +430,7 @@ function verDetalhes(card) {
     deficiencia: card.dataset.deficiencia || 'Nenhuma',
     status:     card.dataset.status      || 'Disponível',
     descricao:  card.dataset.descricao   || 'Pet especial aguardando um lar.',
-    fotos:      JSON.parse(card.dataset.fotos || '[]')
+    fotos
   };
 
   qs('#detalhes-nome').textContent        = petEscolhido.nome;
@@ -418,7 +438,6 @@ function verDetalhes(card) {
   qs('#detalhes-raca').textContent        = petEscolhido.raca;
   qs('#detalhes-sexo').textContent        = petEscolhido.sexo;
   qs('#detalhes-peso').textContent        = petEscolhido.peso;
-  qs('#detalhes-altura').textContent      = petEscolhido.altura;
   qs('#detalhes-idade').textContent       = petEscolhido.idade;
   qs('#detalhes-porte').textContent       = petEscolhido.porte;
   qs('#detalhes-vacinado').textContent    = petEscolhido.vacinado;
@@ -448,8 +467,10 @@ function atualizarStatusBadge(status) {
 
   if (status.toLowerCase().includes('disponível')) {
     badge.classList.add('disponivel');
-  } else if (status.toLowerCase().includes('adoção')) {
+  } else if (status.toLowerCase().includes('processo') || status.toLowerCase().includes('solicitação')) {
     badge.classList.add('em-adocao');
+  } else if (status.toLowerCase().includes('adotado')) {
+    badge.classList.add('adotado');
   }
 }
 
@@ -482,9 +503,15 @@ function initCarrossel() {
 function carregarCarrossel() {
   const cont  = qs('#carrossel-imagens');
   const indic = qs('#carrossel-indicadores');
+  const btnAnterior = qs('#btn-anterior');
+  const btnProximo = qs('#btn-proximo');
 
   cont.innerHTML  = '';
   indic.innerHTML = '';
+
+  if (!Array.isArray(carrosselFotos) || carrosselFotos.length === 0) {
+    carrosselFotos = ['uploads/not_image.png'];
+  }
 
   carrosselFotos.forEach((src, i) => {
     const img = document.createElement('img');
@@ -501,6 +528,11 @@ function carregarCarrossel() {
     dot.addEventListener('click', () => irParaFoto(i));
     indic.appendChild(dot);
   });
+
+  const temVariasFotos = carrosselFotos.length > 1;
+  if (btnAnterior) btnAnterior.style.display = temVariasFotos ? '' : 'none';
+  if (btnProximo) btnProximo.style.display = temVariasFotos ? '' : 'none';
+  indic.style.display = temVariasFotos ? '' : 'none';
 
   indiceFotoAtual = 0;
 }
@@ -520,11 +552,13 @@ function atualizarCarrossel() {
 }
 
 function fotoProxima() {
+  if (!carrosselFotos.length) return;
   indiceFotoAtual = (indiceFotoAtual + 1) % carrosselFotos.length;
   atualizarCarrossel();
 }
 
 function fotoAnterior() {
+  if (!carrosselFotos.length) return;
   indiceFotoAtual = (indiceFotoAtual - 1 + carrosselFotos.length) % carrosselFotos.length;
   atualizarCarrossel();
 }
@@ -565,7 +599,14 @@ function initModais() {
 function abrirModalConfirmacao() {
   if (!petEscolhido) { console.warn('Nenhum pet selecionado.'); return; }
 
+
   const abrigo = abrigos[petEscolhido.abrigoId] || {};
+
+  const msgErro = qs('#mensagem-erro-adocao');
+  if (msgErro) {
+    msgErro.style.display = 'none';
+    msgErro.textContent   = '';
+  }
 
   qs('#info-adocao').innerHTML = `
     <p><strong>Pet:</strong> ${petEscolhido.nome} (${petEscolhido.raca})</p>
@@ -585,44 +626,92 @@ function fecharModalConfirmacao() {
 function confirmarAdocao() {
   if (!petEscolhido) return;
 
-  const abrigo  = abrigos[petEscolhido.abrigoId] || {};
-  const nome    = petEscolhido.nome;
-  const tel     = abrigo.telefone || '—';
-  const nomeAb  = abrigo.nome || '—';
-  const novoStatus = 'Em adoção';
+  const btnConfirmar = qs('#btn-confirmar-adocao');
+  const msgErro       = qs('#mensagem-erro-adocao');
 
-  if (petCardAtivo) {
-    petCardAtivo.dataset.status = novoStatus;
-
-    const badge = petCardAtivo.querySelector('.badge');
-    if (badge) {
-      badge.textContent = 'Em adoção';
-      badge.className   = 'badge urgente';
-    } else {
-      const imgWrapper = petCardAtivo.querySelector('.card-img-wrapper');
-      if (imgWrapper) {
-        const novoBadge = document.createElement('span');
-        novoBadge.className = 'badge urgente';
-        novoBadge.textContent = 'Em adoção';
-        imgWrapper.appendChild(novoBadge);
-      }
-    }
+  if (msgErro) {
+    msgErro.style.display = 'none';
+    msgErro.textContent   = '';
+  }
+  if (btnConfirmar) {
+    btnConfirmar.disabled    = true;
+    btnConfirmar.textContent = 'Enviando...';
   }
 
-  atualizarStatusBadge(novoStatus);
-  if (petEscolhido) petEscolhido.status = novoStatus;
+  const formData = new FormData();
+  formData.append('id_animal', petEscolhido.id);
 
-  fecharModalConfirmacao();
+  fetch('solicitar_adocao.php', {
+    method: 'POST',
+    body: formData
+  })
+    .then(res => res.json().then(dados => ({ ok: res.ok, dados })))
+    .then(({ ok, dados }) => {
+      
 
-  setTimeout(() => {
-    qs('#info-final').innerHTML = `
-      <p><strong>Pet:</strong> ${nome}</p>
-      <p><strong>Abrigo responsável:</strong> ${nomeAb}</p>
-      <p><strong>Contato:</strong> ${tel}</p>
-    `;
+      if (!dados.sucesso) {
+        if (msgErro) {
+          msgErro.textContent   = dados.mensagem || 'Não foi possível enviar seu pedido.';
+          msgErro.style.display = 'block';
+        }
+        return;
+      }
 
-    abrirModal('modal-final-bg', 'modal-final');
-  }, 340);
+      // Sucesso: atualiza o status dinamicamente na tela para 'Em processo'
+      const abrigo = abrigos[petEscolhido.abrigoId] || {};
+      const nome   = petEscolhido.nome;
+      const tel    = abrigo.telefone || '—';
+      const nomeAb = abrigo.nome || '—';
+      const statusVisual = 'Em processo';
+
+      if (petCardAtivo) {
+        // 1. Atualiza o status gravado no elemento 'article' correspondente ao pet ativo
+        petCardAtivo.dataset.status = statusVisual;
+
+        // 2. Localiza o selo visual (badge) do card e altera o texto e a classe CSS
+        const badge = petCardAtivo.querySelector('[data-status-badge]') || petCardAtivo.querySelector('.badge-status-adocao');
+        if (badge) {
+          badge.textContent = statusVisual;
+          badge.className   = 'badge-status-adocao status-processo'; // Aplica os estilos correspondentes mapeados no PHP
+        } else {
+          const imgWrapper = petCardAtivo.querySelector('.card-img-wrapper');
+          if (imgWrapper) {
+            const novoBadge = document.createElement('span');
+            novoBadge.className = 'badge-status-adocao status-processo';
+            novoBadge.setAttribute('data-status-badge', '');
+            novoBadge.textContent = statusVisual;
+            imgWrapper.appendChild(novoBadge);
+          }
+        }
+      }
+
+      atualizarStatusBadge(statusVisual);
+      petEscolhido.status = statusVisual;
+
+      fecharModalConfirmacao();
+
+      setTimeout(() => {
+        qs('#info-final').innerHTML = `
+          <p><strong>Pet:</strong> ${nome}</p>
+          <p><strong>Abrigo responsável:</strong> ${nomeAb}</p>
+          <p><strong>Contato:</strong> ${tel}</p>
+        `;
+
+        abrirModal('modal-final-bg', 'modal-final');
+      }, 340);
+    })
+    .catch(() => {
+      if (msgErro) {
+        msgErro.textContent   = 'Erro de conexão. Tente novamente.';
+        msgErro.style.display = 'block';
+      }
+    })
+    .finally(() => {
+      if (btnConfirmar) {
+        btnConfirmar.disabled    = false;
+        btnConfirmar.textContent = 'Sim, quero adotar!';
+      }
+    });
 }
 
 function fecharModalFinal() {
