@@ -55,7 +55,7 @@ try {
         <nav>
             <ul>
                 <li><a href="adimpage.php">Visão Geral</a></li>
-                <li><a href="animais.php">Animais</a></li>
+                <li><a href="listagem-animais.php">Animais</a></li>
                 <li class="active"><a href="abrigos.php">Abrigos</a></li>
                 <li><a href="usuarios.php">Usuários</a></li>
                 <li><a href="index.php">Sair do Painel</a></li>
