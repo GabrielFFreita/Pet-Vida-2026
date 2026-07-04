@@ -1,4 +1,14 @@
 <?php
+/*
+|--------------------------------------------------------------------------
+| Contexto da feature
+|--------------------------------------------------------------------------
+| Tela dedicada a edicao de usuarios no painel administrativo.
+| Esta feature separa a manutencao cadastral da listagem principal,
+| preservando o padrao visual do admin e atualizando os dados da
+| tabela usuarios com validacoes basicas.
+|--------------------------------------------------------------------------
+*/
 require_once "conexao.php";
 require_once "config_sessao.php";
 

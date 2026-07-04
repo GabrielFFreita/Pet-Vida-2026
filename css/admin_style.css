@@ -1,3 +1,14 @@
+/*
+|--------------------------------------------------------------------------
+| Contexto da feature
+|--------------------------------------------------------------------------
+| Estilos complementares da administracao de usuarios.
+| Este bloco concentra os ajustes visuais adicionados para a nova
+| listagem, formulario de edicao e confirmacao de exclusao,
+| mantendo a paleta e os componentes do painel admin existente.
+|--------------------------------------------------------------------------
+*/
+
 :root {
     --primaria: #2D6A4F;
     --primaria-escura: #1B4332;

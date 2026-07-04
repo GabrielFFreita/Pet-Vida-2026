@@ -1,4 +1,14 @@
 <?php
+/*
+|--------------------------------------------------------------------------
+| Contexto da feature
+|--------------------------------------------------------------------------
+| Tela principal de gerenciamento de usuarios do painel administrativo.
+| Esta feature reorganiza a listagem, destaca metricas resumidas e
+| centraliza os acessos para edicao e exclusao sem permitir inclusao
+| de novos usuarios nesta pagina.
+|--------------------------------------------------------------------------
+*/
 require_once "conexao.php";
 require_once "config_sessao.php";
 

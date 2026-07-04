@@ -1,4 +1,14 @@
 <?php
+/*
+|--------------------------------------------------------------------------
+| Contexto da feature
+|--------------------------------------------------------------------------
+| Tela dedicada a confirmacao e exclusao de usuarios no painel
+| administrativo. Esta feature valida vinculos com adocao e doacao,
+| bloqueia autoexclusao e concentra a remocao em um fluxo separado
+| da listagem principal.
+|--------------------------------------------------------------------------
+*/
 require_once "conexao.php";
 require_once "config_sessao.php";
 
