@@ -4,13 +4,9 @@ session_start();
 
 try {
     // Faz o JOIN com a tabela foto_animal para trazer a coluna ds_img correspondente
-    $sql = "SELECT a.*, fp.ds_img 
+    $sql = "SELECT a.id_animal, a.nome, a.idade, a.raca, a.especie, a.sexo, a.porte, a.peso, a.vacinado, a.descricao, a.status_adocao, f.ds_img 
             FROM animais_adocao a 
-            LEFT JOIN (
-                SELECT id_animal, MIN(ds_img) AS ds_img
-                FROM foto_animal
-                GROUP BY id_animal
-            ) fp ON a.id_animal = fp.id_animal 
+            LEFT JOIN foto_animal f ON a.id_animal = f.id_animal 
             WHERE a.status_adocao = 'Disponível' 
             LIMIT 4";
     $stmt = $pdo->query($sql);
@@ -28,7 +24,7 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -43,11 +39,11 @@ try {
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
 
-    <!-- Cabeçalho -->
     <header class="cabecalho-principal">
         <div class="conteudo-cabecalho">
             <div class="logo">
-                <img src="img/Logo Pet Vida.png" alt="Logo Pet Vida">
+                <img src="img/logo_petvida.png" alt="Logo Pet Vida">
+                <span class="logo-text">Pet <em>Vida</em></span>
             </div>
             
             <div class="barra-busca">
@@ -56,30 +52,25 @@ try {
             </div>
             
             <div class="acoes-cabecalho">
-                <div class="acao-cabecalho" id="btnFavoritos">
+                <a href="adocao.html" class="botao-adote" id="btnFavoritos">
                     <i class="fas fa-heart"></i>
-                    <span>Favoritos</span>
-                </div>
+                    <span>Adote um amigo</span>
+                </a>
                 <div class="acao-cabecalho">
                     <button class="botao-doacao"><i class="fas fa-hand-holding-heart"></i> Doe/ajude</button>
                 </div>
-                <div class="acao-cabecalho" id="btnPainelAdmin" style="display: none;">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Painel Admin</span>
-                </div>
-                <div class="acao-cabecalho" id="btnSair" style="display: none;">
-                    <i class="fas fa-right-from-bracket"></i>
-                    <span>Sair</span>
-                </div>
-                <div class="acao-cabecalho" id="botaoUsuario">
-                    <i class="far fa-user"></i>
-                    <span id="textoUsuario">Entrar/Cadastrar</span>
+                <div class="acao-cabecalho" style="padding:0;background:none;border:none;">
+                    <div id="botaoUsuario" style="display:flex;flex-direction:row;align-items:center;gap:12px;cursor:pointer;">
+                        <div class="usuario-perfil-bloco" style="display:flex;flex-direction:column;align-items:center;">
+                            <i class="far fa-user" id="iconeUsuario" style="font-size:1.4rem;margin-bottom:4px;"></i>
+                            <span id="textoUsuario" style="font-size:0.8rem;font-weight:600;">Entrar/Cadastrar</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Banner -->
     <section class="banner-principal">
         <div class="slide-banner ativo">
             <img src="img/Petquiz.png" alt="Banner Pet quiz">
@@ -109,105 +100,62 @@ try {
         </div>
     </section>
 
-    <!-- Seção de Animais em Destaque -->
     <section class="animais-destaque" id="secaoAnimais">
         <div class="container-animais">
             <div class="cabecalho-animais">
                 <h2><i class="fas fa-paw"></i> Animais para Adoção</h2>
-                <button class="btn-ver-mais" onclick="verTodosAnimais()">
+                <a href="adocao.html" class="btn-ver-mais">
                     Ver mais animais <i class="fas fa-arrow-right"></i>
-                </button>
+                </a>
             </div>
-            <div class="grade-animais" id="gradeAnimaisDestaque">
-                <?php foreach ($animais_destaque as $animal): ?>
-                <div class="cartao-animal" data-id="<?= $animal['id_animal'] ?>" onclick="abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
-                    <div class="imagem-animal">
-                    <?php 
-                        // Verifica se há foto cadastrada no banco; se sim, aponta para a pasta uploads/
-                        $fotoExibicao = !empty($animal['ds_img']) ? 'uploads/' . $animal['ds_img'] : 'https://placehold.co/400x400?text=Sem+Imagem';
+
+            <div class="grade-animais">
+                <?php if (!empty($animais_destaque)): ?>
+                    <?php foreach ($animais_destaque as $animal):
+                        $sexo = trim($animal['sexo'] ?? '');
+                        $sexoClasse = mb_strtolower($sexo) === 'macho' ? 'macho' : 'femea';
+                        $imagem = !empty($animal['ds_img']) ? htmlspecialchars($animal['ds_img']) : '';
                     ?>
-                    <img src="<?= htmlspecialchars($fotoExibicao) ?>" alt="<?= htmlspecialchars($animal['nome']) ?>">
-                        <span class="etiqueta-sexo <?= $animal['sexo'] === 'Macho' ? 'macho' : 'femea' ?>"><?= $animal['sexo'] === 'Macho' ? '♂' : '♀' ?> <?= htmlspecialchars($animal['sexo']) ?></span>
-                        <button class="btn-favorito" onclick="event.stopPropagation(); toggleFavorito(<?= $animal['id_animal'] ?>, this)">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="info-animal">
-                        <h3 class="nome-animal"><?= htmlspecialchars($animal['nome']) ?></h3>
-                        <div class="raca-animal"><i class="fas fa-tag"></i> <?= htmlspecialchars($animal['raca'] ?? 'SRD') ?></div>
-                        <div class="detalhes-animal">
-                            <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= $animal['idade'] ?> <?= ($animal['idade'] == 1) ? 'ano' : 'anos' ?></div>
-                            <div class="detalhe-item"><i class="fas fa-<?= $animal['especie'] === 'Cachorro' ? 'dog' : 'cat' ?>"></i> <?= htmlspecialchars($animal['especie']) ?></div>
+                        <div class="cartao-animal"
+                             data-img="<?= $imagem ?>"
+                             data-nome="<?= htmlspecialchars($animal['nome'] ?? '') ?>"
+                             data-raca="<?= htmlspecialchars($animal['raca'] ?? '') ?>"
+                             data-sexo="<?= htmlspecialchars($sexo) ?>"
+                             data-idade="<?= htmlspecialchars($animal['idade'] ?? '') ?>"
+                             data-especie="<?= htmlspecialchars($animal['especie'] ?? '') ?>"
+                             data-peso="<?= htmlspecialchars($animal['peso'] ?? '') ?>"
+                             data-porte="<?= htmlspecialchars($animal['porte'] ?? '') ?>"
+                             data-vacinado="<?= htmlspecialchars($animal['vacinado'] ?? '') ?>"
+                             data-descricao="<?= htmlspecialchars($animal['descricao'] ?? '') ?>"
+                             onclick="abrirPreviewAnimal(this)">
+                            <div class="imagem-animal">
+                                <?php if ($imagem): ?>
+                                    <img src="<?= $imagem ?>" alt="<?= htmlspecialchars($animal['nome'] ?? 'Animal') ?>" onerror="this.style.display='none'">
+                                <?php endif; ?>
+                                <span class="etiqueta-sexo <?= $sexoClasse ?>"><?= htmlspecialchars($sexo) ?></span>
+                                <button class="btn-favorito" onclick="event.stopPropagation(); this.classList.toggle('favoritado')" aria-label="Favoritar">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="info-animal">
+                                <h3 class="nome-animal"><?= htmlspecialchars($animal['nome'] ?? '') ?></h3>
+                                <p class="raca-animal"><i class="fas fa-dna"></i> <?= htmlspecialchars($animal['raca'] ?? '') ?></p>
+                                <div class="detalhes-animal">
+                                    <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= htmlspecialchars($animal['idade'] ?? '?') ?> anos</div>
+                                    <div class="detalhe-item"><i class="fas fa-weight-hanging"></i> <?= htmlspecialchars($animal['peso'] ?? '?') ?> kg</div>
+                                </div>
+                                <button class="btn-adotar" onclick="event.stopPropagation(); abrirPreviewAnimal(this.closest('.cartao-animal'))">
+                                    <i class="fas fa-paw"></i> Ver Detalhes
+                                </button>
+                            </div>
                         </div>
-                        <button class="btn-adotar" onclick="event.stopPropagation(); abrirDetalhesAnimal(<?= $animal['id_animal'] ?>)">
-                            <i class="fas fa-heart"></i> Quero adotar
-                        </button>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                <?php if (empty($animais_destaque)): ?>
-                <div class="loading"><div class="spinner"></div> Carregando...</div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="grid-column: 1 / -1; text-align: center; color: #718096;">Nenhum animal disponível para adoção no momento.</p>
                 <?php endif; ?>
             </div>
         </div>
     </section>
-
-    <!-- Página de Todos os Animais -->
-    <div id="paginaTodosAnimais" class="pagina-todos-animais">
-        <button class="botao-voltar" onclick="voltarParaHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        
-        <h1 style="margin-bottom: 20px; color: var(--primaria);">Todos os Animais para Adoção</h1>
-        
-        <div class="filtros-animais">
-            <div class="grupo-filtro">
-                <label>Espécie</label>
-                <select id="filtroEspecie">
-                    <option value="">Todas</option>
-                    <option value="Cachorro">Cachorro</option>
-                    <option value="Gato">Gato</option>
-                </select>
-            </div>
-            <div class="grupo-filtro">
-                <label>Sexo</label>
-                <select id="filtroSexo">
-                    <option value="">Todos</option>
-                    <option value="Macho">Macho</option>
-                    <option value="Fêmea">Fêmea</option>
-                </select>
-            </div>
-            <div class="grupo-filtro">
-                <label>Porte</label>
-                <select id="filtroPorte">
-                    <option value="">Todos</option>
-                    <option value="Pequeno">Pequeno</option>
-                    <option value="Médio">Médio</option>
-                    <option value="Grande">Grande</option>
-                </select>
-            </div>
-            <button class="btn-filtrar" onclick="filtrarAnimais()">Filtrar</button>
-        </div>
-        
-        <div class="grade-animais" id="gradeTodosAnimais">
-            <div class="loading"><div class="spinner"></div> Carregando...</div>
-        </div>
-    </div>
-
-    <!-- Página de Favoritos -->
-    <div id="paginaFavoritos" class="pagina-todos-animais">
-        <button class="botao-voltar" onclick="voltarParaHome()">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
-        
-        <h1 style="margin-bottom: 20px; color: var(--primaria);">Meus Favoritos</h1>
-        
-        <div class="grade-animais" id="gradeFavoritos">
-            <div class="loading"><div class="spinner"></div> Carregando...</div>
-        </div>
-    </div>
-
-    <!-- Seção Sobre - Texto único com botão "Ler mais" geral -->
     <section class="secao-sobre">
         <div class="container-sobre">
             <div class="cabecalho-sobre">
@@ -216,7 +164,6 @@ try {
             </div>
             
             <div class="sobre-conteudo">
-                <!-- TEXTO RESUMIDO (sempre visível) -->
                 <div class="texto-resumido">
                     <h3><i class="fas fa-paw"></i> Nossa Missão</h3>
                     <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo o bem-estar animal e combatendo o abandono.</p>
@@ -231,10 +178,9 @@ try {
                     <p>Sua ajuda viabiliza o resgate de mais animais, cobre custos médicos e mantém o nosso abrigo funcionando. Cada adoção abre espaço para um novo resgate.</p>
                 </div>
                 
-                <!-- TEXTO COMPLETO (inicialmente oculto) -->
                 <div class="texto-completo">
                     <h3><i class="fas fa-paw"></i> Nossa Missão de Resgate e Adoção</h3>
-                    <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo o bem-estar animal e combatendo o abandono. Trabalhamos incansavelmente para garantir que cada animal tenha uma segunda chance e encontre uma família que o ame para sempre. Acreditamos que todo animal merece dignidade, respeito e amor.</p>
+                    <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo o bem-estar animal e combatendo o abandono. Trabalhamos incansavelmente para garantir que cada animal tenha uma segunda chance e encontre uma família que o ame para sempre. Acreditamos que todo animal merece dignidade, respeito and amor.</p>
                     
                     <h3><i class="fas fa-star"></i> Nossos Valores</h3>
                     <ul>
@@ -257,7 +203,6 @@ try {
                     </div>
                 </div>
                 
-                <!-- Botão único "Ler mais / Ler menos" -->
                 <button class="btn-ler-mais-sobre" onclick="toggleLerMaisGeral()">
                     <i class="fas fa-chevron-down"></i> Ler mais
                 </button>
@@ -265,28 +210,27 @@ try {
         </div>
     </section>
 
-    <!-- Seção Equipe -->
     <section class="secao-equipe">
         <div class="container">
             <h2 class="secao-titulo">Nossa Equipe</h2>
             <div class="equipe-grid">
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Mariana.jpeg" alt="Mariana"></div>
+                    <div class="foto-bolinha"><img src="img/mari.jpeg" alt="Mariana"></div>
                     <div class="nome">Mariana R. Patricio</div>
-                    <div class="cargo">Desenvolvedora Front-end</div>
+                    <div class="cargo">Desenvolvedora <br>Front-end</div>
                 </div>
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Gabriel.jpeg" alt="Gabriel"></div>
-                    <div class="nome">Gabriel F. Fortunato</div>
-                    <div class="cargo">Desenvolvedor Back-end</div>
+                    <div class="foto-bolinha"><img src="img/gabriel.jpeg" alt="Gabriel"></div>
+                    <div class="nome">Gabriel F. Freitas</div>
+                    <div class="cargo">Desenvolvedor <br>Back-end</div>
                 </div>
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Lais.jpeg" alt="Lais"></div>
+                    <div class="foto-bolinha"><img src="img/lais.jpeg" alt="Lais"></div>
                     <div class="nome">Lais V. Meris</div>
-                    <div class="cargo">Desenvolvedora Back-end</div>
+                    <div class="cargo">Desenvolvedora <br>Back-end</div>
                 </div>
                 <div class="membro">
-                    <div class="foto-bolinha"><img src="static/Wellingtom.jpeg" alt="Wellingtom"></div>
+                    <div class="foto-bolinha"><img src="img/welli.jpeg" alt="Wellingtom"></div>
                     <div class="nome">Wellingtom</div>
                     <div class="cargo">Desenvolvedor de Modelagem</div>
                 </div>
@@ -294,36 +238,45 @@ try {
         </div>
     </section>
 
-    <!-- Rodapé -->
     <footer class="rodape-principal">
         <div class="conteudo-rodape">
             <div class="coluna-rodape">
                 <h3>Institucional</h3>
                 <ul class="links-rodape">
                     <li><a onclick="abrirSobreNos()">Sobre nós</a></li>
-                    <li><a onclick="verTodosAnimais()">Animais para Adoção</a></li>
+                    <li><a href="adocao.html">Como adotar</a></li>
+                    <li><a href="#">Política de privacidade</a></li>
                 </ul>
             </div>
             <div class="coluna-rodape">
-                <h3>Atendimento</h3>
+                <h3>Ajuda</h3>
                 <ul class="links-rodape">
-                    <li><a onclick="abrirCentralAjuda()">Central de Ajuda</a></li>
+                    <li><a onclick="abrirCentralAjuda()">Dúvidas frequentes</a></li>
+                    <li><a href="#">Fale conosco</a></li>
                 </ul>
             </div>
             <div class="coluna-rodape">
-                <h3>Fale Conosco</h3>
+                <h3>Contato</h3>
                 <ul class="links-rodape">
-                    <li><i class="fas fa-phone"></i> (47) 99756-5199</li>
-                    <li><i class="fas fa-envelope"></i> contato@petvida.org.br</li>
+                    <li><a href="mailto:contato@petvida.org.br" class="rodape-contato-link">
+                        <i class="fas fa-envelope"></i> contato@petvida.org.br
+                    </a></li>
+                    <li><a href="tel:+554799756519" class="rodape-contato-link">
+                        <i class="fab fa-whatsapp"></i> (47) 99756-5199
+                    </a></li>
+                    <li><a href="#" class="rodape-contato-link">
+                        <i class="fab fa-instagram"></i> @petvida.oficial
+                    </a></li>
                 </ul>
                 <div class="links-sociais">
-                    <a href="#" class="link-social"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="link-social"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:contato@petvida.org.br" class="link-social" aria-label="E-mail"><i class="fas fa-envelope"></i></a>
+                    <a href="#" class="link-social" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="tel:+554799756519" class="link-social" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
         <div class="rodape-inferior">
-            <p>&copy; 2025 Pet Vida - Adote com amor</p>
+            <p>&copy; 2025 Adote com Amor · Todos os direitos reservados</p>
         </div>
     </footer>
 
@@ -331,7 +284,6 @@ try {
         <i class="fas fa-question-circle"></i>
     </div>
 
-    <!-- Modal Central de Ajuda -->
     <div id="modal-Ajuda" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button class="close" onclick="fecharModal('modal-Ajuda')">&times;</button>
@@ -422,7 +374,6 @@ try {
         </div>
     </div>
 
-    <!-- Modal Sobre Nós -->
     <div id="modalSobre" class="modal">
         <div class="modal-box">
             <button class="close" onclick="fecharModal('modalSobre')">&times;</button>
@@ -573,7 +524,6 @@ try {
         </div>
     </div>
 
-    <!-- Modal Detalhes do Animal -->
     <div id="modalAnimal" class="modal">
         <div class="modal-animal-box">
             <button class="close" onclick="fecharModalAnimal()">&times;</button>
@@ -601,7 +551,6 @@ try {
         </div>
     </div>
 
-    <!-- Modal Doação -->
     <div id="modalDoacao" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button class="close" onclick="fecharModalDoacao()">&times;</button>
@@ -663,6 +612,21 @@ try {
 
     <script src="script/script.js"></script>
     <script>
+        // Abre o modal de detalhes a partir de um card de prévia de animal
+        function abrirPreviewAnimal(card) {
+            document.getElementById('modalAnimalImg').src = card.dataset.img || '';
+            document.getElementById('modalAnimalNome').textContent = card.dataset.nome || '';
+            document.getElementById('modalAnimalRaca').textContent = card.dataset.raca || '';
+            document.getElementById('modalAnimalSexo').textContent = card.dataset.sexo || '';
+            document.getElementById('modalAnimalIdade').textContent = card.dataset.idade || '';
+            document.getElementById('modalAnimalEspecie').textContent = card.dataset.especie || '';
+            document.getElementById('modalAnimalPeso').textContent = card.dataset.peso || '';
+            document.getElementById('modalAnimalPorte').textContent = card.dataset.porte || '';
+            document.getElementById('modalAnimalVacinado').textContent = card.dataset.vacinado || '';
+            document.getElementById('modalAnimalDescricao').textContent = card.dataset.descricao || '';
+            document.getElementById('modalAnimal').style.display = 'flex';
+        }
+
         // Corrigir o evento do botão de doação
         document.querySelector('.botao-doacao').addEventListener('click', function(e) {
             e.preventDefault();

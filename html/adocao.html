@@ -20,7 +20,7 @@
     <div class="header-inner">
 
       <!-- Logo + texto Pet Vida — bloco coeso centralizado -->
-      <a href="index.php" class="logo" aria-label="Página inicial">
+      <a href="../index.php" class="logo" aria-label="Página inicial">
         <img src="../img/logo_petvida.png" alt="Pet Vida" class="logo-img">
         <!-- [ALTERADO #1] Texto Pet Vida com Playfair Display -->
         <span class="logo-text">Pet <em>Vida</em></span>
@@ -57,7 +57,7 @@
         </button>
 
         <!-- [ALTERADO #5] Botão Pet Quiz: sem ícone, mais "gordinho", agora é um link para quiz.html -->
-        <a href="quiz.php" class="btn-cta" aria-label="Pet Quiz">
+        <a href="../html/quiz.html" class="btn-cta" aria-label="Pet Quiz">
           Pet Quiz
         </a>
       </div>
@@ -113,11 +113,14 @@
         </button>
       </div>
 
-      <!-- Botão limpar filtros -->
-      <button class="filtro-limpar" id="btn-limpar-filtros" aria-label="Limpar todos os filtros">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.87"/></svg>
-        Limpar
-      </button>
+      <!-- Separador + Limpar sempre juntos na mesma linha -->
+      <div class="filtro-limpar-grupo">
+        <div class="filtros-separador" aria-hidden="true"></div>
+        <button class="filtro-limpar" id="btn-limpar-filtros" aria-label="Limpar todos os filtros">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.87"/></svg>
+          Limpar
+        </button>
+      </div>
 
     </div>
   </div>
@@ -404,20 +407,16 @@
   <!-- [ALTERADO #6] Links redirecionam para index.html; ícones de contato atualizados -->
   <footer role="contentinfo">
     <div class="footer-inner">
-      <div class="footer-marca">
-        <img src="../img/logo_petvida.png" alt="Pet Vida" class="logo-img">
-        <span class="logo-text">Pet <em>Vida</em></span>
-      </div>
       <div class="footer-links">
         <h4>Institucional</h4>
         <!-- [ALTERADO #6] Todos redirecionam para index.html -->
-        <a href="index.php">Sobre nós</a>
-        <a href="index.php">Como adotar</a>
-        <a href="index.php">Política de privacidade</a>
+        <a href="../index.php">Sobre nós</a>
+        <a href="../index.php">Como adotar</a>
+        <a href="../index.php">Política de privacidade</a>
       </div>
       <div class="footer-links">
         <h4>Ajuda</h4>
-        <a href="index.php">Dúvidas frequentes</a>
+        <a href="../index.php">Dúvidas frequentes</a>
         <a href="mailto:contato@petvida.org.br">Fale conosco</a>
       </div>
       <!-- [ALTERADO #6] Seção de contato com WhatsApp, Email e Instagram -->

@@ -32,7 +32,7 @@ try {
                 <li><a href="animais.php">Animais</a></li>
                 <li><a href="abrigos.php">Abrigos</a></li>
                 <li class="active"><a href="usuarios.php">Usuários</a></li>
-                <li><a href="../index.php">Sair do Painel</a></li>
+                <li><a href="index.php">Sair do Painel</a></li>
             </ul>
         </nav>
     </aside>
