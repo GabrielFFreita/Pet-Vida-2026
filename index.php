@@ -26,7 +26,7 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
 
@@ -52,9 +52,9 @@ try {
             </div>
             
             <div class="acoes-cabecalho">
-                <a href="adocao.html" class="botao-adote" id="btnFavoritos">
+                <a href="adocao.php" class="botao-adote" id="btnFavoritos" onclick="return irParaAdocao(event)">
                     <i class="fas fa-heart"></i>
-                    <span>Adote um amigo</span>
+                    <span>Adoção</span>
                 </a>
                 <div class="acao-cabecalho">
                     <button class="botao-doacao"><i class="fas fa-hand-holding-heart"></i> Doe/ajude</button>
@@ -104,7 +104,7 @@ try {
         <div class="container-animais">
             <div class="cabecalho-animais">
                 <h2><i class="fas fa-paw"></i> Animais para Adoção</h2>
-                <a href="adocao.html" class="btn-ver-mais">
+                <a href="adocao.php" class="btn-ver-mais" onclick="return irParaAdocao(event)">
                     Ver mais animais <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
@@ -217,22 +217,22 @@ try {
                 <div class="membro">
                     <div class="foto-bolinha"><img src="img/mari.jpeg" alt="Mariana"></div>
                     <div class="nome">Mariana R. Patricio</div>
-                    <div class="cargo">Desenvolvedora <br>Front-end</div>
+                    <div class="cargo">Desenvolvedora<br>Front-end</div>
                 </div>
                 <div class="membro">
                     <div class="foto-bolinha"><img src="img/gabriel.jpeg" alt="Gabriel"></div>
                     <div class="nome">Gabriel F. Freitas</div>
-                    <div class="cargo">Desenvolvedor <br>Back-end</div>
+                    <div class="cargo">Desenvolvedor<br>Back-end</div>
                 </div>
                 <div class="membro">
                     <div class="foto-bolinha"><img src="img/lais.jpeg" alt="Lais"></div>
                     <div class="nome">Lais V. Meris</div>
-                    <div class="cargo">Desenvolvedora <br>Back-end</div>
+                    <div class="cargo">Desenvolvedora<br>Back-end</div>
                 </div>
                 <div class="membro">
                     <div class="foto-bolinha"><img src="img/welli.jpeg" alt="Wellingtom"></div>
                     <div class="nome">Wellingtom</div>
-                    <div class="cargo">Desenvolvedor de Modelagem</div>
+                    <div class="cargo">Desenvolvedor<br>de Modelagem</div>
                 </div>
             </div>
         </div>
@@ -244,7 +244,7 @@ try {
                 <h3>Institucional</h3>
                 <ul class="links-rodape">
                     <li><a onclick="abrirSobreNos()">Sobre nós</a></li>
-                    <li><a href="adocao.html">Como adotar</a></li>
+                    <li><a href="adocao.php">Como adotar</a></li>
                     <li><a href="#">Política de privacidade</a></li>
                 </ul>
             </div>
@@ -590,8 +590,19 @@ try {
             </div>
             
             <div id="valorDoacaoDiv" style="display: none;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <img src="img/qrcode_pix.png" alt="QR Code Pix" style="width: 180px; height: 180px; border: 1px solid #e2e8f0; border-radius: var(--raio); padding: 6px; background: #fff;">
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">Escaneie o QR Code com o app do seu banco</p>
+                </div>
                 <div class="form-group">
-                    <label>Valor (R$)</label>
+                    <label>Ou copie a chave Pix</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" class="form-control" id="chavePix" value="contato@petvida.org.br" readonly>
+                        <button type="button" class="btn" style="background: var(--primaria); padding: 10px 16px; white-space: nowrap;" onclick="copiarChavePix()">Copiar</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Valor doado (opcional, apenas para nosso controle)</label>
                     <input type="number" class="form-control" id="valorDoacao" step="0.01" min="1" placeholder="Ex: 50.00">
                 </div>
             </div>
@@ -602,6 +613,17 @@ try {
                     <textarea class="form-control" id="descricaoOutro" rows="3" placeholder="Ex: 3 cobertores, 2 coleiras, 1 caixa de transporte..."></textarea>
                 </div>
             </div>
+
+            <div id="infoDoacaoDiv" style="display: none; background: #f4f8f6; border-radius: var(--raio); padding: 15px 18px; margin-bottom: 15px;">
+                <p style="font-weight: 600; margin-bottom: 8px; color: var(--primaria);">
+                    <i class="fas fa-lightbulb"></i> Itens sugeridos:
+                </p>
+                <ul id="listaSugestoesDoacao" style="padding-left: 20px; line-height: 1.8; margin: 0;"></ul>
+                <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
+                    <label>O que você vai enviar?</label>
+                    <textarea class="form-control" id="detalheDoacao" rows="2" placeholder="Ex: 2 pacotes de ração, 1 caixa de vermífugo..."></textarea>
+                </div>
+            </div>
             
             <button class="btn" onclick="enviarDoacao()" style="background: var(--primaria);">Confirmar Doação</button>
             <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: #666;">
@@ -610,7 +632,7 @@ try {
         </div>
     </div>
 
-    <script src="script/script.js"></script>
+    <script src="script/script.js?v=11"></script>
     <script>
         // Abre o modal de detalhes a partir de um card de prévia de animal
         function abrirPreviewAnimal(card) {
@@ -633,10 +655,37 @@ try {
             abrirModalDoacao();
         });
         
+        // Sugestões de itens exibidas para cada categoria de doação
+        const sugestoesDoacao = {
+            'Ração': [
+                'Ração seca para cães e gatos (filhotes, adultos e idosos)',
+                'Ração úmida (sachês/latas)',
+                'Petiscos saudáveis'
+            ],
+            'Roupa': [
+                'Cobertores e mantas',
+                'Casaquinhos para dias frios',
+                'Toalhas de banho'
+            ],
+            'Brinquedo': [
+                'Bolinhas e mordedores',
+                'Brinquedos de corda',
+                'Arranhadores para gatos'
+            ],
+            'Medicamento': [
+                'Vermífugos',
+                'Antipulgas e carrapatos',
+                'Vacinas (V8/V10, antirrábica)',
+                'Soro fisiológico, gaze e curativos'
+            ]
+        };
+
         // Mostrar/esconder campo de valor quando selecionar Dinheiro
         function selecionarTipoDoacao(tipo, elemento) {
             const valorDiv = document.getElementById('valorDoacaoDiv');
             const outroDiv = document.getElementById('outroDoacao');
+            const infoDiv = document.getElementById('infoDoacaoDiv');
+            const listaSugestoes = document.getElementById('listaSugestoesDoacao');
             
             document.querySelectorAll('.opcao-doacao').forEach(opt => opt.classList.remove('selecionado'));
             elemento.classList.add('selecionado');
@@ -645,12 +694,21 @@ try {
             if (tipo === 'Dinheiro') {
                 valorDiv.style.display = 'block';
                 outroDiv.style.display = 'none';
+                infoDiv.style.display = 'none';
             } else if (tipo === 'Outro') {
                 valorDiv.style.display = 'none';
                 outroDiv.style.display = 'block';
+                infoDiv.style.display = 'none';
+            } else if (sugestoesDoacao[tipo]) {
+                valorDiv.style.display = 'none';
+                outroDiv.style.display = 'none';
+                listaSugestoes.innerHTML = sugestoesDoacao[tipo].map(item => `<li>${item}</li>`).join('');
+                document.getElementById('detalheDoacao').value = '';
+                infoDiv.style.display = 'block';
             } else {
                 valorDiv.style.display = 'none';
                 outroDiv.style.display = 'none';
+                infoDiv.style.display = 'none';
             }
         }
     </script>

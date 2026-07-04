@@ -8,8 +8,8 @@
     --raio: 8px;
     --sombra: 0 4px 12px rgba(0, 0, 0, 0.1);
     --transicao: all 0.3s ease;
-    --cor-botao-login: #ffa46f;
-    --cor-botao-hover: #f2894c;
+    --cor-botao-login: #1B4332;
+    --cor-botao-hover: #2d6a4f;
     --cor-erro: #f44336;
 }
 
@@ -39,11 +39,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1200px;
+    max-width: 1320px;
     margin: 0 auto;
-    padding: 5px 5px;
+    padding: 16px 24px 16px 16px;
     flex-wrap: wrap;
-    gap: 2px;
+    gap: 20px;
 }
 
 .logo {
@@ -89,10 +89,10 @@ body {
 
 .barra-busca input {
     width: 100%;
-    padding: 12px 20px;
+    padding: 9px 16px;
     border: 2px solid #e2e8f0;
     border-radius: 30px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: var(--transicao);
 }
 
@@ -103,12 +103,12 @@ body {
 
 .barra-busca button {
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 4px;
+    top: 4px;
     background: var(--primaria);
     border: none;
     color: white;
-    padding: 7px 15px;
+    padding: 6px 13px;
     border-radius: 30px;
     cursor: pointer;
 }
@@ -117,15 +117,20 @@ body {
     background: var(--destaque);
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 30px;
     font-weight: 700;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: var(--transicao);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     margin-right: 15px;
+}
+
+.botao-doacao i {
+    font-size: 0.9rem;
 }
 
 .botao-doacao:hover {
@@ -133,10 +138,48 @@ body {
     transform: translateY(-2px);
 }
 
+.botao-painel-admin {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primaria), #2d6a4f);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(27, 67, 50, 0.35);
+    transition: var(--transicao);
+}
+
+.botao-painel-admin:hover {
+    background: linear-gradient(135deg, #2d6a4f, var(--primaria));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(27, 67, 50, 0.45);
+}
+
 .acoes-cabecalho {
     display: flex;
     gap: 20px;
     align-items: center;
+}
+
+/* Layout compacto: só entra em ação depois que o usuário faz login,
+   quando aparecem mais elementos (Painel Admin, nome, sair) no cabeçalho */
+.conteudo-cabecalho.tem-usuario-logado {
+    justify-content: flex-start;
+}
+
+.conteudo-cabecalho.tem-usuario-logado .barra-busca {
+    flex: 0 1 340px;
+    max-width: 340px;
+}
+
+.conteudo-cabecalho.tem-usuario-logado .acoes-cabecalho {
+    margin-left: auto;
 }
 
 .acao-cabecalho {
@@ -164,25 +207,25 @@ body {
     background: var(--primaria);
     color: white;
     border: none;
-    padding: 10px 22px;
+    padding: 8px 16px;
     border-radius: 30px;
     font-weight: 700;
     cursor: pointer;
     transition: var(--transicao);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     text-decoration: none;
     box-shadow: 0 4px 12px rgba(27, 67, 50, 0.25);
 }
 
 .botao-adote i {
-    font-size: 1rem;
+    font-size: 0.9rem;
     margin-bottom: 0;
 }
 
 .botao-adote span {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
 .botao-adote:hover {
@@ -291,7 +334,7 @@ body {
 
 /* Seção de Animais */
 .animais-destaque {
-    padding: 60px 20px;
+    padding: 45px 20px;
     background-color: #fcfbf5;
 }
 
@@ -673,6 +716,18 @@ body {
     font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
+    transition: var(--transicao);
+}
+
+.btn:hover {
+    background: var(--cor-botao-hover);
+    transform: translateY(-2px);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .footer-modal {
@@ -683,7 +738,8 @@ body {
 }
 
 .link {
-    color: var(--cor-botao-login);
+    color: var(--destaque);
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -695,7 +751,7 @@ body {
 
 /* ========== SEÇÃO SOBRE - ESTILO PROFISSIONAL (TEXTO ÚNICO COM LER MAIS) ========== */
 .secao-sobre {
-    padding: 80px 20px;
+    padding: 50px 20px;
     background: #fcfbf5;
 }
 
@@ -704,12 +760,12 @@ body {
     margin: 0 auto;
     background: #fcfbf5;
     border-radius: 20px;
-    padding: 50px;
+    padding: 35px 50px;
 }
 
 .cabecalho-sobre {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
 }
 
 .titulo-sobre {
@@ -835,7 +891,7 @@ body {
 
 /* Seção Equipe */
 .secao-equipe {
-    padding: 50px 20px;
+    padding: 35px 20px;
     background: #fffdfc;
 }
 
@@ -853,13 +909,14 @@ body {
 .equipe-grid {
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     gap: 40px;
     flex-wrap: wrap;
 }
 
 .membro {
     text-align: center;
-    max-width: 200px;
+    width: 160px;
 }
 
 .foto-bolinha {
@@ -880,6 +937,12 @@ body {
 .nome {
     font-weight: bold;
     margin-bottom: 5px;
+}
+
+.cargo {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
 }
 
 /* Rodapé */

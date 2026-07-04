@@ -208,6 +208,20 @@ function fecharModalDoacao() {
     document.getElementById('outroDoacao').style.display = 'none';
     if (document.getElementById('valorDoacao')) document.getElementById('valorDoacao').value = '';
     if (document.getElementById('descricaoOutro')) document.getElementById('descricaoOutro').value = '';
+    if (document.getElementById('infoDoacaoDiv')) document.getElementById('infoDoacaoDiv').style.display = 'none';
+    if (document.getElementById('detalheDoacao')) document.getElementById('detalheDoacao').value = '';
+}
+
+function copiarChavePix() {
+    const campo = document.getElementById('chavePix');
+    if (!campo) return;
+    navigator.clipboard.writeText(campo.value).then(() => {
+        alert('Chave Pix copiada!');
+    }).catch(() => {
+        campo.select();
+        document.execCommand('copy');
+        alert('Chave Pix copiada!');
+    });
 }
 
 function selecionarTipoDoacao(tipo, elemento) {
@@ -247,12 +261,17 @@ async function enviarDoacao() {
     let valor = null;
     
     if (tipoDoacaoSelecionado === 'Dinheiro') {
-        valor = parseFloat(document.getElementById('valorDoacao').value);
-        if (isNaN(valor) || valor <= 0) {
-            alert('Informe um valor válido para doação.');
-            return;
+        const valorInformado = document.getElementById('valorDoacao').value;
+        if (valorInformado) {
+            valor = parseFloat(valorInformado);
+            if (isNaN(valor) || valor <= 0) {
+                alert('Informe um valor válido para doação.');
+                return;
+            }
+            descricao = `Doação via Pix de R$ ${valor.toFixed(2)}`;
+        } else {
+            descricao = 'Doação via Pix';
         }
-        descricao = `Doação de R$ ${valor.toFixed(2)}`;
     } else if (tipoDoacaoSelecionado === 'Outro') {
         descricao = document.getElementById('descricaoOutro').value;
         if (!descricao) {
@@ -260,7 +279,13 @@ async function enviarDoacao() {
             return;
         }
     } else {
-        descricao = `Doação de ${tipoDoacaoSelecionado}`;
+        const campoDetalhe = document.getElementById('detalheDoacao');
+        const detalhe = campoDetalhe ? campoDetalhe.value.trim() : '';
+        if (!detalhe) {
+            alert('Descreva o que você vai enviar.');
+            return;
+        }
+        descricao = `Doação de ${tipoDoacaoSelecionado}: ${detalhe}`;
     }
     
     const result = await fetchAPI('api.php?acao=doar', {
@@ -362,6 +387,22 @@ function toggleLerMaisGeral() {
 }
 
 // ========== NAVEGAÇÃO ==========
+// Exige que o usuário esteja cadastrado/logado antes de acessar adocao.php
+// (mesma regra já usada para doações). O clique é sempre interceptado;
+// só avançamos para adocao.php manualmente se o usuário estiver logado.
+function irParaAdocao(e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    if (!usuarioLogado) {
+        alert('Você precisa se cadastrar para ver os animais disponíveis para adoção.');
+        abrirLogin();
+        return false;
+    }
+
+    window.location.href = 'adocao.php';
+    return false;
+}
+
 function verTodosAnimais() {
     const banner = document.querySelector('.banner-principal');
     const secaoAnimais = document.getElementById('secaoAnimais');
@@ -428,30 +469,32 @@ function atualizarInterfaceUsuario() {
     const botaoUsuario = document.getElementById('botaoUsuario');
     if (!botaoUsuario) return;
 
+    // Ativa o layout compacto (barra mais fina, botões no canto) somente
+    // quando o usuário logado for admin, já que aí aparece o botão extra
+    // "Painel Admin". Para usuário comum ou sem login, a barra fica centralizada.
+    const conteudoCabecalho = document.querySelector('.conteudo-cabecalho');
+    if (conteudoCabecalho) {
+        const ehAdmin = !!(usuarioLogado && usuarioLogado.perfil === 'admin');
+        conteudoCabecalho.classList.toggle('tem-usuario-logado', ehAdmin);
+    }
+
     // Garante que o wrapper sempre seja row (não herda column do acao-cabecalho)
     botaoUsuario.style.cssText = 'display:flex;flex-direction:row;align-items:center;gap:20px;cursor:pointer;background:none;border:none;padding:0;';
 
     if (usuarioLogado) {
         // Exibe o botão "Painel Admin" apenas se o perfil do usuário for 'admin'
         const btnAdmin = usuarioLogado.perfil === 'admin'
-            ? `<a href="adimpage.php" id="btnPainelAdmin"
-                    style="display:inline-flex;align-items:center;gap:6px;
-                           background:var(--primaria);color:#fff;border:none;border-radius:20px;
-                           padding:6px 14px;font-size:0.78rem;font-weight:700;
-                           text-decoration:none;white-space:nowrap;cursor:pointer;
-                           transition:background 0.2s,transform 0.2s;">
-                    <i class="fas fa-shield-alt"></i> Painel Admin
-               </a>`
+            ? `<a href="adimpage.php" id="btnPainelAdmin" class="botao-painel-admin">Painel Admin</a>`
             : '';
 
         botaoUsuario.innerHTML = `
+            ${btnAdmin}
             <div style="display:flex;flex-direction:column;align-items:center;line-height:1;">
                 <i class="far fa-user" id="iconeUsuario" style="font-size:1.4rem;margin-bottom:4px;color:#2d3748;"></i>
                 <span id="textoUsuario" style="font-size:0.8rem;font-weight:600;color:#333;white-space:nowrap;">${usuarioLogado.nome}</span>
             </div>
-            ${btnAdmin}
             <button id="btnSairEfetivo" onclick="deslogarUsuario(event)"
-                style="display:inline-flex;flex-direction:row;align-items:center;gap:6px;background:transparent;border:none;outline:none;color:#e53e3e;padding:0;font-size:1rem;font-weight:700;text-transform:uppercase;cursor:pointer;white-space:nowrap;">
+                style="display:inline-flex;flex-direction:row;align-items:center;gap:6px;background:transparent;border:none;outline:none;color:#e53e3e;padding:0;margin-left:36px;font-size:1rem;font-weight:700;text-transform:uppercase;cursor:pointer;white-space:nowrap;">
                 <i class="fas fa-sign-out-alt" style="font-size:1.3rem;color:#e53e3e;"></i> Sair
             </button>
         `;
@@ -473,6 +516,15 @@ function deslogarUsuario(event) {
     alert('Sessão encerrada com sucesso.');
 }
 function abrirLogin() {
+    // Limpa os campos e mensagens de erro para não ficar com dados
+    // de uma tentativa anterior quando o modal é reaberto
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) loginForm.reset();
+    const cadastroForm = document.getElementById('cadastroForm');
+    if (cadastroForm) cadastroForm.reset();
+    const loginSenhaError = document.getElementById('loginSenhaError');
+    if (loginSenhaError) loginSenhaError.textContent = '';
+
     document.getElementById('modalLogin').style.display = 'flex';
     alternarFormulario('cadastro');
     document.body.style.overflow = 'hidden';
@@ -580,7 +632,7 @@ async function verificarSessao() {
 
 // ========== EVENTOS E INICIALIZAÇÃO ==========
 document.addEventListener('DOMContentLoaded', function() {
-    verificarSessao();
+    // verificarSessao(); // Desativado: a página deve sempre abrir sem nenhum usuário logado
     carregarAnimais('gradeAnimaisDestaque', 4);
     iniciarCarrossel();
     
@@ -617,11 +669,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 abrirLogin();
             }
         });
-    }
-    
-    const btnFavoritos = document.getElementById('btnFavoritos');
-    if (btnFavoritos) {
-        btnFavoritos.addEventListener('click', verFavoritos);
     }
     
     window.onclick = function(event) {
@@ -702,7 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 usuarioLogado = result.usuario;
                 atualizarInterfaceUsuario();
                 fecharModal('modalLogin');
-                if (document.getElementById('paginaFavoritos').style.display === 'block') {
+                if (document.getElementById('paginaFavoritos')?.style.display === 'block') {
                     carregarFavoritos();
                 }
                 alert(`Bem-vindo(a), ${usuarioLogado.nome}!`);
