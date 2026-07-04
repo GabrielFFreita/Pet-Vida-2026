@@ -138,19 +138,6 @@ foreach ($abrigos as $abrigo) {
         <button data-filtro-sexo="femea" class="filtro-pill filtro-pill--sexo" id="filtro-femea">Fêmea</button>
       </div>
 
-      <?php if (!empty($racasUnicas)): ?>
-      <div class="filtros-separador" aria-hidden="true"></div>
-
-      <div class="filtros-grupo" role="group" aria-label="Filtrar por raça">
-        <button data-filtro-raca="todos" class="filtro-pill filtro-pill--raca filtro-ativo" id="filtro-raca-todos">Todas as raças</button>
-        <?php foreach ($racasUnicas as $raca): ?>
-          <button data-filtro-raca="<?= htmlspecialchars($raca, ENT_QUOTES, 'UTF-8') ?>" class="filtro-pill filtro-pill--raca">
-            <?= htmlspecialchars($raca, ENT_QUOTES, 'UTF-8') ?>
-          </button>
-        <?php endforeach; ?>
-      </div>
-      <?php endif; ?>
-
       <button class="filtro-limpar" id="btn-limpar-filtros" aria-label="Limpar todos os filtros">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.87"/></svg>
         Limpar
