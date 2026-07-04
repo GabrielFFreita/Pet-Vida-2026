@@ -35,7 +35,7 @@ function renderCardAnimal(array $animal): string {
     $abrigo    = !empty($animal['abrigo']) ? e($animal['abrigo']) : 'Localização não informada';
 
     // A tabela animais_adocao não possui campo de foto: usa imagem padrão.
-    $foto = !empty($animal['foto']) ? e($animal['foto']) : '../static/pet-placeholder.jpg';
+    $foto = !empty($animal['ds_img']) ? '../uploads/' . e($animal['ds_img']) : '../static/pet-placeholder.jpg';
 
     $tagClasse = ($especie === 'Gato') ? 'tag-gato' : 'tag-cachorro';
 
@@ -132,13 +132,22 @@ function processarQuiz(PDO $pdo, array $respostas): string {
     }
 
         // ── Monta a consulta com PDO + prepared statements ──────────────
+        // Usamos uma subquery correlacionada em vez de JOIN com foto_animal
+        // porque um mesmo animal pode ter várias fotos cadastradas: um JOIN
+        // normal traria uma linha (e um card) para cada foto. A subquery
+        // pega só a foto de menor id_foto (a primeira registrada) de cada
+        // animal, garantindo uma única linha por animal.
         $sql = "
         SELECT
             a.*,
-            f.nome_foto
+            (
+                SELECT f.ds_img
+                FROM foto_animal f
+                WHERE f.id_animal = a.id_animal
+                ORDER BY f.id_foto ASC
+                LIMIT 1
+            ) AS ds_img
         FROM animais_adocao a
-        LEFT JOIN foto_animal f
-            ON a.id_animal = f.id_animal
         WHERE a.status_adocao = 'Disponível'
         ";
 
