@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Quiz - Pet Vida</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/adocao.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+
+<div class="quiz-wrapper">
+    <div class="quiz-card">
+
+        <h1 class="quiz-titulo">Pet <em>Quiz</em></h1>
+        <p class="quiz-subtitulo">Descubra quais pets combinam com seu perfil!</p>
+
+        <div class="topo-quiz">
+            <span id="contador">Pergunta 1 de 8</span>
+            <div class="linha-progresso" id="linhaProgresso"></div>
+        </div>
+
+        <h2 id="pergunta"></h2>
+
+        <div class="opcoes-quiz" id="opcoes"></div>
+
+        <div class="botoes-quiz">
+            <button id="voltar">Voltar</button>
+            <button id="btnResultado">Dar Match <i class="fa-solid fa-heart"></i></button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Tela de carregamento (inicialmente oculta) -->
+<div class="carregando-wrapper-total" id="loadingScreen" style="display:none;">
+    <svg class="pata-svg-gigante" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse class="dedo" id="d1" cx="13.5" cy="44" rx="13.5" ry="17.5" />
+        <ellipse class="dedo" id="d2" cx="34.5" cy="17.5" rx="13.5" ry="17.5" />
+        <ellipse class="dedo" id="d3" cx="65.5" cy="17.5" rx="13.5" ry="17.5" />
+        <ellipse class="dedo" id="d4" cx="86.5" cy="44" rx="13.5" ry="17.5" />
+        <path class="almofada-central" d="M 50,40.5 
+                 C 34.5,40.5 27.5,53.5 27.5,60.5
+                 C 27.5,67 15,75.5 15,86
+                 C 15,96 32,100 50,93.5
+                 C 68,100 85,96 85,86
+                 C 85,75.5 72.5,67 72.5,60.5
+                 C 72.5,53.5 65.5,40.5 50,40.5 Z" />
+    </svg>
+</div>
+
+<script src="../js/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,568 @@
+/* ==========================================================================
+   PALETA DE CORES (Inspirada no modelo: Adote com Amor)
+   ========================================================================== */
+   :root {
+    /* Cores Principais */
+    --primary: #526c34;       /* Verde oliva elegante (Botões secundários e textos de cabeçalho) */
+    --secondary: #e67d22;     /* Laranja quente/vibrante (Botões principais de destaque e quiz) */
+    --destaque: #d35400;      /* Laranja escuro para estados de Hover */
+    --light: #fcf9f2;         /* Fundo da página (Bege ultra suave, confortável aos olhos) */
+    --dark: #4a3b32;          /* Texto escuro (Marrom café, muito mais suave que o preto puro) */
+    --gray: #f0ebe1;          /* Bordas e fundos secundários leves */
+    
+    /* Estados e Auxiliares */
+    --success: #2ecc71;       /* Verde para badges de sucesso/novo */
+    --warning: #f1c40f;       /* Amarelo para urgências */
+    --radius: 16px;           /* Cantos mais arredondados e amigáveis como no modelo */
+    --shadow: 0 10px 30px rgba(74, 59, 50, 0.05); /* Sombra suave orgânica */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* ==========================================================================
+     ESTILOS GERAIS
+     ========================================================================== */
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--light);
+    color: var(--dark);
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  header {
+    background: white; /* Removido o gradiente pesado por um topo limpo e minimalista */
+    text-align: center;
+    padding: 35px 20px;
+    border-bottom: 1px solid var(--gray);
+  }
+  
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--dark);
+    margin: 0;
+    font-weight: 600;
+    font-size: 2.2rem;
+    letter-spacing: -0.5px;
+  }
+  
+  /* ==========================================================================
+     INTERFACES DE FILTROS E BUSCA
+     ========================================================================== */
+  #barra-busca {
+    padding: 20px;
+    text-align: center;
+    background-color: white;
+    border-bottom: 1px solid var(--gray);
+  }
+  
+  #busca-pet {
+    padding: 14px 20px;
+    border-radius: 30px; /* Estilo pílula moderno */
+    border: 1px solid var(--gray);
+    background-color: var(--light);
+    width: 85%;
+    max-width: 450px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    transition: var(--transition);
+  }
+  
+  #busca-pet:focus {
+    outline: none;
+    border-color: var(--secondary);
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(230, 125, 34, 0.15);
+  }
+  
+  /* Botão Flutuante (FAB) */
+  .fab-filtros {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 8px 25px rgba(82, 108, 52, 0.3);
+    transition: var(--transition);
+  }
+  
+  .fab-filtros:hover {
+    background-color: var(--dark);
+    transform: translateY(-50%) scale(1.05);
+  }
+  
+  .fab-filtros svg {
+    width: 22px;
+    height: 22px;
+    fill: white;
+  }
+  
+  /* Sidebar de Filtros */
+  #sidebar-filtros {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%) translateX(-100%);
+    width: 290px;
+    height: 80vh;
+    max-height: 600px;
+    background-color: white;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 30px 25px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    transition: var(--transition);
+  }
+  
+  #sidebar-filtros.mostrar {
+    transform: translateY(-50%) translateX(0);
+  }
+  
+  #sidebar-filtros h2 {
+    color: var(--dark);
+    font-size: 1.4rem;
+    margin-top: 0;
+    border-bottom: 2px solid var(--gray);
+    padding-bottom: 12px;
+  }
+  
+  .grupo-filtros h3 {
+    color: var(--primary);
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .filtro-opcoes button {
+    background-color: var(--light);
+    color: var(--dark);
+    border: 1px solid var(--gray);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    text-align: left;
+    transition: var(--transition);
+  }
+  
+  .filtro-opcoes button:hover {
+    background-color: var(--gray);
+    border-color: #dcd6cb;
+  }
+  
+  .filtro-opcoes button.filtro-ativo {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .btn-limpar-filtros {
+    background-color: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 12px;
+    width: 100%;
+    margin-top: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+  }
+  
+  .btn-limpar-filtros:hover {
+    background-color: var(--primary);
+    color: white;
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(74, 59, 50, 0.4);
+    backdrop-filter: blur(4px); /* Efeito moderno de desfoque ao fundo */
+    z-index: 999;
+    display: none;
+  }
+  
+  .overlay.mostrar {
+    display: block;
+  }
+  
+  /* ==========================================================================
+     CARDS DE PETS (Alinhado com a seção "Seu Resultado" da imagem)
+     ========================================================================== */
+  #lista-pets {
+    padding: 40px 20px;
+    min-height: 60vh;
+  }
+  
+  .pets-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+  }
+  
+  .pet-card {
+    background-color: white;
+    border: 1px solid var(--gray);
+    border-radius: var(--radius);
+    padding: 16px;
+    width: 250px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pet-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(74, 59, 50, 0.08);
+  }
+  
+  .pet-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: calc(var(--radius) - 4px);
+    background-color: var(--light);
+    transition: var(--transition);
+  }
+  
+  .pet-nome {
+    font-size: 1.3rem;
+    color: var(--dark);
+    font-weight: 600;
+    margin: 12px 0 4px 0;
+  }
+  
+  .pet-localizacao {
+    color: #8e7d73;
+    font-size: 0.85rem;
+    margin: 0 0 15px 0;
+  }
+  
+  /* Botões dos Cards */
+  .btn-detalhes {
+    background-color: var(--secondary); /* Laranja vibrante principal */
+    color: white;
+    padding: 12px 16px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: 'Montserrat', sans-serif;
+    transition: var(--transition);
+    width: 100%;
+    margin-top: auto; /* Garante alinhamento na base */
+  }
+  
+  .btn-detalhes:hover {
+    background-color: var(--destaque);
+    box-shadow: 0 5px 15px rgba(230, 125, 34, 0.3);
+  }
+  
+  /* Badges de Status nos Cards */
+  .badge {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .badge.novo { background-color: var(--success); }
+  .badge.urgente { background-color: var(--secondary); }
+  
+  /* ==========================================================================
+     TELA DE DETALHES DO PET E CARROSSEL
+     ========================================================================== */
+  #detalhes-pet {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--light);
+    z-index: 2000;
+    overflow-y: auto;
+    padding: 40px 20px;
+  }
+  
+  .detalhes-container {
+    max-width: 850px;
+    margin: 0 auto;
+    padding-bottom: 60px;
+  }
+  
+  .carrossel-container {
+    position: relative;
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto 30px;
+  }
+  
+  .carrossel-imagens {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: var(--radius);
+    position: relative;
+    box-shadow: var(--shadow);
+    background-color: white;
+  }
+  
+  .carrossel-imagens img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .carrossel-controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+  }
+  
+  .carrossel-btn {
+    background-color: white;
+    color: var(--dark);
+    border: 1px solid var(--gray);
+    border-radius: 30px;
+    padding: 8px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .carrossel-btn:hover {
+    background-color: var(--dark);
+    color: white;
+  }
+  
+  .indicador {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--gray);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .indicador.ativo {
+    background-color: var(--secondary);
+    transform: scale(1.3);
+  }
+  
+  /* Grade de Informações Técnicas do Pet */
+  .info-pet {
+    background-color: white;
+    padding: 35px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  
+  .info-pet h2 {
+    color: var(--dark);
+    font-size: 2rem;
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--light);
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .info-item {
+    padding: 14px 18px;
+    background-color: var(--light);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--primary);
+    font-size: 0.95rem;
+  }
+  
+  .info-item strong {
+    color: var(--primary);
+  }
+  
+  .descricao-pet {
+    margin-bottom: 30px;
+    line-height: 1.7;
+    padding: 20px;
+    background-color: #faf6ee;
+    border-radius: var(--radius);
+    color: var(--dark);
+  }
+  
+  .acoes-pet {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding-top: 25px;
+    border-top: 1px solid var(--light);
+  }
+  
+  .acoes-pet .btn-voltar {
+    background-color: transparent;
+    color: var(--dark);
+    border: 1px solid var(--gray);
+  }
+  
+  .acoes-pet .btn-voltar:hover {
+    background-color: var(--gray);
+  }
+  
+  /* Botão voltar do canto superior esquerdo */
+  .btn-voltar-canto {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: white;
+    border: 1px solid var(--gray);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+  }
+  
+  .btn-voltar-canto:hover {
+    background-color: var(--primary);
+  }
+  
+  .btn-voltar-canto:hover svg {
+    stroke: white;
+  }
+  
+  .btn-voltar-canto svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--primary);
+    stroke-width: 2.5;
+    fill: none;
+  }
+  
+  /* ==========================================================================
+     MODAIS DE CONFIRMAÇÃO (Estilo Pop-up limpo)
+     ========================================================================== */
+  .modal-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(74, 59, 50, 0.4);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2500;
+  }
+  
+  .modal {
+    background: white;
+    padding: 35px;
+    border-radius: var(--radius);
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  }
+  
+  .modal h3 {
+    color: var(--dark);
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+  
+  .info-adocao {
+    background-color: var(--light);
+    padding: 18px;
+    border-radius: var(--radius);
+    margin: 20px 0;
+    text-align: left;
+    border-left: 4px solid var(--secondary);
+  }
+  
+  .modal button {
+    padding: 12px 24px;
+    margin: 5px 8px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+  }
+  
+  .btn-sim { background-color: var(--secondary); color: white; }
+  .btn-sim:hover { background-color: var(--destaque); }
+  .btn-nao { background-color: var(--light); color: var(--dark); border: 1px solid var(--gray); }
+  .btn-nao:hover { background-color: var(--gray); }
+  
+  /* ==========================================================================
+     RODAPÉ (FOOTER)
+     ========================================================================== */
+  footer {
+    background-color: var(--dark); /* Marrom escuro para fechar o site com sobriedade */
+    color: #dcd6cb;
+    text-align: center;
+    padding: 35px 20px;
+    margin-top: 50px;
+    font-size: 0.9rem;
+  }
+  
+  footer p { margin: 8px 0; }
+  footer a { color: white; text-decoration: none; font-weight: 600; }
+  footer a:hover { text-decoration: underline; color: var(--secondary); }
+  
+  /* ==========================================================================
+     RESPONSIVIDADE AJUSTADA
+     ========================================================================== */
+  @media screen and (max-width: 768px) {
+    h1 { font-size: 1.8rem; }
+    .pet-card { width: 45%; min-width: 160px; }
+    .carrossel-imagens { height: 320px; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .pet-card { width: 100%; max-width: 290px; }
+    .acoes-pet { flex-direction: column; }
+    .btn-voltar-canto { top: 10px; left: 10px; width: 40px; height: 40px; }
+  }

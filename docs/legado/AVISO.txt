@@ -1,0 +1,31 @@
+1-Preciso adicionar e mexer no dados.php, quando tiver o form do html, para assim poder atualizar os dados e colocar novas variáveis
+2-Para fazer o upload das imagens no html para o php, o html precisa ter essa ação: <form method="POST" enctype="multipart/form-data">
+
+Estrutura da página de adimn
+
+a página admin vai ter: 
+dashboard geral
+usuarios
+abrigos
+
+dentro de abrigos vai ter:
+informações do abrigo
+cadastro de animais
+listagem de animais 
+edição de animais
+exclusão de animais
+
+dentro de usuarios vai ter:
+listagem de usuarios 
+edição de usuarios
+exclusão de usuarios
+
+//Responsabilidades Gabriel hj:
+
+-Realizar o cadastro dos animais e fazer sua inserção no banco de dados
+-Fazer a página de entrada.php ser redirecionar ao login 
+-Fazer um esboço do painel admin, com a aba de usuarios e abrigos, para testar o cadastro de animais, 
+a listagem de usuarios, abrigos e animais
+-Fazer a parte de alteração e exclusão das listagens, 
+-Fazer a mudança de status do animal dentro do banco de dados, quando ele mudar para em adoção
+-Verificar as sessões dos usuários, nas páginas que é necessário o login

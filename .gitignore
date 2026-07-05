@@ -1,0 +1,7 @@
+.env
+uploads/*
+!uploads/.gitkeep
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
