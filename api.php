@@ -35,6 +35,12 @@ switch($acao) {
     case 'verificar_sessao':
         verificarSessao();
         break;
+    case 'meus_dados':
+        meusDados();
+        break;
+    case 'atualizar_usuario':
+        atualizarUsuario();
+        break;
     case 'doar':
         registrarDoacao();
         break;
@@ -241,9 +247,19 @@ function cadastrarUsuario() {
         $_SESSION["id_usuario"] = $pdo->lastInsertId();
         $_SESSION["nome_usuario"] = $nome;
         $_SESSION["email"] = $email;
+        $_SESSION["perfil"] = 'user';
         $_SESSION['ultima_atividade'] = time();
         
-        echo json_encode(["success" => true]);
+        echo json_encode([
+            "success" => true,
+            "usuario" => [
+                "id" => (int) $_SESSION["id_usuario"],
+                "id_usuario" => (int) $_SESSION["id_usuario"],
+                "nome" => $nome,
+                "email" => $email,
+                "perfil" => 'user'
+            ]
+        ]);
     } catch (PDOException $e) {
         echo json_encode(['success' => false, 'error' => 'Erro no banco de dados: ' . $e->getMessage()]);
     }
@@ -286,6 +302,7 @@ function login() {
                     "id" => $usuario['id_usuario'],
                     "id_usuario" => $usuario['id_usuario'],
                     "nome" => $usuario['nome'],
+                    "email" => $usuario['email'],
                     "perfil" => $usuario['perfil']
                 ]
             ]);
@@ -345,12 +362,13 @@ function verificarSessao() {
                     "success" => true,
                     "logged_in" => true,
                     "usuario" => [
-                        "id" => $usuario['id_usuario'],
-                        "id_usuario" => $usuario['id_usuario'],
-                        "nome" => $usuario['nome'],
-                        "perfil" => $usuario['perfil']
-                    ]
-                ]);
+                    "id" => $usuario['id_usuario'],
+                    "id_usuario" => $usuario['id_usuario'],
+                    "nome" => $usuario['nome'],
+                    "email" => $usuario['email'],
+                    "perfil" => $usuario['perfil']
+                ]
+            ]);
                 return;
             }
         }
@@ -361,6 +379,201 @@ function verificarSessao() {
     } catch (PDOException $e) {
         echo json_encode(['success' => false, 'error' => 'Erro na sessão: ' . $e->getMessage()]);
     }
+    exit;
+}
+
+function meusDados() {
+    global $pdo;
+
+    try {
+        if (ob_get_length()) ob_clean();
+
+        if (!isset($_SESSION['id_usuario'])) {
+            echo json_encode(['success' => false, 'error' => 'Usuário não autenticado.']);
+            return;
+        }
+
+        $stmt = $pdo->prepare("
+            SELECT id_usuario, nome, idade, email, telefone, cpf, data_nascimento, endereco, cidade, estado, perfil
+            FROM usuarios
+            WHERE id_usuario = :id_usuario
+            LIMIT 1
+        ");
+        $stmt->execute([':id_usuario' => $_SESSION['id_usuario']]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$usuario) {
+            echo json_encode(['success' => false, 'error' => 'Usuário não encontrado.']);
+            return;
+        }
+
+        $_SESSION["nome_usuario"] = $usuario['nome'];
+        $_SESSION["email"] = $usuario['email'];
+        $_SESSION["perfil"] = $usuario['perfil'];
+        $_SESSION['ultima_atividade'] = time();
+
+        echo json_encode([
+            'success' => true,
+            'usuario' => [
+                'id_usuario' => (int) $usuario['id_usuario'],
+                'nome' => $usuario['nome'],
+                'idade' => $usuario['idade'] !== null ? (int) $usuario['idade'] : null,
+                'email' => $usuario['email'],
+                'telefone' => $usuario['telefone'],
+                'cpf' => $usuario['cpf'],
+                'data_nascimento' => $usuario['data_nascimento'],
+                'endereco' => $usuario['endereco'],
+                'cidade' => $usuario['cidade'],
+                'estado' => $usuario['estado'],
+                'perfil' => $usuario['perfil']
+            ]
+        ]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Erro ao buscar dados do usuário: ' . $e->getMessage()]);
+    }
+
+    exit;
+}
+
+function atualizarUsuario() {
+    global $pdo;
+
+    try {
+        if (ob_get_length()) ob_clean();
+
+        if (!isset($_SESSION['id_usuario'])) {
+            echo json_encode(['success' => false, 'error' => 'Usuário não autenticado.']);
+            return;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($data)) {
+            echo json_encode(['success' => false, 'error' => 'Corpo da requisição inválido.']);
+            return;
+        }
+
+        $nome = trim((string) ($data['nome'] ?? ''));
+        $email = trim((string) ($data['email'] ?? ''));
+        $telefone = trim((string) ($data['telefone'] ?? ''));
+        $cpf = trim((string) ($data['cpf'] ?? ''));
+        $idadeInformada = $data['idade'] ?? null;
+        $idade = $idadeInformada === '' || $idadeInformada === null ? null : (int) $idadeInformada;
+        $dataNascimento = trim((string) ($data['data_nascimento'] ?? ''));
+        $endereco = trim((string) ($data['endereco'] ?? ''));
+        $cidade = trim((string) ($data['cidade'] ?? ''));
+        $estado = trim((string) ($data['estado'] ?? ''));
+        $novaSenha = (string) ($data['nova_senha'] ?? '');
+        $confirmarSenha = (string) ($data['confirmar_senha'] ?? '');
+
+        if ($nome === '' || $email === '') {
+            echo json_encode(['success' => false, 'error' => 'Nome e e-mail são obrigatórios.']);
+            return;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'error' => 'Informe um e-mail válido.']);
+            return;
+        }
+
+        if ($idade !== null && $idade < 0) {
+            echo json_encode(['success' => false, 'error' => 'Informe uma idade válida.']);
+            return;
+        }
+
+        if ($novaSenha !== '' || $confirmarSenha !== '') {
+            if ($novaSenha !== $confirmarSenha) {
+                echo json_encode(['success' => false, 'error' => 'A confirmação de senha não confere.']);
+                return;
+            }
+
+            if (strlen($novaSenha) < 6) {
+                echo json_encode(['success' => false, 'error' => 'A nova senha deve ter ao menos 6 caracteres.']);
+                return;
+            }
+        }
+
+        $stmtEmail = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE email = :email AND id_usuario <> :id_usuario");
+        $stmtEmail->execute([
+            ':email' => $email,
+            ':id_usuario' => $_SESSION['id_usuario']
+        ]);
+
+        if ((int) $stmtEmail->fetchColumn() > 0) {
+            echo json_encode(['success' => false, 'error' => 'Já existe outro usuário com este e-mail.']);
+            return;
+        }
+
+        $sql = "
+            UPDATE usuarios
+            SET
+                nome = :nome,
+                idade = :idade,
+                email = :email,
+                telefone = :telefone,
+                cpf = :cpf,
+                data_nascimento = :data_nascimento,
+                endereco = :endereco,
+                cidade = :cidade,
+                estado = :estado
+        ";
+
+        $params = [
+            ':nome' => $nome,
+            ':idade' => $idade,
+            ':email' => $email,
+            ':telefone' => $telefone !== '' ? $telefone : null,
+            ':cpf' => $cpf !== '' ? $cpf : null,
+            ':data_nascimento' => $dataNascimento !== '' ? $dataNascimento : null,
+            ':endereco' => $endereco !== '' ? $endereco : null,
+            ':cidade' => $cidade !== '' ? $cidade : null,
+            ':estado' => $estado !== '' ? $estado : null,
+            ':id_usuario' => $_SESSION['id_usuario']
+        ];
+
+        if ($novaSenha !== '') {
+            $sql .= ", senha = :senha";
+            $params[':senha'] = password_hash($novaSenha, PASSWORD_DEFAULT);
+        }
+
+        $sql .= " WHERE id_usuario = :id_usuario";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+
+        $stmtUsuario = $pdo->prepare("
+            SELECT id_usuario, nome, idade, email, telefone, cpf, data_nascimento, endereco, cidade, estado, perfil
+            FROM usuarios
+            WHERE id_usuario = :id_usuario
+            LIMIT 1
+        ");
+        $stmtUsuario->execute([':id_usuario' => $_SESSION['id_usuario']]);
+        $usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
+
+        $_SESSION["nome_usuario"] = $usuario['nome'];
+        $_SESSION["email"] = $usuario['email'];
+        $_SESSION["perfil"] = $usuario['perfil'];
+        $_SESSION['ultima_atividade'] = time();
+
+        echo json_encode([
+            'success' => true,
+            'usuario' => [
+                'id_usuario' => (int) $usuario['id_usuario'],
+                'nome' => $usuario['nome'],
+                'email' => $usuario['email'],
+                'perfil' => $usuario['perfil'],
+                'idade' => $usuario['idade'] !== null ? (int) $usuario['idade'] : null,
+                'telefone' => $usuario['telefone'],
+                'cpf' => $usuario['cpf'],
+                'data_nascimento' => $usuario['data_nascimento'],
+                'endereco' => $usuario['endereco'],
+                'cidade' => $usuario['cidade'],
+                'estado' => $usuario['estado']
+            ]
+        ]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Erro ao atualizar usuário: ' . $e->getMessage()]);
+    }
+
     exit;
 }
 function registrarDoacao() {

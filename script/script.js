@@ -3,6 +3,7 @@ let animalSelecionado = null;
 let slideAtual = 0;
 let intervaloCarrossel;
 let tipoDoacaoSelecionado = null;
+let menuUsuarioAberto = false;
 
 const sugestoesDoacao = {
     'Ração': [
@@ -39,6 +40,55 @@ function montarUrlLogin(redirect = null) {
 
 function redirecionarParaLogin(redirect = null) {
     window.location.href = montarUrlLogin(redirect);
+}
+
+function escaparHtml(valor) {
+    return String(valor ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function obterPrimeiroNome(nome) {
+    const nomeLimpo = String(nome ?? '').trim();
+    if (!nomeLimpo) return 'Conta';
+
+    return nomeLimpo.split(/\s+/)[0];
+}
+
+function obterIniciaisUsuario(nome) {
+    const partes = String(nome ?? '').trim().split(/\s+/).filter(Boolean);
+    if (!partes.length) return 'PV';
+
+    return partes.slice(0, 2).map((parte) => parte[0].toUpperCase()).join('');
+}
+
+function obterUrlPainelControle() {
+    return 'adimpage.php';
+}
+
+function obterEstadoVisualUsuario() {
+    if (!usuarioLogado) {
+        return {
+            nomeCompleto: '',
+            primeiroNome: 'Entrar',
+            email: '',
+            iniciais: 'PV',
+            perfil: 'visitante',
+            ehAdmin: false
+        };
+    }
+
+    return {
+        nomeCompleto: usuarioLogado.nome || 'Usuario Pet Vida',
+        primeiroNome: obterPrimeiroNome(usuarioLogado.nome),
+        email: usuarioLogado.email || '',
+        iniciais: obterIniciaisUsuario(usuarioLogado.nome),
+        perfil: usuarioLogado.perfil || 'user',
+        ehAdmin: usuarioLogado.perfil === 'admin'
+    };
 }
 
 function mostrarSlide(indice) {
@@ -541,41 +591,169 @@ function voltarParaHome() {
 }
 
 function atualizarInterfaceUsuario() {
-    const botaoUsuario = document.getElementById('botaoUsuario');
-    if (!botaoUsuario) return;
+    const menuWrapper = document.getElementById('botaoUsuario');
+    const dropdown = document.getElementById('menuUsuarioDropdown');
+    if (!menuWrapper) return;
 
+    const dadosUsuario = obterEstadoVisualUsuario();
     const conteudoCabecalho = document.querySelector('.conteudo-cabecalho');
     if (conteudoCabecalho) {
-        const ehAdmin = !!(usuarioLogado && usuarioLogado.perfil === 'admin');
-        conteudoCabecalho.classList.toggle('tem-usuario-logado', ehAdmin);
+        conteudoCabecalho.classList.toggle('tem-usuario-logado', !!usuarioLogado);
     }
 
     if (usuarioLogado) {
-        const btnAdmin = usuarioLogado.perfil === 'admin'
-            ? '<a href="adimpage.php" id="btnPainelAdmin" class="botao-painel-admin">Painel Admin</a>'
-            : '';
-
-        botaoUsuario.innerHTML = `
-            ${btnAdmin}
-            <div class="usuario-perfil-bloco">
-                <i class="far fa-user" id="iconeUsuario"></i>
-                <span id="textoUsuario">${usuarioLogado.nome}</span>
-            </div>
-            <button id="btnSairEfetivo" type="button" onclick="deslogarUsuario(event)">
-                <i class="fas fa-sign-out-alt"></i> Sair
+        menuWrapper.innerHTML = `
+            <button
+                id="usuarioMenuTrigger"
+                class="usuario-trigger"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="${menuUsuarioAberto ? 'true' : 'false'}"
+                aria-label="Abrir menu da conta de ${escaparHtml(dadosUsuario.nomeCompleto)}"
+            >
+                <span class="usuario-avatar" aria-hidden="true">${escaparHtml(dadosUsuario.iniciais)}</span>
+                <span class="usuario-trigger-textos">
+                    <span class="usuario-trigger-nome">${escaparHtml(dadosUsuario.primeiroNome)}</span>
+                    <span class="usuario-status">
+                        <span class="usuario-status-dot" aria-hidden="true"></span>
+                        <span>Logado</span>
+                    </span>
+                </span>
+                <i class="fas fa-chevron-down usuario-trigger-seta" aria-hidden="true"></i>
             </button>
         `;
+
+        if (dropdown) {
+            dropdown.innerHTML = `
+                <div class="usuario-dropdown-header">
+                    <div class="usuario-dropdown-avatar" aria-hidden="true">${escaparHtml(dadosUsuario.iniciais)}</div>
+                    <p class="usuario-dropdown-conta">Conta Pet Vida</p>
+                    <p class="usuario-dropdown-nome">${escaparHtml(dadosUsuario.nomeCompleto)}</p>
+                    <p class="usuario-dropdown-email">${escaparHtml(dadosUsuario.email || 'E-mail nao informado')}</p>
+                </div>
+                <button type="button" class="usuario-dropdown-item" role="menuitem" onclick="irParaPerfil()">
+                    <i class="fas fa-user-edit" aria-hidden="true"></i>
+                    <span>Alterar meus dados</span>
+                </button>
+                ${dadosUsuario.ehAdmin ? `
+                    <button type="button" class="usuario-dropdown-item" role="menuitem" onclick="irParaPainelControle()">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        <span>Pet Vida Admin</span>
+                    </button>
+                ` : ''}
+                <button type="button" class="usuario-dropdown-item usuario-dropdown-sair" role="menuitem" onclick="deslogarUsuario(event)">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    <span>Sair</span>
+                </button>
+            `;
+        }
     } else {
-        botaoUsuario.innerHTML = `
-            <div class="usuario-perfil-bloco">
-                <i class="far fa-user" id="iconeUsuario"></i>
-                <span id="textoUsuario">Entrar/Cadastrar</span>
+        menuUsuarioAberto = false;
+        menuWrapper.innerHTML = `
+            <div class="usuario-acoes-visitante">
+                <button
+                    id="usuarioLoginTrigger"
+                    class="usuario-trigger usuario-trigger--visitante"
+                    type="button"
+                    aria-label="Acessar sua conta"
+                >
+                    <span class="usuario-avatar usuario-avatar--visitante" aria-hidden="true">
+                        <i class="far fa-user"></i>
+                    </span>
+                    <span class="usuario-trigger-textos">
+                        <span class="usuario-trigger-nome">Entrar</span>
+                        <span class="usuario-trigger-subtexto">Acesse sua conta</span>
+                    </span>
+                </button>
+                <button
+                    id="usuarioCadastroTrigger"
+                    class="usuario-trigger usuario-trigger--cadastro"
+                    type="button"
+                    aria-label="Ir para cadastro"
+                >
+                    Cadastre-se
+                </button>
             </div>
         `;
+
+        if (dropdown) {
+            dropdown.classList.remove('aberto');
+            dropdown.setAttribute('aria-hidden', 'true');
+            dropdown.innerHTML = '';
+        }
+    }
+
+    const trigger = document.getElementById('usuarioMenuTrigger');
+    if (trigger && usuarioLogado) {
+        trigger.addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            toggleMenuUsuario();
+        });
+    } else {
+        const loginTrigger = document.getElementById('usuarioLoginTrigger');
+        const cadastroTrigger = document.getElementById('usuarioCadastroTrigger');
+
+        if (loginTrigger) {
+            loginTrigger.addEventListener('click', function () {
+                abrirLogin();
+            });
+        }
+
+        if (cadastroTrigger) {
+            cadastroTrigger.addEventListener('click', function () {
+                window.location.href = 'cadastro.php';
+            });
+        }
     }
 }
 
+function abrirMenuUsuario() {
+    const trigger = document.getElementById('usuarioMenuTrigger');
+    const dropdown = document.getElementById('menuUsuarioDropdown');
+    if (!trigger || !dropdown || !usuarioLogado) return;
+
+    menuUsuarioAberto = true;
+    dropdown.classList.add('aberto');
+    dropdown.setAttribute('aria-hidden', 'false');
+    trigger.setAttribute('aria-expanded', 'true');
+}
+
+function fecharMenuUsuario() {
+    const trigger = document.getElementById('usuarioMenuTrigger');
+    const dropdown = document.getElementById('menuUsuarioDropdown');
+    if (!dropdown) return;
+
+    menuUsuarioAberto = false;
+    dropdown.classList.remove('aberto');
+    dropdown.setAttribute('aria-hidden', 'true');
+    if (trigger) {
+        trigger.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function toggleMenuUsuario() {
+    if (menuUsuarioAberto) {
+        fecharMenuUsuario();
+        return;
+    }
+
+    abrirMenuUsuario();
+}
+
+function irParaPerfil() {
+    fecharMenuUsuario();
+    window.location.href = 'perfil.php';
+}
+
+function irParaPainelControle() {
+    fecharMenuUsuario();
+    window.location.href = obterUrlPainelControle();
+}
+
 async function fazerLogout() {
+    fecharMenuUsuario();
+
     const result = await fetchAPI('api.php?acao=logout');
     if (!result.success) {
         alert(result.error || 'Nao foi possivel encerrar a sessao.');
@@ -590,9 +768,7 @@ async function fazerLogout() {
 
 function deslogarUsuario(event) {
     if (event) event.stopPropagation();
-    if (confirm('Deseja realmente sair da sua conta?')) {
-        fazerLogout();
-    }
+    fazerLogout();
 }
 
 function fecharModal(idModal) {
@@ -702,15 +878,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const botaoUsuario = document.getElementById('botaoUsuario');
-    if (botaoUsuario) {
-        botaoUsuario.addEventListener('click', function (e) {
-            if (!usuarioLogado && !e.target.closest('#btnSairEfetivo')) {
-                abrirLogin();
-            }
-        });
-    }
-
     const botaoDoacao = document.querySelector('.botao-doacao');
     if (botaoDoacao) {
         botaoDoacao.addEventListener('click', function (e) {
@@ -727,9 +894,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.onclick = function (event) {
+        const dropdown = document.getElementById('menuUsuarioDropdown');
+        const wrapper = document.querySelector('.acao-cabecalho-usuario');
+        if (menuUsuarioAberto && dropdown && wrapper && !wrapper.contains(event.target)) {
+            fecharMenuUsuario();
+        }
+
         if (event.target.classList?.contains('modal')) {
             event.target.style.display = 'none';
             document.body.style.overflow = '';
         }
     };
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && menuUsuarioAberto) {
+            fecharMenuUsuario();
+            document.getElementById('usuarioMenuTrigger')?.focus();
+        }
+    });
 });

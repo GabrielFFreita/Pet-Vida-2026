@@ -235,7 +235,7 @@ $extraScripts = $extraScripts ?? [];
         </div>
     </div>
 
-    <script src="script/script.js?v=12"></script>
+    <script src="script/script.js?v=13"></script>
 <?php foreach ($extraScripts as $scriptPath): ?>
     <script src="<?php echo htmlspecialchars($scriptPath, ENT_QUOTES, 'UTF-8'); ?>"></script>
 <?php endforeach; ?>
