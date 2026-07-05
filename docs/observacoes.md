@@ -1,14 +1,107 @@
-# Observacoes
+# Observações Técnicas
 
-## Refatoracao estrutural
+## Segurança e Controle de Acesso
 
-- As paginas publicas principais permaneceram na raiz para reduzir risco de quebra.
-- O painel administrativo foi concentrado em `admin/`.
-- Os assets fixos foram consolidados em `assets/`.
-- Os wrappers na raiz foram mantidos para compatibilidade com rotas antigas.
+### Autenticação
 
-## Material legado
+- Login por e-mail e senha
+- Validação de senha com `password_verify`
+- Cadastro com `password_hash`
 
-- O conteudo antigo de `AVISO` foi preservado em `docs/legado/AVISO.txt`.
-- Os prototipos HTML antigos foram movidos para `docs/legado/html/`.
-- Arquivos antigos como `dados.php`, `validar_sessao.php`, `listagem-usuarios.php` e `entrar.php` foram mantidos na raiz por cautela, porque ainda podem servir como referencia tecnica durante a apresentacao ou revisao.
+### Sessão
+
+- Sessão PHP nativa
+- Dados como `id_usuario`, `nome_usuario`, `email`, `perfil` e `ultima_atividade`
+- Expiração por inatividade de 30 minutos
+
+### Autorização
+
+- Área administrativa protegida por `verificarAdmin()`
+- Operações autenticadas dependem da sessão ativa
+
+### Banco de Dados
+
+- Uso predominante de prepared statements
+- Comunicação via PDO com MySQL
+
+## Upload de Imagens
+
+### Fluxo principal
+
+- Upload local em `uploads/`
+- Uso de `move_uploaded_file(...)`
+- Persistência do nome do arquivo em `foto_animal.ds_img`
+
+### Fallback e legado
+
+- Imagem padrão `not_image.png` quando não há foto cadastrada
+- Endpoint legado `api/upload.php` com exemplo de integração com ImgBB
+
+## Frontend e Arquivos Relevantes
+
+### JavaScript
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `assets/js/site.js` | Sessão visual, carrossel, favoritos, modais e interações gerais |
+| `assets/js/auth.js` | Cadastro e login |
+| `assets/js/perfil.js` | Leitura e atualização de perfil |
+| `assets/js/adocao.js` | Filtros, detalhes do pet e confirmação de adoção |
+| `assets/js/quiz.js` | Interatividade do quiz |
+
+### CSS
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `assets/css/site.css` | Estilo geral do site |
+| `assets/css/adocao.css` | Estilo da página de adoção |
+| `assets/css/admin.css` | Estilo do painel administrativo |
+| `assets/css/quiz.css` | Estilo do quiz |
+| `assets/css/procura.css` | Estilos auxiliares de busca |
+
+## Integrações Externas
+
+| Recurso | Finalidade |
+|---|---|
+| Bootstrap CDN | Apoio visual de componentes |
+| Font Awesome | Ícones |
+| Google Fonts | Tipografia |
+| VLibras | Acessibilidade |
+| Chart.js | Gráficos do dashboard |
+| ImgBB | Upload legado externo |
+
+## Pontos Fortes para Apresentação
+
+- Separação de responsabilidades por pasta
+- Uso de PDO com prepared statements
+- Senhas armazenadas com hash
+- Controle de sessão com perfis `user` e `admin`
+- Fluxo real de adoção com persistência em banco
+- Dashboard administrativo com métricas e gráficos
+- Upload múltiplo de imagens para animais
+
+## Oportunidades de Evolução
+
+| Ponto | Situação atual | Evolução sugerida |
+|---|---|---|
+| Schema SQL | `schema.sql` e `seed.sql` estão incompletos | Criar schema oficial do projeto |
+| Credenciais | Configuradas em arquivo PHP | Migrar para variáveis de ambiente |
+| CORS | Indícios de configuração ampla | Restringir origens em produção |
+| Exibição de erros | Ambiente pode expor erros diretamente | Desativar `display_errors` em produção |
+| CSRF | Não há padronização visível | Adicionar tokens CSRF em operações POST |
+| Upload | Validação parcial | Validar MIME type, tamanho e nome de arquivo |
+| Modelagem | Há nomes legados coexistindo | Consolidar nomenclatura de tabelas e fluxos |
+
+## Validação Técnica Executada
+
+Segundo a documentação-base analisada:
+
+- Foi executado `php -l`
+- Foram analisados 29 arquivos PHP
+- Não foram identificados erros de sintaxe
+
+## Material Legado
+
+- `docs/legado/AVISO.txt` preserva notas históricas
+- `docs/legado/html/` mantém protótipos HTML antigos
+- Esse material deve ser tratado como referência, não como documentação principal
