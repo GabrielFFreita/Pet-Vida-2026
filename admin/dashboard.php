@@ -1,6 +1,6 @@
 <?php
-require_once "config_sessao.php";
-require_once "conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
+require_once __DIR__ . "/../config/conexao.php";
 
 verificarAdmin();
 
@@ -94,7 +94,7 @@ $chartBarColors = ["#2D6A4F", "#52B788", "#95D5B2", "#E07B39", "#D9C7AE", "#6B72
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
     <style>
         .card-metrica h3 {
             font-size: 1.15rem;
@@ -190,18 +190,7 @@ $chartBarColors = ["#2D6A4F", "#52B788", "#95D5B2", "#E07B39", "#D9C7AE", "#6B72
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>Pet Vida Admin</h2>
-        <nav>
-            <ul>
-                <li class="active"><a href="adimpage.php">Visão Geral</a></li>
-                <li><a href="listagem-animais.php">Animais</a></li>
-                <li><a href="abrigos.php">Abrigos</a></li>
-                <li><a href="usuarios.php">Usuários</a></li>
-                <li><a href="index.php">Sair do Painel</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <?php $adminActivePage = 'dashboard'; require __DIR__ . '/../includes/menu-admin.php'; ?>
 
     <main class="content">
         <h1>Visão Geral do Sistema</h1>

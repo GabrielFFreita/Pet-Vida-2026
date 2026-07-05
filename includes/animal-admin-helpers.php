@@ -2,7 +2,12 @@
 
 function animalAdminUploadDir(): string
 {
-    return __DIR__ . DIRECTORY_SEPARATOR . "uploads";
+    return dirname(__DIR__) . DIRECTORY_SEPARATOR . "uploads";
+}
+
+function animalAdminUploadPublicPath(): string
+{
+    return '../uploads/';
 }
 
 function animalAdminPlaceholderFileName(): string
@@ -32,8 +37,8 @@ function animalAdminEnsurePlaceholderImage(): string
 
     if (!file_exists($placeholderPath)) {
         $logoPaths = [
-            __DIR__ . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "logo_petvida.png",
-            __DIR__ . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "Logo Pet Vida.png",
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "logo" . DIRECTORY_SEPARATOR . "logo_petvida.png",
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "img" . DIRECTORY_SEPARATOR . "logo" . DIRECTORY_SEPARATOR . "Logo Pet Vida.png",
         ];
 
         foreach ($logoPaths as $logoPath) {
@@ -184,14 +189,14 @@ function animalAdminClasseBooleana($valor): string
 function animalAdminFotoPublica(?string $nomeArquivo): string
 {
     if ($nomeArquivo === null || trim($nomeArquivo) === "") {
-        return "uploads/" . animalAdminEnsurePlaceholderImage();
+        return animalAdminUploadPublicPath() . animalAdminEnsurePlaceholderImage();
     }
 
     $caminho = animalAdminUploadDir() . DIRECTORY_SEPARATOR . $nomeArquivo;
 
     if (!file_exists($caminho)) {
-        return "uploads/" . animalAdminEnsurePlaceholderImage();
+        return animalAdminUploadPublicPath() . animalAdminEnsurePlaceholderImage();
     }
 
-    return "uploads/" . $nomeArquivo;
+    return animalAdminUploadPublicPath() . $nomeArquivo;
 }

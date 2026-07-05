@@ -1,0 +1,2 @@
+-- seed.sql
+-- Arquivo destinado a carga inicial de dados de exemplo do projeto Pet Vida.

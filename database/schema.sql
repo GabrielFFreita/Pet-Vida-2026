@@ -1,0 +1,2 @@
+-- schema.sql
+-- Arquivo destinado a criacao das tabelas do banco de dados do projeto Pet Vida.

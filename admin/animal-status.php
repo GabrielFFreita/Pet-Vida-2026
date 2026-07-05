@@ -2,8 +2,8 @@
 // ============================================================
 // MUDANCA_STATUS_ANIMAL.PHP - ATUALIZAÇÃO VIA POST (PDO)
 // ============================================================
-require_once "conexao.php";
-require_once "config_sessao.php";
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
 verificarLogado(); // Proteção para garantir privilégios de acesso
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $novoStatus = $_POST['status'] ?? 'Adotado';
 
     if (!$id_animal) {
-        header("Location: adocao.php?erro=id_invalido");
+        header("Location: ../adocao.php?erro=id_invalido");
         exit;
     }
 
@@ -34,10 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         if ($sucesso) {
-            header("Location: adocao.php?sucesso=status_atualizado");
+            header("Location: ../adocao.php?sucesso=status_atualizado");
             exit;
         } else {
-            header("Location: adocao.php?erro=falha_execucao");
+            header("Location: ../adocao.php?erro=falha_execucao");
             exit;
         }
 
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Erro crítico no banco de dados ao mudar o status do pet: " . $e->getMessage());
     }
 } else {
-    header("Location: adocao.php");
+    header("Location: ../adocao.php");
     exit;
 }
 ?>

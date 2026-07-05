@@ -1,7 +1,7 @@
 <?php
-require_once "conexao.php";
-require_once "config_sessao.php";
-require_once "animal_admin_helpers.php";
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
+require_once __DIR__ . "/../includes/animal-admin-helpers.php";
 
 verificarAdmin();
 
@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 if (!$idAnimal) {
-    header("Location: listagem-animais.php?status=erro");
+    header("Location: animais.php?status=erro");
     exit;
 }
 
@@ -180,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 animalAdminGarantirFotoPadrao($pdo, $idAnimal);
                 $pdo->commit();
 
-                header("Location: listagem-animais.php?status=editado");
+                header("Location: animais.php?status=editado");
                 exit;
             }
         } catch (PDOException $e) {
@@ -196,11 +196,11 @@ try {
     [$animal, $abrigos, $fotos] = carregarDadosAnimalEdicao($pdo, $idAnimal);
 
     if (!$animal) {
-        header("Location: listagem-animais.php?status=erro");
+        header("Location: animais.php?status=erro");
         exit;
     }
 } catch (PDOException $e) {
-    header("Location: listagem-animais.php?status=erro");
+    header("Location: animais.php?status=erro");
     exit;
 }
 ?>
@@ -213,22 +213,11 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>Pet Vida Admin</h2>
-        <nav>
-            <ul>
-                <li><a href="adimpage.php">Visão Geral</a></li>
-                <li class="active"><a href="listagem-animais.php">Animais</a></li>
-                <li><a href="abrigos.php">Abrigos</a></li>
-                <li><a href="usuarios.php">Usuários</a></li>
-                <li><a href="index.php">Sair do Painel</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <?php $adminActivePage = 'animais'; require __DIR__ . '/../includes/menu-admin.php'; ?>
 
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
@@ -236,7 +225,7 @@ try {
                 <h1>Editar Animal</h1>
                 <p class="subtitulo">Atualize os dados cadastrais e faça a manutenção das fotos já enviadas com uma galeria simples e direta.</p>
             </div>
-            <a href="listagem-animais.php" class="btn-admin btn-editar btn-admin--voltar">Voltar para a listagem</a>
+            <a href="animais.php" class="btn-admin btn-editar btn-admin--voltar">Voltar para a listagem</a>
         </div>
 
         <?php if ($erro !== null): ?>
@@ -254,7 +243,7 @@ try {
                 <span class="header-tag-admin"><?php echo htmlspecialchars($animal["status_adocao"], ENT_QUOTES, "UTF-8"); ?></span>
             </div>
 
-            <form action="editar_animal.php" method="POST" enctype="multipart/form-data" class="modal-admin-form modal-admin-form--page">
+            <form action="animal-editar.php" method="POST" enctype="multipart/form-data" class="modal-admin-form modal-admin-form--page">
                 <input type="hidden" name="id_animal" value="<?php echo (int) $animal["id_animal"]; ?>">
 
                 <div class="form-linha-dupla">
@@ -385,7 +374,7 @@ try {
                 </section>
 
                 <div class="modal-admin-footer">
-                    <a href="listagem-animais.php" class="btn-modal-cancelar btn-link-admin">Cancelar</a>
+                    <a href="animais.php" class="btn-modal-cancelar btn-link-admin">Cancelar</a>
                     <button type="submit" class="btn-modal-salvar">Salvar Alterações</button>
                 </div>
             </form>

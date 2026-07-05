@@ -9,8 +9,8 @@
 | da listagem principal.
 |--------------------------------------------------------------------------
 */
-require_once "conexao.php";
-require_once "config_sessao.php";
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
 
 verificarAdmin();
 
@@ -81,22 +81,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>Pet Vida Admin</h2>
-        <nav>
-            <ul>
-                <li><a href="adimpage.php">Visão Geral</a></li>
-                <li><a href="listagem-animais.php">Animais</a></li>
-                <li><a href="abrigos.php">Abrigos</a></li>
-                <li class="active"><a href="usuarios.php">Usuários</a></li>
-                <li><a href="index.php">Sair do Painel</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <?php $adminActivePage = 'usuarios'; require __DIR__ . '/../includes/menu-admin.php'; ?>
 
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
@@ -149,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <?php endif; ?>
             </div>
 
-            <form action="excluir_usuario.php" method="POST" class="form-exclusao-admin">
+            <form action="usuario-excluir.php" method="POST" class="form-exclusao-admin">
                 <input type="hidden" name="id_usuario" value="<?php echo (int) $usuario["id_usuario"]; ?>">
                 <a href="usuarios.php" class="btn-modal-cancelar btn-link-admin">Cancelar</a>
                 <button type="submit" class="btn-table btn-table-excluir" <?php echo $bloqueado ? "disabled" : ""; ?>>

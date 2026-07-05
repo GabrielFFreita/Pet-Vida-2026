@@ -1,5 +1,5 @@
 <?php
-require_once "conexao.php";
+require_once __DIR__ . "/config/conexao.php";
 
 function e($valor): string
 {
@@ -228,7 +228,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="./css/adocao.css">
+    <link rel="stylesheet" href="assets/css/adocao.css">
     <style>
         .quiz-main {
             max-width: 720px;
@@ -521,7 +521,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
     <header role="banner">
         <div class="header-inner">
             <a href="adocao.php" class="logo" aria-label="Pagina inicial">
-                <img src="./img/logo_petvida.png" alt="Pet Vida" class="logo-img">
+                <img src="assets/img/logo/logo_petvida.png" alt="Pet Vida" class="logo-img">
                 <span class="logo-text">Pet <em>Vida</em></span>
             </a>
 
@@ -566,7 +566,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
     <footer role="contentinfo">
         <div class="footer-inner">
             <div class="footer-marca">
-                <img src="./img/logo_petvida.png" alt="Pet Vida" class="footer-logo-img">
+                <img src="assets/img/logo/logo_petvida.png" alt="Pet Vida" class="footer-logo-img">
                 <p class="footer-slogan">Adote amor.<br><em>Mude uma vida.</em></p>
             </div>
             <div class="footer-links">

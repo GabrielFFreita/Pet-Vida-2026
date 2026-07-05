@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Pet Vida - Cadastro';
 $bodyClass = 'pagina-auth';
-$extraScripts = ['script/auth.js?v=1'];
+$extraScripts = ['assets/js/auth.js?v=1'];
 require __DIR__ . '/includes/header.php';
 ?>
 

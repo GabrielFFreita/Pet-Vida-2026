@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/helpers.php';
+
 $extraScripts = $extraScripts ?? [];
 ?>
     <footer class="rodape-principal">
@@ -7,7 +9,7 @@ $extraScripts = $extraScripts ?? [];
                 <h3>Institucional</h3>
                 <ul class="links-rodape">
                     <li><a onclick="abrirSobreNos()">Sobre nos</a></li>
-                    <li><a href="adocao.php">Como adotar</a></li>
+                    <li><a href="<?php echo htmlspecialchars(rootPath('adocao.php'), ENT_QUOTES, 'UTF-8'); ?>">Como adotar</a></li>
                     <li><a href="#">Politica de privacidade</a></li>
                 </ul>
             </div>
@@ -197,7 +199,7 @@ $extraScripts = $extraScripts ?? [];
             </div>
             <div id="valorDoacaoDiv" style="display: none;">
                 <div style="text-align: center; margin-bottom: 15px;">
-                    <img src="img/qrcode_pix.png" alt="QR Code Pix" style="width: 180px; height: 180px; border: 1px solid #e2e8f0; border-radius: var(--raio); padding: 6px; background: #fff;">
+                    <img src="<?php echo htmlspecialchars(assetPath('img/qrcode/qrcode_pix.png'), ENT_QUOTES, 'UTF-8'); ?>" alt="QR Code Pix" style="width: 180px; height: 180px; border: 1px solid #e2e8f0; border-radius: var(--raio); padding: 6px; background: #fff;">
                     <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">Escaneie o QR Code com o app do seu banco</p>
                 </div>
                 <div class="form-group">
@@ -235,7 +237,7 @@ $extraScripts = $extraScripts ?? [];
         </div>
     </div>
 
-    <script src="script/script.js?v=13"></script>
+    <script src="<?php echo htmlspecialchars(assetPath('js/site.js?v=13'), ENT_QUOTES, 'UTF-8'); ?>"></script>
 <?php foreach ($extraScripts as $scriptPath): ?>
     <script src="<?php echo htmlspecialchars($scriptPath, ENT_QUOTES, 'UTF-8'); ?>"></script>
 <?php endforeach; ?>

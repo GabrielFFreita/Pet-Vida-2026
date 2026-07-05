@@ -1,7 +1,7 @@
 <?php
-require_once "conexao.php";
-require_once "config_sessao.php";
-require_once "animal_admin_helpers.php";
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
+require_once __DIR__ . "/../includes/animal-admin-helpers.php";
 
 verificarAdmin();
 
@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 if (!$idAnimal) {
-    header("Location: listagem-animais.php?status=erro");
+    header("Location: animais.php?status=erro");
     exit;
 }
 
@@ -36,7 +36,7 @@ try {
     $animal = $stmtAnimal->fetch(PDO::FETCH_ASSOC);
 
     if (!$animal) {
-        header("Location: listagem-animais.php?status=erro");
+        header("Location: animais.php?status=erro");
         exit;
     }
 
@@ -46,7 +46,7 @@ try {
 
     $fotos = animalAdminFetchFotos($pdo, $idAnimal);
 } catch (PDOException $e) {
-    header("Location: listagem-animais.php?status=erro");
+    header("Location: animais.php?status=erro");
     exit;
 }
 
@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 animalAdminRemoverArquivoFoto((string) $foto["ds_img"]);
             }
 
-            header("Location: listagem-animais.php?status=excluido");
+            header("Location: animais.php?status=excluido");
             exit;
         } catch (PDOException $e) {
             if ($pdo->inTransaction()) {
@@ -91,22 +91,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>Pet Vida Admin</h2>
-        <nav>
-            <ul>
-                <li><a href="adimpage.php">Visão Geral</a></li>
-                <li class="active"><a href="listagem-animais.php">Animais</a></li>
-                <li><a href="abrigos.php">Abrigos</a></li>
-                <li><a href="usuarios.php">Usuários</a></li>
-                <li><a href="index.php">Sair do Painel</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <?php $adminActivePage = 'animais'; require __DIR__ . '/../includes/menu-admin.php'; ?>
 
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
@@ -114,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <h1>Excluir Animal</h1>
                 <p class="subtitulo">Confirme a remoção apenas quando o cadastro não tiver vínculo ativo com solicitações de adoção.</p>
             </div>
-            <a href="listagem-animais.php" class="btn-admin btn-editar btn-admin--voltar">Voltar para a listagem</a>
+            <a href="animais.php" class="btn-admin btn-editar btn-admin--voltar">Voltar para a listagem</a>
         </div>
 
         <?php if ($erro !== null): ?>
@@ -163,9 +152,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <?php endif; ?>
             </div>
 
-            <form action="excluir_animal.php" method="POST" class="form-exclusao-admin">
+            <form action="animal-excluir.php" method="POST" class="form-exclusao-admin">
                 <input type="hidden" name="id_animal" value="<?php echo (int) $animal["id_animal"]; ?>">
-                <a href="listagem-animais.php" class="btn-modal-cancelar btn-link-admin">Cancelar</a>
+                <a href="animais.php" class="btn-modal-cancelar btn-link-admin">Cancelar</a>
                 <button type="submit" class="btn-table btn-table-excluir" <?php echo $bloqueado ? "disabled" : ""; ?>>
                     Confirmar Exclusão
                 </button>

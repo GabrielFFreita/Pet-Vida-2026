@@ -1,6 +1,6 @@
 <?php
-require_once "conexao.php";
-require_once "config_sessao.php";
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
 verificarAdmin();
 
 // 1. VERIFICAÇÃO E BUSCA DOS DADOS DO ABRIGO
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     
     $fotosAnimal = [];
     $extensoesPermitidas = ["jpg", "jpeg", "png", "webp"];
-    $pasta = "uploads/";
+    $pasta = __DIR__ . "/../uploads/";
 
     if (!is_dir($pasta)) {
         mkdir($pasta, 0777, true);
@@ -111,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             ]);
         }
 
-        echo "<script>alert('Animal cadastrado com sucesso!'); window.location.href='perfil_abrigo.php?id=$id_abrigo';</script>";
+        echo "<script>alert('Animal cadastrado com sucesso!'); window.location.href='abrigo-perfil.php?id=$id_abrigo';</script>";
     } catch (PDOException $e) {
         die('Erro ao salvar no banco: ' . $e->getMessage());
     }
@@ -141,22 +141,11 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil do Abrigo | Pet Vida</title>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>Pet Vida Admin</h2>
-        <nav>
-            <ul>
-                <li><a href="adimpage.php">Visão Geral</a></li>
-                <li><a href="listagem-animais.php">Animais</a></li>
-                <li class="active"><a href="abrigos.php">Abrigos</a></li>
-                <li><a href="usuarios.php">Usuários</a></li>
-                <li><a href="index.php">Sair do Painel</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <?php $adminActivePage = 'abrigos'; require __DIR__ . '/../includes/menu-admin.php'; ?>
 
     <main class="content">
         <div class="header-acoes-admin">
@@ -206,7 +195,7 @@ try {
                             <article class="card-animal-pequeno">
                                 <div class="animal-thumb">
                                     <?php 
-                                        $fotoCaminho = !empty($animal['ds_img']) ? 'uploads/' . $animal['ds_img'] : 'uploads/not_image.png';
+                                        $fotoCaminho = !empty($animal['ds_img']) ? '../uploads/' . $animal['ds_img'] : '../uploads/not_image.png';
                                     ?>
                                     <img src="<?php echo $fotoCaminho; ?>" alt="Foto de <?php echo htmlspecialchars($animal['nome']); ?>">
                                     <span class="badge-status"><?php echo htmlspecialchars($animal['status_adocao']); ?></span>
@@ -244,7 +233,7 @@ try {
                 <h2>Cadastrar Animal para este Abrigo</h2>
                 <button class="btn-modal-fechar" onclick="fecharModal()">&times;</button>
             </div>
-            <form action="perfil_abrigo.php?id=<?php echo $id_abrigo; ?>" method="POST" enctype="multipart/form-data" class="modal-admin-form">
+            <form action="abrigo-perfil.php?id=<?php echo $id_abrigo; ?>" method="POST" enctype="multipart/form-data" class="modal-admin-form">
                 <input type="hidden" name="action" value="cadastrar_animal">
                 
                 <div class="form-linha-dupla">

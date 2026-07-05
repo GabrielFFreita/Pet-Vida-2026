@@ -1,7 +1,7 @@
 <?php
-require_once "conexao.php";
-// require_once "config_sessao.php";
-// verificarLogado();
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
+verificarLogado();
 
 // Busca das informações colocadas no form do html, dentro de variáveis do php
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         // Verifica se o array de imagens foi enviado e se possui arquivos
         if (isset($_FILES['image']) && is_array($_FILES['image']['name'])) {
             $totalArquivos = count($_FILES['image']['name']);
-            $pasta = "uploads/";
+            $pasta = __DIR__ . "/../uploads/";
 
             // Cria a pasta caso não exista
             if (!is_dir($pasta)) {
@@ -118,7 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         echo "
         <script>
             alert('Animal cadastrado com sucesso!');
-            window.location.href='adimpage.php';
+            window.location.href='dashboard.php';
         </script>
         ";
 

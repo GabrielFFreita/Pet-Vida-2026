@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/helpers.php';
+
 $pageTitle = $pageTitle ?? 'Pet Vida - Adote um Amigo';
 $bodyClass = $bodyClass ?? '';
 
@@ -39,7 +41,7 @@ if ($usuarioHeaderNome !== '') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css?v=11">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(assetPath('css/site.css?v=11'), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body<?php echo $bodyClass !== '' ? ' class="' . htmlspecialchars($bodyClass, ENT_QUOTES, 'UTF-8') . '"' : ''; ?>>
 
@@ -55,8 +57,8 @@ if ($usuarioHeaderNome !== '') {
     <header class="cabecalho-principal">
         <div class="conteudo-cabecalho">
             <div class="logo">
-                <a href="index.php" class="logo-link" aria-label="Ir para a home do Pet Vida">
-                    <img src="img/logo_petvida.png" alt="Logo Pet Vida">
+                <a href="<?php echo htmlspecialchars(rootPath('index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="logo-link" aria-label="Ir para a home do Pet Vida">
+                    <img src="<?php echo htmlspecialchars(assetPath('img/logo/logo_petvida.png'), ENT_QUOTES, 'UTF-8'); ?>" alt="Logo Pet Vida">
                     <span class="logo-text">Pet <em>Vida</em></span>
                 </a>
             </div>
@@ -67,7 +69,7 @@ if ($usuarioHeaderNome !== '') {
             </div>
 
             <div class="acoes-cabecalho">
-                <a href="adocao.php" class="botao-adote" id="btnFavoritos" onclick="return irParaAdocao(event)">
+                <a href="<?php echo htmlspecialchars(rootPath('adocao.php'), ENT_QUOTES, 'UTF-8'); ?>" class="botao-adote" id="btnFavoritos" onclick="return irParaAdocao(event)">
                     <i class="fas fa-heart"></i>
                     <span>Adocao</span>
                 </a>

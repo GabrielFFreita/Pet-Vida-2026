@@ -1,6 +1,6 @@
 <?php
-require_once "conexao.php";
-require_once "config_sessao.php";
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
 verificarAdmin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,22 +46,11 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>Pet Vida Admin</h2>
-        <nav>
-            <ul>
-                <li><a href="adimpage.php">Visão Geral</a></li>
-                <li><a href="listagem-animais.php">Animais</a></li>
-                <li class="active"><a href="abrigos.php">Abrigos</a></li>
-                <li><a href="usuarios.php">Usuários</a></li>
-                <li><a href="index.php">Sair do Painel</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <?php $adminActivePage = 'abrigos'; require __DIR__ . '/../includes/menu-admin.php'; ?>
 
     <main class="content">
         <div class="header-acoes-admin">
@@ -103,7 +92,7 @@ try {
                             </p>
                             
                             <div class="card-acoes-btn">
-                                <a href="perfil_abrigo.php?id=<?php echo $abrigo['id']; ?>" class="btn-admin btn-editar">Visualizar</a>
+                                <a href="abrigo-perfil.php?id=<?php echo $abrigo['id']; ?>" class="btn-admin btn-editar">Visualizar</a>
                             </div>
                         </div>
                     </article>

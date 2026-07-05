@@ -66,7 +66,7 @@ function obterIniciaisUsuario(nome) {
 }
 
 function obterUrlPainelControle() {
-    return 'adimpage.php';
+    return 'admin/dashboard.php';
 }
 
 function obterEstadoVisualUsuario() {

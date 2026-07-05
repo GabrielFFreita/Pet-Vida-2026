@@ -1,7 +1,7 @@
 <?php
-require_once "conexao.php";
-require_once "config_sessao.php";
-require_once "animal_admin_helpers.php";
+require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/../config/sessao.php";
+require_once __DIR__ . "/../includes/animal-admin-helpers.php";
 
 verificarAdmin();
 
@@ -70,22 +70,11 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>Pet Vida Admin</h2>
-        <nav>
-            <ul>
-                <li><a href="adimpage.php">Visão Geral</a></li>
-                <li class="active"><a href="listagem-animais.php">Animais</a></li>
-                <li><a href="abrigos.php">Abrigos</a></li>
-                <li><a href="usuarios.php">Usuários</a></li>
-                <li><a href="index.php">Sair do Painel</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <?php $adminActivePage = 'animais'; require __DIR__ . '/../includes/menu-admin.php'; ?>
 
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
@@ -184,8 +173,8 @@ try {
                                     <td><?php echo htmlspecialchars(trim((string) ($animal["deficiencia"] ?? "")) !== "" ? $animal["deficiencia"] : "Não possui", ENT_QUOTES, "UTF-8"); ?></td>
                                     <td>
                                         <div class="table-acoes">
-                                            <a href="editar_animal.php?id=<?php echo (int) $animal["id_animal"]; ?>" class="btn-table btn-table-editar">Editar</a>
-                                            <a href="excluir_animal.php?id=<?php echo (int) $animal["id_animal"]; ?>" class="btn-table btn-table-excluir">Excluir</a>
+                                            <a href="animal-editar.php?id=<?php echo (int) $animal["id_animal"]; ?>" class="btn-table btn-table-editar">Editar</a>
+                                            <a href="animal-excluir.php?id=<?php echo (int) $animal["id_animal"]; ?>" class="btn-table btn-table-excluir">Excluir</a>
                                         </div>
                                     </td>
                                 </tr>

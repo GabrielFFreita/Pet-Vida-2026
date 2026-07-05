@@ -1,5 +1,5 @@
 <?php
-require_once "conexao.php";
+require_once __DIR__ . "/config/conexao.php";
 session_start();
 
 $pageTitle = "Pet Vida - Adote um Amigo";
@@ -39,7 +39,7 @@ require __DIR__ . "/includes/header.php";
 
 <section class="banner-principal">
     <div class="slide-banner ativo">
-        <img src="img/Petquiz.png" alt="Banner Pet quiz">
+        <img src="assets/img/banners/Petquiz.png" alt="Banner Pet quiz">
         <div class="conteudo-banner">
             <h1>Adote um amigo para a vida</h1>
             <p>Milhares de animais esperando por um lar cheio de amor.</p>
@@ -48,12 +48,12 @@ require __DIR__ . "/includes/header.php";
     <div class="slide-banner">
         <div class="video-wrapper">
             <video autoplay muted loop playsinline>
-                <source src="video/Video-Adote.mp4" type="video/mp4">
+                <source src="assets/video/Video-Adote.mp4" type="video/mp4">
             </video>
         </div>
     </div>
     <div class="slide-banner">
-        <img src="img/Banner Cores neutras.png" alt="Banner de adocao">
+        <img src="assets/img/banners/Banner Cores neutras.png" alt="Banner de adocao">
     </div>
 
     <button class="controle-banner controle-anterior" onclick="mudarSlide(-1)">&#10094;</button>
@@ -238,22 +238,22 @@ require __DIR__ . "/includes/header.php";
         <h2 class="secao-titulo">Nossa Equipe</h2>
         <div class="equipe-grid">
             <div class="membro">
-                <div class="foto-bolinha"><img src="img/mari.jpeg" alt="Mariana"></div>
+                <div class="foto-bolinha"><img src="assets/img/equipe/mari.jpeg" alt="Mariana"></div>
                 <div class="nome">Mariana R. Patricio</div>
                 <div class="cargo">Desenvolvedora<br>Front-end</div>
             </div>
             <div class="membro">
-                <div class="foto-bolinha"><img src="img/gabriel.jpeg" alt="Gabriel"></div>
+                <div class="foto-bolinha"><img src="assets/img/equipe/gabriel.jpeg" alt="Gabriel"></div>
                 <div class="nome">Gabriel F. Freitas</div>
                 <div class="cargo">Desenvolvedor<br>Back-end</div>
             </div>
             <div class="membro">
-                <div class="foto-bolinha"><img src="img/lais.jpeg" alt="Lais"></div>
+                <div class="foto-bolinha"><img src="assets/img/equipe/lais.jpeg" alt="Lais"></div>
                 <div class="nome">Lais V. Meris</div>
                 <div class="cargo">Desenvolvedora<br>Back-end</div>
             </div>
             <div class="membro">
-                <div class="foto-bolinha"><img src="img/welli.jpeg" alt="Wellingtom"></div>
+                <div class="foto-bolinha"><img src="assets/img/equipe/welli.jpeg" alt="Wellingtom"></div>
                 <div class="nome">Wellingtom</div>
                 <div class="cargo">Desenvolvedor<br>de Modelagem</div>
             </div>

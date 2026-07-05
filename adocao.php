@@ -1,5 +1,5 @@
 <?php
-require_once "conexao.php";
+require_once __DIR__ . "/config/conexao.php";
 
 $sqlAbrigos = "SELECT id, nome, localizacao FROM abrigos ORDER BY nome";
 $stmtAbrigos = $pdo->prepare($sqlAbrigos);
@@ -60,7 +60,7 @@ foreach ($abrigos as $abrigo) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/adocao.css">
+  <link rel="stylesheet" href="assets/css/adocao.css">
 </head>
 <body>
 
@@ -68,7 +68,7 @@ foreach ($abrigos as $abrigo) {
     <div class="header-inner">
 
       <a href="index.php" class="logo" aria-label="Página inicial">
-        <img src="img/logo_petvida.png" alt="Pet Vida" class="logo-img">
+        <img src="assets/img/logo/logo_petvida.png" alt="Pet Vida" class="logo-img">
         <span class="logo-text">Pet <em>Vida</em></span>
       </a>
 
@@ -274,7 +274,7 @@ foreach ($abrigos as $abrigo) {
   <footer role="contentinfo">
     <div class="footer-inner">
       <div class="footer-marca">
-        <img src="img/logo_petvida.png" alt="Pet Vida" class="logo-img">
+        <img src="assets/img/logo/logo_petvida.png" alt="Pet Vida" class="logo-img">
         <span class="logo-text">Pet <em>Vida</em></span>
       </div>
       <div class="footer-links">
@@ -441,6 +441,6 @@ foreach ($abrigos as $abrigo) {
   <script>
     window.ABRIGOS_DADOS = <?= json_encode($abrigosJs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
   </script>
-  <script src="js/adocao.js"></script>
+  <script src="assets/js/adocao.js"></script>
 </body>
 </html>

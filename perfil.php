@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config_sessao.php';
+require_once __DIR__ . '/config/sessao.php';
 
 if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php?redirect=' . urlencode('perfil.php'));
@@ -7,7 +7,7 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 $pageTitle = 'Pet Vida - Minha Conta';
-$extraScripts = ['script/perfil.js?v=1'];
+$extraScripts = ['assets/js/perfil.js?v=1'];
 require __DIR__ . '/includes/header.php';
 ?>
 

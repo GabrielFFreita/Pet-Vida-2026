@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../includes/helpers.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -26,7 +27,7 @@ if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['nome_usuario']))
 function verificarLogado() {
     if (!isset($_SESSION["nome_usuario"])) {
         // Para páginas PHP restritas (como painel admin), manda de volta de forma segura
-        header("Location: index.php");
+        header("Location: " . rootPath("index.php"));
         exit();
     }
 }
@@ -34,7 +35,7 @@ function verificarAdmin() {
     verificarLogado();
 
     if (strtolower(trim($_SESSION["perfil"] ?? "")) !== "admin") {
-        header("Location: index.php");
+        header("Location: " . rootPath("index.php"));
         exit();
     }
 }
