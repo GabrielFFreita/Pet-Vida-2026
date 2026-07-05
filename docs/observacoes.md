@@ -66,9 +66,15 @@
 | Bootstrap CDN | Apoio visual de componentes |
 | Font Awesome | Ícones |
 | Google Fonts | Tipografia |
-| VLibras | Acessibilidade |
+| VLibras | Acessibilidade em páginas públicas e no painel administrativo |
 | Chart.js | Gráficos do dashboard |
 | ImgBB | Upload legado externo |
+
+## Cobertura de Acessibilidade
+
+- O `VLibras` está ativo nas páginas públicas com layout compartilhado por meio de `includes/header.php`.
+- As páginas `adocao.php` e `quiz.php` possuem inclusão explícita do widget no próprio arquivo.
+- O painel administrativo recebe o `VLibras` a partir de `includes/menu-admin.php`, evitando repetição nas telas internas.
 
 ## Pontos Fortes para Apresentação
 

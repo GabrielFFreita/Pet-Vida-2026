@@ -25,6 +25,7 @@ Funcionalidades identificadas:
 - Visualização de detalhes do pet
 - Carrossel de imagens
 - Confirmação e envio da solicitação de adoção
+- Carga direta do widget `VLibras` no próprio arquivo
 
 ### Quiz
 
@@ -35,16 +36,20 @@ Pontos relevantes:
 - Coleta respostas via interface web
 - Processa regras no próprio backend PHP
 - Retorna sugestão de pet conforme perfil inferido
+- Carga direta do widget `VLibras` no próprio arquivo
 
 ### Autenticação e Perfil
 
 - `cadastro.php` registra novos usuários
 - `login.php` autentica por e-mail e senha
 - `perfil.php` permite atualizar dados cadastrais do usuário logado
+- `index.php`, `login.php`, `cadastro.php` e `perfil.php` recebem `VLibras` via `includes/header.php`
 
 ## Área Administrativa
 
 O painel administrativo é restrito a usuários com perfil `admin` e depende de validação feita em `config/sessao.php`.
+
+Além da autenticação, as telas administrativas compartilham a inclusão do widget `VLibras` por meio de `includes/menu-admin.php`.
 
 ### Dashboard
 

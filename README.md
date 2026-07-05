@@ -14,6 +14,7 @@ O projeto foi organizado sem framework, com páginas PHP renderizadas no servido
 - Quiz de compatibilidade com pets
 - Favoritos e registro de intenção de doação
 - Painel administrativo para gestão de animais, abrigos, usuários e métricas
+- Widget de acessibilidade VLibras nas páginas públicas e no painel administrativo
 
 ## Tecnologias Identificadas
 
@@ -81,6 +82,13 @@ Pet-Vida-2026/
 | `/login.php` | Autenticação |
 | `/perfil.php` | Perfil do usuário autenticado |
 | `/admin/dashboard.php` | Dashboard administrativo |
+
+## Acessibilidade
+
+- O projeto utiliza o widget `VLibras` como recurso de acessibilidade.
+- Nas páginas públicas compartilhadas, a carga do widget é feita por `includes/header.php`.
+- As páginas `adocao.php` e `quiz.php` possuem inclusão própria do `VLibras` por não usarem o header compartilhado.
+- No painel administrativo, a inclusão foi centralizada em `includes/menu-admin.php`, cobrindo todas as telas que usam o menu lateral comum.
 
 ## Como Executar Localmente
 

@@ -74,11 +74,18 @@ Pet-Vida-2026/
 |---|---|
 | `config/conexao.php` | Instancia a conexão PDO com MySQL |
 | `config/sessao.php` | Inicia sessão e valida usuário/admin |
-| `includes/header.php` | Header público, dependências externas e navegação |
+| `includes/header.php` | Header público, dependências externas, VLibras e navegação |
 | `includes/footer.php` | Footer público, contato e modal de doação |
 | `includes/helpers.php` | Funções de caminho e apoio estrutural |
-| `includes/menu-admin.php` | Menu lateral do painel administrativo |
+| `includes/menu-admin.php` | Menu lateral do painel administrativo e carga centralizada do VLibras |
 | `includes/animal-admin-helpers.php` | Upload, remoção e fallback de imagens de animais |
+
+## Acessibilidade
+
+- O widget `VLibras` é uma dependência externa carregada no frontend.
+- `includes/header.php` cobre as páginas públicas que usam layout compartilhado, como `index.php`, `login.php`, `cadastro.php` e `perfil.php`.
+- `adocao.php` e `quiz.php` carregam o `VLibras` diretamente no próprio arquivo, pois possuem estrutura HTML independente.
+- `includes/menu-admin.php` centraliza a inclusão do `VLibras` nas páginas do painel administrativo que reutilizam o menu lateral.
 
 ## Visão Contexto do sistema
 
@@ -131,6 +138,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     PAG["index.php, adocao.php, quiz.php, login.php, cadastro.php, perfil.php"] --> JS["assets/js/*.js"]
+    PAG --> VL["VLibras"]
     JS --> API["api/index.php"]
     JS --> SAD["api/solicitar-adocao.php"]
     API --> SES["config/sessao.php"]
@@ -149,6 +157,7 @@ flowchart LR
 flowchart LR
     DASH["dashboard.php"] --> AUTH["verificarAdmin()"]
     CRUD["animais, abrigos e usuários"] --> AUTH
+    CRUD --> VLADM["VLibras via includes/menu-admin.php"]
     AUTH --> PDO["config/conexao.php"]
     CRUD --> UP["uploads/"]
     PDO --> DB[(MySQL)]
