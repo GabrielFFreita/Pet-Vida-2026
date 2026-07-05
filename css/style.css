@@ -959,14 +959,17 @@ body {
     padding: 0 20px 10px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     gap: 60px;
 }
 
 .coluna-rodape {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
+    text-align: left;
 }
 
 .rodape-marca {
@@ -1002,6 +1005,8 @@ body {
 
 .links-rodape {
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .links-rodape li {
