@@ -3,12 +3,29 @@ require_once "conexao.php";
 session_start();
 
 try {
-    // Faz o JOIN com a tabela foto_animal para trazer a coluna ds_img correspondente
-    $sql = "SELECT a.id_animal, a.nome, a.idade, a.raca, a.especie, a.sexo, a.porte, a.peso, a.vacinado, a.descricao, a.status_adocao, f.ds_img 
-            FROM animais_adocao a 
-            LEFT JOIN foto_animal f ON a.id_animal = f.id_animal 
-            WHERE a.status_adocao = 'Disponível' 
-            LIMIT 4";
+    $sql = "SELECT
+                a.id_animal,
+                a.nome,
+                a.idade,
+                a.raca,
+                a.especie,
+                a.sexo,
+                a.porte,
+                a.peso,
+                a.vacinado,
+                a.descricao,
+                a.status_adocao,
+                fotos.ds_img
+            FROM animais_adocao a
+            LEFT JOIN (
+                SELECT
+                    id_animal,
+                    MIN(ds_img) AS ds_img
+                FROM foto_animal
+                GROUP BY id_animal
+            ) fotos ON a.id_animal = fotos.id_animal
+            ORDER BY RAND()
+            LIMIT 5";
     $stmt = $pdo->query($sql);
     $animais_destaque = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -113,11 +130,16 @@ try {
                 <?php if (!empty($animais_destaque)): ?>
                     <?php foreach ($animais_destaque as $animal):
                         $sexo = trim($animal['sexo'] ?? '');
-                        $sexoClasse = mb_strtolower($sexo) === 'macho' ? 'macho' : 'femea';
-                        $imagem = !empty($animal['ds_img']) ? htmlspecialchars($animal['ds_img']) : '';
+                        $sexoNormalizado = mb_strtolower($sexo, 'UTF-8');
+                        $sexoClasse = $sexoNormalizado === 'macho' ? 'macho' : 'femea';
+                        $imagem = !empty($animal['ds_img']) ? 'uploads/' . ltrim($animal['ds_img'], '/\\') : '';
+                        $idade = trim((string)($animal['idade'] ?? ''));
+                        $peso = trim((string)($animal['peso'] ?? ''));
+                        $idadeTexto = $idade !== '' ? $idade . ' anos' : 'Nao informado';
+                        $pesoTexto = $peso !== '' ? $peso . ' kg' : 'Nao informado';
                     ?>
                         <div class="cartao-animal"
-                             data-img="<?= $imagem ?>"
+                             data-img="<?= htmlspecialchars($imagem, ENT_QUOTES, 'UTF-8') ?>"
                              data-nome="<?= htmlspecialchars($animal['nome'] ?? '') ?>"
                              data-raca="<?= htmlspecialchars($animal['raca'] ?? '') ?>"
                              data-sexo="<?= htmlspecialchars($sexo) ?>"
@@ -130,7 +152,7 @@ try {
                              onclick="abrirPreviewAnimal(this)">
                             <div class="imagem-animal">
                                 <?php if ($imagem): ?>
-                                    <img src="<?= $imagem ?>" alt="<?= htmlspecialchars($animal['nome'] ?? 'Animal') ?>" onerror="this.style.display='none'">
+                                    <img src="<?= htmlspecialchars($imagem, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($animal['nome'] ?? 'Animal') ?>" onerror="this.style.display='none'">
                                 <?php endif; ?>
                                 <span class="etiqueta-sexo <?= $sexoClasse ?>"><?= htmlspecialchars($sexo) ?></span>
                                 <button class="btn-favorito" onclick="event.stopPropagation(); this.classList.toggle('favoritado')" aria-label="Favoritar">
@@ -141,8 +163,8 @@ try {
                                 <h3 class="nome-animal"><?= htmlspecialchars($animal['nome'] ?? '') ?></h3>
                                 <p class="raca-animal"><i class="fas fa-dna"></i> <?= htmlspecialchars($animal['raca'] ?? '') ?></p>
                                 <div class="detalhes-animal">
-                                    <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= htmlspecialchars($animal['idade'] ?? '?') ?> anos</div>
-                                    <div class="detalhe-item"><i class="fas fa-weight-hanging"></i> <?= htmlspecialchars($animal['peso'] ?? '?') ?> kg</div>
+                                    <div class="detalhe-item"><i class="fas fa-birthday-cake"></i> <?= htmlspecialchars($idadeTexto) ?></div>
+                                    <div class="detalhe-item"><i class="fas fa-weight-hanging"></i> <?= htmlspecialchars($pesoTexto) ?></div>
                                 </div>
                                 <button class="btn-adotar" onclick="event.stopPropagation(); abrirPreviewAnimal(this.closest('.cartao-animal'))">
                                     <i class="fas fa-paw"></i> Ver Detalhes
