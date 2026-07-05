@@ -61,13 +61,13 @@ Pet-Vida-2026/
 
 ## Documentação Complementar
 
-- [docs/estrutura.md](/C:/Reinaldo/Projetos/Gabriel/Pet-Vida-2026/docs/estrutura.md)  
+- [docs/estrutura.md](/docs/estrutura.md)  
   Arquitetura, responsabilidades por pasta e visão C4 do sistema.
-- [docs/fluxo-sistema.md](/C:/Reinaldo/Projetos/Gabriel/Pet-Vida-2026/docs/fluxo-sistema.md)  
+- [docs/fluxo-sistema.md](/docs/fluxo-sistema.md)  
   Fluxos públicos, administrativos e interações com a API.
-- [docs/banco-de-dados.md](/C:/Reinaldo/Projetos/Gabriel/Pet-Vida-2026/docs/banco-de-dados.md)  
+- [docs/banco-de-dados.md](/docs/banco-de-dados.md)  
   Modelo de dados inferido, entidades e schema sugerido.
-- [docs/observacoes.md](/C:/Reinaldo/Projetos/Gabriel/Pet-Vida-2026/docs/observacoes.md)  
+- [docs/observacoes.md](/docs/observacoes.md)  
   Segurança, integrações, validações, riscos e oportunidades de evolução.
 
 ## Páginas Principais
