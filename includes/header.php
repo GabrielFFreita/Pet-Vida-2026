@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/helpers.php';
 
 $pageTitle = $pageTitle ?? 'Pet Vida - Adote um Amigo';
@@ -64,14 +64,14 @@ if ($usuarioHeaderNome !== '') {
             </div>
 
             <div class="barra-busca">
-                <input type="text" id="campo-busca" placeholder="Buscar animal por nome ou raca...">
+                <input type="text" id="campo-busca" placeholder="Buscar animal por nome ou ra&ccedil;a...">
                 <button id="botao-busca" type="button"><i class="fas fa-search"></i></button>
             </div>
 
             <div class="acoes-cabecalho">
                 <a href="<?php echo htmlspecialchars(rootPath('adocao.php'), ENT_QUOTES, 'UTF-8'); ?>" class="botao-adote" id="btnFavoritos" onclick="return irParaAdocao(event)">
                     <i class="fas fa-heart"></i>
-                    <span>Adocao</span>
+                    <span>Ado&ccedil;&atilde;o</span>
                 </a>
                 <div class="acao-cabecalho">
                     <button class="botao-doacao" type="button"><i class="fas fa-hand-holding-heart"></i> Doe/ajude</button>
@@ -85,7 +85,7 @@ if ($usuarioHeaderNome !== '') {
                                 type="button"
                                 aria-haspopup="true"
                                 aria-expanded="false"
-                                aria-label="Abrir menu da conta de <?php echo htmlspecialchars($usuarioHeaderNome !== '' ? $usuarioHeaderNome : 'Usuario Pet Vida', ENT_QUOTES, 'UTF-8'); ?>"
+                                aria-label="Abrir menu da conta de <?php echo htmlspecialchars($usuarioHeaderNome !== '' ? $usuarioHeaderNome : 'Usu&aacute;rio Pet Vida', ENT_QUOTES, 'UTF-8'); ?>"
                             >
                                 <span class="usuario-avatar" aria-hidden="true"><?php echo htmlspecialchars($usuarioHeaderIniciais, ENT_QUOTES, 'UTF-8'); ?></span>
                                 <span class="usuario-trigger-textos">
@@ -136,3 +136,4 @@ if ($usuarioHeaderNome !== '') {
             </div>
         </div>
     </header>
+

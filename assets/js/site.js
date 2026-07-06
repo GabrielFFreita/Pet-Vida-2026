@@ -1,4 +1,4 @@
-let usuarioLogado = null;
+﻿let usuarioLogado = null;
 let animalSelecionado = null;
 let slideAtual = 0;
 let intervaloCarrossel;
@@ -6,10 +6,10 @@ let tipoDoacaoSelecionado = null;
 let menuUsuarioAberto = false;
 
 const sugestoesDoacao = {
-    'Ração': [
-        'Ração seca para cães e gatos (filhotes, adultos e idosos)',
-        'Ração úmida (saches/latas)',
-        'Petiscos saudáveis'
+    'Ra\u00e7\u00e3o': [
+        'Ra\u00e7\u00e3o seca para c\u00e3es e gatos (filhotes, adultos e idosos)',
+        'Ra\u00e7\u00e3o \u00famida (sach\u00eas/latas)',
+        'Petiscos saud\u00e1veis'
     ],
     Roupa: [
         'Cobertores e mantas',
@@ -22,10 +22,10 @@ const sugestoesDoacao = {
         'Arranhadores para gatos'
     ],
     Medicamento: [
-        'Vermífugos',
+        'Verm\u00edfugos',
         'Antipulgas e carrapatos',
-        'Vacinas (V8/V10, antirrábica)',
-        'Soro fisiológico, gaze e curativos'
+        'Vacinas (V8/V10, antirr\u00e1bica)',
+        'Soro fisiol\u00f3gico, gaze e curativos'
     ]
 };
 
@@ -82,7 +82,7 @@ function obterEstadoVisualUsuario() {
     }
 
     return {
-        nomeCompleto: usuarioLogado.nome || 'Usuario Pet Vida',
+        nomeCompleto: usuarioLogado.nome || 'Usu\u00e1rio Pet Vida',
         primeiroNome: obterPrimeiroNome(usuarioLogado.nome),
         email: usuarioLogado.email || '',
         iniciais: obterIniciaisUsuario(usuarioLogado.nome),
@@ -174,7 +174,7 @@ async function carregarAnimais(containerId, limite = null, filtros = {}) {
     if (limite) animais = animais.slice(0, limite);
 
     if (!animais || animais.length === 0) {
-        container.innerHTML = '<p style="text-align:center;">Nenhum animal disponível para adoção no momento.</p>';
+        container.innerHTML = '<p style="text-align:center;">Nenhum animal dispon\u00edvel para ado\u00e7\u00e3o no momento.</p>';
         return;
     }
 
@@ -187,7 +187,7 @@ async function carregarAnimais(containerId, limite = null, filtros = {}) {
 
 function criarCardAnimal(animal) {
     const sexoClass = animal.sexo === 'Macho' ? 'macho' : 'femea';
-    const idadeFormatada = animal.idade ? `${animal.idade} ${animal.idade == 1 ? 'ano' : 'anos'}` : 'Idade nao informada';
+    const idadeFormatada = animal.idade ? `${animal.idade} ${animal.idade == 1 ? 'ano' : 'anos'}` : 'Idade n\u00e3o informada';
     const foto = animal.ds_img ? `uploads/${animal.ds_img}` : 'https://placehold.co/400x400?text=Sem+Foto';
 
     return `
@@ -216,7 +216,7 @@ function criarCardAnimal(animal) {
 
 async function toggleFavorito(idAnimal, elemento) {
     if (!usuarioLogado) {
-        alert('Você precisa fazer login para favoritar animais.');
+        alert('Voc\u00ea precisa fazer login para favoritar animais.');
         redirecionarParaLogin();
         return;
     }
@@ -252,7 +252,7 @@ async function carregarFavoritos() {
     if (!container) return;
 
     if (!usuarioLogado) {
-        container.innerHTML = '<p style="text-align:center;">Faca login para ver seus animais favoritados.</p>';
+        container.innerHTML = '<p style="text-align:center;">Fa\u00e7a login para ver seus animais favoritados.</p>';
         return;
     }
 
@@ -266,7 +266,7 @@ async function carregarFavoritos() {
     }
 
     if (result.length === 0) {
-        container.innerHTML = '<p style="text-align:center;">Você não tem animais favoritados.</p>';
+        container.innerHTML = '<p style="text-align:center;">Voc\u00ea n\u00e3o tem animais favoritados.</p>';
         return;
     }
 
@@ -353,14 +353,14 @@ function selecionarTipoDoacao(tipo, elemento) {
 
 async function enviarDoacao() {
     if (!usuarioLogado) {
-        alert('Você precisa fazer login para realizar uma doação.');
+        alert('Voc\u00ea precisa fazer login para realizar uma doa\u00e7\u00e3o.');
         fecharModalDoacao();
         redirecionarParaLogin();
         return;
     }
 
     if (!tipoDoacaoSelecionado) {
-        alert('Selecione um tipo de doacao.');
+        alert('Selecione um tipo de doa\u00e7\u00e3o.');
         return;
     }
 
@@ -372,26 +372,26 @@ async function enviarDoacao() {
         if (valorInformado) {
             valor = parseFloat(valorInformado);
             if (Number.isNaN(valor) || valor <= 0) {
-                alert('Informe um valor valido para doacao.');
+                alert('Informe um valor v\u00e1lido para doa\u00e7\u00e3o.');
                 return;
             }
-            descricao = `Doacao via Pix de R$ ${valor.toFixed(2)}`;
+            descricao = `Doa\u00e7\u00e3o via Pix de R$ ${valor.toFixed(2)}`;
         } else {
-            descricao = 'Doacao via Pix';
+            descricao = 'Doa\u00e7\u00e3o via Pix';
         }
     } else if (tipoDoacaoSelecionado === 'Outro') {
         descricao = document.getElementById('descricaoOutro')?.value?.trim() || '';
         if (!descricao) {
-            alert('Descreva o que você deseja doar.');
+            alert('Descreva o que voc\u00ea deseja doar.');
             return;
         }
     } else {
         const detalhe = document.getElementById('detalheDoacao')?.value?.trim() || '';
         if (!detalhe) {
-            alert('Descreva o que você vai enviar.');
+            alert('Descreva o que voc\u00ea vai enviar.');
             return;
         }
-        descricao = `Doacao de ${tipoDoacaoSelecionado}: ${detalhe}`;
+        descricao = `Doa\u00e7\u00e3o de ${tipoDoacaoSelecionado}: ${detalhe}`;
     }
 
     const result = await fetchAPI('api.php?acao=doar', {
@@ -405,10 +405,10 @@ async function enviarDoacao() {
     });
 
     if (result.success) {
-        alert('Doacao registrada com sucesso! Muito obrigado!');
+        alert('Doa\u00e7\u00e3o registrada com sucesso! Muito obrigado!');
         fecharModalDoacao();
     } else {
-        alert('Erro ao registrar doacao. Tente novamente.');
+        alert('Erro ao registrar doa\u00e7\u00e3o. Tente novamente.');
     }
 }
 
@@ -432,9 +432,9 @@ async function abrirDetalhesAnimal(id) {
     document.getElementById('modalAnimalIdade').textContent = animalSelecionado.idade || '?';
     document.getElementById('modalAnimalEspecie').innerHTML = `<i class="fas fa-${animalSelecionado.especie === 'Cachorro' ? 'dog' : 'cat'}"></i> ${animalSelecionado.especie}`;
     document.getElementById('modalAnimalPeso').textContent = animalSelecionado.peso || '?';
-    document.getElementById('modalAnimalPorte').textContent = animalSelecionado.porte || 'Não informado';
-    document.getElementById('modalAnimalVacinado').innerHTML = animalSelecionado.vacinado ? '<i class="fas fa-check-circle" style="color:#4caf50"></i> Sim' : '<i class="fas fa-times-circle" style="color:#f44336"></i> Não';
-    document.getElementById('modalAnimalDescricao').textContent = animalSelecionado.descricao || 'Sem descrição disponível.';
+    document.getElementById('modalAnimalPorte').textContent = animalSelecionado.porte || 'N\u00e3o informado';
+    document.getElementById('modalAnimalVacinado').innerHTML = animalSelecionado.vacinado ? '<i class="fas fa-check-circle" style="color:#4caf50"></i> Sim' : '<i class="fas fa-times-circle" style="color:#f44336"></i> N\u00e3o';
+    document.getElementById('modalAnimalDescricao').textContent = animalSelecionado.descricao || 'Sem descri\u00e7\u00e3o dispon\u00edvel.';
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -469,7 +469,7 @@ function fecharModalAnimal() {
 
 async function solicitarAdocao() {
     if (!usuarioLogado) {
-        alert('Você precisa fazer login para solicitar uma adoção.');
+        alert('Voc\u00ea precisa fazer login para solicitar uma ado\u00e7\u00e3o.');
         fecharModalAnimal();
         redirecionarParaLogin();
         return;
@@ -477,7 +477,7 @@ async function solicitarAdocao() {
 
     if (!animalSelecionado) return;
 
-    const confirmar = confirm(`Você realmente deseja adotar ${animalSelecionado.nome}?`);
+    const confirmar = confirm(`Voc\u00ea realmente deseja adotar ${animalSelecionado.nome}?`);
     if (!confirmar) return;
 
     const result = await fetchAPI('api.php?acao=solicitar_adocao', {
@@ -489,14 +489,14 @@ async function solicitarAdocao() {
     });
 
     if (result.success) {
-        alert('Solicitação de adoção enviada com sucesso!');
+        alert('Solicita\u00e7\u00e3o de ado\u00e7\u00e3o enviada com sucesso!');
         fecharModalAnimal();
         carregarAnimais('gradeAnimaisDestaque', 4);
         if (document.getElementById('gradeTodosAnimais')) {
             carregarAnimais('gradeTodosAnimais');
         }
     } else {
-        alert('Erro ao enviar solicitacao. Tente novamente.');
+        alert('Erro ao enviar solicita\u00e7\u00e3o. Tente novamente.');
     }
 }
 
@@ -519,7 +519,7 @@ function irParaAdocao(e) {
     if (e?.preventDefault) e.preventDefault();
 
     if (!usuarioLogado) {
-        alert('Você precisa se cadastrar para ver os animais disponíveis para adoção.');
+        alert('Voc\u00ea precisa se cadastrar para ver os animais dispon\u00edveis para ado\u00e7\u00e3o.');
         redirecionarParaLogin('adocao.php');
         return false;
     }
@@ -549,7 +549,7 @@ function verTodosAnimais() {
 
 function verFavoritos() {
     if (!usuarioLogado) {
-        alert('Faca login para ver seus favoritos.');
+        alert('Fa\u00e7a login para ver seus favoritos.');
         redirecionarParaLogin();
         return;
     }
@@ -629,7 +629,7 @@ function atualizarInterfaceUsuario() {
                     <div class="usuario-dropdown-avatar" aria-hidden="true">${escaparHtml(dadosUsuario.iniciais)}</div>
                     <p class="usuario-dropdown-conta">Conta Pet Vida</p>
                     <p class="usuario-dropdown-nome">${escaparHtml(dadosUsuario.nomeCompleto)}</p>
-                    <p class="usuario-dropdown-email">${escaparHtml(dadosUsuario.email || 'E-mail nao informado')}</p>
+                    <p class="usuario-dropdown-email">${escaparHtml(dadosUsuario.email || 'E-mail n\u00e3o informado')}</p>
                 </div>
                 <button type="button" class="usuario-dropdown-item" role="menuitem" onclick="irParaPerfil()">
                     <i class="fas fa-user-edit" aria-hidden="true"></i>
@@ -756,7 +756,7 @@ async function fazerLogout() {
 
     const result = await fetchAPI('api.php?acao=logout');
     if (!result.success) {
-        alert(result.error || 'Não foi possível encerrar a sessão.');
+        alert(result.error || 'N\u00e3o foi poss\u00edvel encerrar a sess\u00e3o.');
         return;
     }
 
@@ -913,3 +913,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+

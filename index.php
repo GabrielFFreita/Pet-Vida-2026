@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . "/config/conexao.php";
 session_start();
 
@@ -53,7 +53,7 @@ require __DIR__ . "/includes/header.php";
         </div>
     </div>
     <div class="slide-banner">
-        <img src="assets/img/banners/Banner Cores neutras.png" alt="Banner de adoção">
+        <img src="assets/img/banners/Banner Cores neutras.png" alt="Banner de ado&ccedil;&atilde;o">
     </div>
 
     <button class="controle-banner controle-anterior" onclick="mudarSlide(-1)">&#10094;</button>
@@ -69,7 +69,7 @@ require __DIR__ . "/includes/header.php";
 <section class="animais-destaque" id="secaoAnimais">
     <div class="container-animais">
         <div class="cabecalho-animais">
-            <h2><i class="fas fa-paw"></i> Animais para Adoção</h2>
+            <h2><i class="fas fa-paw"></i> Animais para Ado&ccedil;&atilde;o</h2>
             <a href="adocao.php" class="btn-ver-mais" onclick="return irParaAdocao(event)">
                 Ver mais animais <i class="fas fa-arrow-right"></i>
             </a>
@@ -84,8 +84,8 @@ require __DIR__ . "/includes/header.php";
                     $imagem = !empty($animal["ds_img"]) ? "uploads/" . ltrim((string) $animal["ds_img"], "/\\") : "";
                     $idade = trim((string) ($animal["idade"] ?? ""));
                     $peso = trim((string) ($animal["peso"] ?? ""));
-                    $idadeTexto = $idade !== "" ? $idade . " anos" : "Não informado";
-                    $pesoTexto = $peso !== "" ? $peso . " kg" : "Não informado";
+                    $idadeTexto = $idade !== "" ? $idade . " anos" : "N&atilde;o informado";
+                    $pesoTexto = $peso !== "" ? $peso . " kg" : "N&atilde;o informado";
                 ?>
                     <div
                         class="cartao-animal"
@@ -124,7 +124,7 @@ require __DIR__ . "/includes/header.php";
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p style="grid-column: 1 / -1; text-align: center; color: #718096;">Nenhum animal disponível para adoção no momento.</p>
+                <p style="grid-column: 1 / -1; text-align: center; color: #718096;">Nenhum animal dispon&iacute;vel para ado&ccedil;&atilde;o no momento.</p>
             <?php endif; ?>
         </div>
     </div>
@@ -137,7 +137,7 @@ require __DIR__ . "/includes/header.php";
 
     <div class="filtros-animais">
         <div class="grupo-filtro">
-            <label for="filtroEspecie">Espécie</label>
+            <label for="filtroEspecie">Esp&eacute;cie</label>
             <select id="filtroEspecie">
                 <option value="">Todas</option>
                 <option value="Cachorro">Cachorro</option>
@@ -149,7 +149,7 @@ require __DIR__ . "/includes/header.php";
             <select id="filtroSexo">
                 <option value="">Todos</option>
                 <option value="Macho">Macho</option>
-                <option value="Fêmea">Fêmea</option>
+                <option value="F&ecirc;mea">F&ecirc;mea</option>
             </select>
         </div>
         <div class="grupo-filtro">
@@ -183,46 +183,46 @@ require __DIR__ . "/includes/header.php";
     <div class="container-sobre">
         <div class="cabecalho-sobre">
             <h2 class="titulo-sobre">Sobre o Pet Vida</h2>
-            <p>Conectando corações e lares há mais de 10 anos.</p>
+            <p>Conectando cora&ccedil;&otilde;es e lares h&aacute; mais de 10 anos.</p>
         </div>
 
         <div class="sobre-conteudo">
             <div class="texto-resumido">
-                <h3><i class="fas fa-paw"></i> Nossa Missão</h3>
-                <p>Nossa missão é resgatar animais abandonados, oferecer cuidados veterinários e encontrar lares amorosos e definitivos para eles.</p>
+                <h3><i class="fas fa-paw"></i> Nossa Miss&atilde;o</h3>
+                <p>Nossa miss&atilde;o &eacute; resgatar animais abandonados, oferecer cuidados veterin&aacute;rios e encontrar lares amorosos e definitivos para eles.</p>
 
                 <h3><i class="fas fa-star"></i> Nossos Valores</h3>
-                <p>Trabalhamos com transparência, bem-estar animal e educação como pilares da organização.</p>
+                <p>Trabalhamos com transpar&ecirc;ncia, bem-estar animal e educa&ccedil;&atilde;o como pilares da organiza&ccedil;&atilde;o.</p>
 
-                <h3><i class="fas fa-heart"></i> Adoção Responsável</h3>
-                <p>Adotar é um ato de amor e compromisso. Nosso processo busca o pet ideal para cada lar.</p>
+                <h3><i class="fas fa-heart"></i> Ado&ccedil;&atilde;o Respons&aacute;vel</h3>
+                <p>Adotar &eacute; um ato de amor e compromisso. Nosso processo busca o pet ideal para cada lar.</p>
 
-                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribuição</h3>
-                <p>Cada ajuda viabiliza novos resgates, cobre custos médicos e mantém o abrigo funcionando.</p>
+                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribui&ccedil;&atilde;o</h3>
+                <p>Cada ajuda viabiliza novos resgates, cobre custos m&eacute;dicos e mant&eacute;m o abrigo funcionando.</p>
             </div>
 
             <div class="texto-completo">
-                <h3><i class="fas fa-paw"></i> Nossa Missão de Resgate e Adoção</h3>
-                <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo bem-estar e combatendo o abandono.</p>
-                <p>Acreditamos que cada animal merece dignidade, segurança e uma segunda chance com uma família responsável.</p>
+                <h3><i class="fas fa-paw"></i> Nossa Miss&atilde;o de Resgate e Ado&ccedil;&atilde;o</h3>
+                <p>Nossa miss&atilde;o &eacute; resgatar animais abandonados, fornecer cuidados veterin&aacute;rios e encontrar lares amorosos e definitivos para eles, promovendo bem-estar e combatendo o abandono.</p>
+                <p>Acreditamos que cada animal merece dignidade, seguran&ccedil;a e uma segunda chance com uma fam&iacute;lia respons&aacute;vel.</p>
 
                 <h3><i class="fas fa-star"></i> Nossos Valores</h3>
                 <ul>
-                    <li><strong>Transparência:</strong> processos e custos claros e auditáveis.</li>
-                    <li><strong>Bem-estar Animal:</strong> saúde física e emocional em primeiro lugar.</li>
-                    <li><strong>Educação:</strong> conscientização sobre posse responsável e castração.</li>
-                    <li><strong>Compromisso:</strong> acompanhamento das adoções para garantir boa adaptação.</li>
+                    <li><strong>Transpar&ecirc;ncia:</strong> processos e custos claros e audit&aacute;veis.</li>
+                    <li><strong>Bem-estar Animal:</strong> sa&uacute;de f&iacute;sica e emocional em primeiro lugar.</li>
+                    <li><strong>Educa&ccedil;&atilde;o:</strong> conscientiza&ccedil;&atilde;o sobre posse respons&aacute;vel e castra&ccedil;&atilde;o.</li>
+                    <li><strong>Compromisso:</strong> acompanhamento das ado&ccedil;&otilde;es para garantir boa adapta&ccedil;&atilde;o.</li>
                 </ul>
 
-                <h3><i class="fas fa-heart"></i> Adoção Responsável</h3>
-                <p>Adotar é um ato de amor, mas também de responsabilidade. Nosso processo busca o pet certo para cada família e reforça o compromisso de longo prazo com o novo lar.</p>
+                <h3><i class="fas fa-heart"></i> Ado&ccedil;&atilde;o Respons&aacute;vel</h3>
+                <p>Adotar &eacute; um ato de amor, mas tamb&eacute;m de responsabilidade. Nosso processo busca o pet certo para cada fam&iacute;lia e refor&ccedil;a o compromisso de longo prazo com o novo lar.</p>
 
-                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribuição Faz a Diferença</h3>
-                <p>Sua ajuda viabiliza mais resgates, cobre custos médicos e mantém o abrigo funcionando. Cada adoção abre espaço para um novo animal ser acolhido.</p>
+                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribui&ccedil;&atilde;o Faz a Diferen&ccedil;a</h3>
+                <p>Sua ajuda viabiliza mais resgates, cobre custos m&eacute;dicos e mant&eacute;m o abrigo funcionando. Cada ado&ccedil;&atilde;o abre espa&ccedil;o para um novo animal ser acolhido.</p>
                 <div class="doacoes-info">
-                    <p><strong><i class="fas fa-qrcode"></i> Doações via PIX:</strong> contato@petvida.org.br</p>
-                    <p><strong><i class="fas fa-university"></i> Transferência Bancária:</strong> Banco do Brasil | Agência: 0001 | Conta: 12345-6</p>
-                    <p><strong><i class="fas fa-dog"></i> Doação de itens:</strong> Rua dos Animais, 123 - Centro, Petrópolis/RJ</p>
+                    <p><strong><i class="fas fa-qrcode"></i> Doa&ccedil;&otilde;es via PIX:</strong> contato@petvida.org.br</p>
+                    <p><strong><i class="fas fa-university"></i> Transfer&ecirc;ncia Banc&aacute;ria:</strong> Banco do Brasil | Ag&ecirc;ncia: 0001 | Conta: 12345-6</p>
+                    <p><strong><i class="fas fa-dog"></i> Doa&ccedil;&atilde;o de itens:</strong> Rua dos Animais, 123 - Centro, Petr&oacute;polis/RJ</p>
                 </div>
             </div>
 
@@ -289,3 +289,4 @@ require __DIR__ . "/includes/header.php";
 </div>
 
 <?php require __DIR__ . "/includes/footer.php"; ?>
+
