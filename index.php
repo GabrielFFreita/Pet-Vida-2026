@@ -53,7 +53,7 @@ require __DIR__ . "/includes/header.php";
         </div>
     </div>
     <div class="slide-banner">
-        <img src="assets/img/banners/Banner Cores neutras.png" alt="Banner de adocao">
+        <img src="assets/img/banners/Banner Cores neutras.png" alt="Banner de adoção">
     </div>
 
     <button class="controle-banner controle-anterior" onclick="mudarSlide(-1)">&#10094;</button>
@@ -69,7 +69,7 @@ require __DIR__ . "/includes/header.php";
 <section class="animais-destaque" id="secaoAnimais">
     <div class="container-animais">
         <div class="cabecalho-animais">
-            <h2><i class="fas fa-paw"></i> Animais para Adocao</h2>
+            <h2><i class="fas fa-paw"></i> Animais para Adoção</h2>
             <a href="adocao.php" class="btn-ver-mais" onclick="return irParaAdocao(event)">
                 Ver mais animais <i class="fas fa-arrow-right"></i>
             </a>
@@ -84,8 +84,8 @@ require __DIR__ . "/includes/header.php";
                     $imagem = !empty($animal["ds_img"]) ? "uploads/" . ltrim((string) $animal["ds_img"], "/\\") : "";
                     $idade = trim((string) ($animal["idade"] ?? ""));
                     $peso = trim((string) ($animal["peso"] ?? ""));
-                    $idadeTexto = $idade !== "" ? $idade . " anos" : "Nao informado";
-                    $pesoTexto = $peso !== "" ? $peso . " kg" : "Nao informado";
+                    $idadeTexto = $idade !== "" ? $idade . " anos" : "Não informado";
+                    $pesoTexto = $peso !== "" ? $peso . " kg" : "Não informado";
                 ?>
                     <div
                         class="cartao-animal"
@@ -124,7 +124,7 @@ require __DIR__ . "/includes/header.php";
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p style="grid-column: 1 / -1; text-align: center; color: #718096;">Nenhum animal disponivel para adocao no momento.</p>
+                <p style="grid-column: 1 / -1; text-align: center; color: #718096;">Nenhum animal disponível para adoção no momento.</p>
             <?php endif; ?>
         </div>
     </div>
@@ -137,7 +137,7 @@ require __DIR__ . "/includes/header.php";
 
     <div class="filtros-animais">
         <div class="grupo-filtro">
-            <label for="filtroEspecie">Especie</label>
+            <label for="filtroEspecie">Espécie</label>
             <select id="filtroEspecie">
                 <option value="">Todas</option>
                 <option value="Cachorro">Cachorro</option>
@@ -149,7 +149,7 @@ require __DIR__ . "/includes/header.php";
             <select id="filtroSexo">
                 <option value="">Todos</option>
                 <option value="Macho">Macho</option>
-                <option value="Fêmea">Femea</option>
+                <option value="Fêmea">Fêmea</option>
             </select>
         </div>
         <div class="grupo-filtro">
@@ -183,46 +183,46 @@ require __DIR__ . "/includes/header.php";
     <div class="container-sobre">
         <div class="cabecalho-sobre">
             <h2 class="titulo-sobre">Sobre o Pet Vida</h2>
-            <p>Conectando coracoes e lares ha mais de 10 anos.</p>
+            <p>Conectando corações e lares há mais de 10 anos.</p>
         </div>
 
         <div class="sobre-conteudo">
             <div class="texto-resumido">
-                <h3><i class="fas fa-paw"></i> Nossa Missao</h3>
-                <p>Nossa missao e resgatar animais abandonados, oferecer cuidados veterinarios e encontrar lares amorosos e definitivos para eles.</p>
+                <h3><i class="fas fa-paw"></i> Nossa Missão</h3>
+                <p>Nossa missão é resgatar animais abandonados, oferecer cuidados veterinários e encontrar lares amorosos e definitivos para eles.</p>
 
                 <h3><i class="fas fa-star"></i> Nossos Valores</h3>
-                <p>Trabalhamos com transparencia, bem-estar animal e educacao como pilares da organizacao.</p>
+                <p>Trabalhamos com transparência, bem-estar animal e educação como pilares da organização.</p>
 
-                <h3><i class="fas fa-heart"></i> Adocao Responsavel</h3>
-                <p>Adotar e um ato de amor e compromisso. Nosso processo busca o pet ideal para cada lar.</p>
+                <h3><i class="fas fa-heart"></i> Adoção Responsável</h3>
+                <p>Adotar é um ato de amor e compromisso. Nosso processo busca o pet ideal para cada lar.</p>
 
-                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribuicao</h3>
-                <p>Cada ajuda viabiliza novos resgates, cobre custos medicos e mantem o abrigo funcionando.</p>
+                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribuição</h3>
+                <p>Cada ajuda viabiliza novos resgates, cobre custos médicos e mantém o abrigo funcionando.</p>
             </div>
 
             <div class="texto-completo">
-                <h3><i class="fas fa-paw"></i> Nossa Missao de Resgate e Adocao</h3>
-                <p>Nossa missao e resgatar animais abandonados, fornecer cuidados veterinarios e encontrar lares amorosos e definitivos para eles, promovendo bem-estar e combatendo o abandono.</p>
-                <p>Acreditamos que cada animal merece dignidade, seguranca e uma segunda chance com uma familia responsavel.</p>
+                <h3><i class="fas fa-paw"></i> Nossa Missão de Resgate e Adoção</h3>
+                <p>Nossa missão é resgatar animais abandonados, fornecer cuidados veterinários e encontrar lares amorosos e definitivos para eles, promovendo bem-estar e combatendo o abandono.</p>
+                <p>Acreditamos que cada animal merece dignidade, segurança e uma segunda chance com uma família responsável.</p>
 
                 <h3><i class="fas fa-star"></i> Nossos Valores</h3>
                 <ul>
-                    <li><strong>Transparencia:</strong> processos e custos claros e auditaveis.</li>
-                    <li><strong>Bem-estar Animal:</strong> saude fisica e emocional em primeiro lugar.</li>
-                    <li><strong>Educacao:</strong> conscientizacao sobre posse responsavel e castracao.</li>
-                    <li><strong>Compromisso:</strong> acompanhamento das adocoes para garantir boa adaptacao.</li>
+                    <li><strong>Transparência:</strong> processos e custos claros e auditáveis.</li>
+                    <li><strong>Bem-estar Animal:</strong> saúde física e emocional em primeiro lugar.</li>
+                    <li><strong>Educação:</strong> conscientização sobre posse responsável e castração.</li>
+                    <li><strong>Compromisso:</strong> acompanhamento das adoções para garantir boa adaptação.</li>
                 </ul>
 
-                <h3><i class="fas fa-heart"></i> Adocao Responsavel</h3>
-                <p>Adotar e um ato de amor, mas tambem de responsabilidade. Nosso processo busca o pet certo para cada familia e reforca o compromisso de longo prazo com o novo lar.</p>
+                <h3><i class="fas fa-heart"></i> Adoção Responsável</h3>
+                <p>Adotar é um ato de amor, mas também de responsabilidade. Nosso processo busca o pet certo para cada família e reforça o compromisso de longo prazo com o novo lar.</p>
 
-                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribuicao Faz a Diferenca</h3>
-                <p>Sua ajuda viabiliza mais resgates, cobre custos medicos e mantem o abrigo funcionando. Cada adocao abre espaco para um novo animal ser acolhido.</p>
+                <h3><i class="fas fa-hand-holding-heart"></i> Sua Contribuição Faz a Diferença</h3>
+                <p>Sua ajuda viabiliza mais resgates, cobre custos médicos e mantém o abrigo funcionando. Cada adoção abre espaço para um novo animal ser acolhido.</p>
                 <div class="doacoes-info">
-                    <p><strong><i class="fas fa-qrcode"></i> Doacoes via PIX:</strong> contato@petvida.org.br</p>
-                    <p><strong><i class="fas fa-university"></i> Transferencia Bancaria:</strong> Banco do Brasil | Agencia: 0001 | Conta: 12345-6</p>
-                    <p><strong><i class="fas fa-dog"></i> Doacao de itens:</strong> Rua dos Animais, 123 - Centro, Petropolis/RJ</p>
+                    <p><strong><i class="fas fa-qrcode"></i> Doações via PIX:</strong> contato@petvida.org.br</p>
+                    <p><strong><i class="fas fa-university"></i> Transferência Bancária:</strong> Banco do Brasil | Agência: 0001 | Conta: 12345-6</p>
+                    <p><strong><i class="fas fa-dog"></i> Doação de itens:</strong> Rua dos Animais, 123 - Centro, Petrópolis/RJ</p>
                 </div>
             </div>
 

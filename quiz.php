@@ -6,18 +6,50 @@ function e($valor): string
     return htmlspecialchars((string) $valor, ENT_QUOTES, "UTF-8");
 }
 
+function normalizarStatus(?string $status): string
+{
+    $status = trim((string) $status);
+    if ($status === '') {
+        $status = 'Disponível';
+    }
+
+    return function_exists('mb_strtolower') ? mb_strtolower($status, 'UTF-8') : strtolower($status);
+}
+
+function obterClasseStatusQuiz(?string $status): string
+{
+    $mapa = [
+        'disponível' => 'status-disponivel',
+        'disponivel' => 'status-disponivel',
+        'em processo' => 'status-processo',
+        'em análise' => 'status-processo',
+        'em analise' => 'status-processo',
+        'reservado' => 'status-processo',
+        'adotado' => 'status-adotado',
+    ];
+
+    return $mapa[normalizarStatus($status)] ?? 'status-padrao';
+}
+
 function renderCardAnimal(array $animal): string
 {
     $nome = e($animal["nome"] ?? "Sem nome");
-    $raca = e($animal["raca"] ?? "Raca nao informada");
-    $idade = !empty($animal["idade"]) ? e($animal["idade"]) : "Idade nao informada";
-    $sexo = e($animal["sexo"] ?? "Nao informado");
-    $porte = e($animal["porte"] ?? "Nao informado");
+    $idAnimal = (int) ($animal["id_animal"] ?? 0);
+    $raca = e($animal["raca"] ?? "Raça não informada");
+    $idade = !empty($animal["idade"]) ? e($animal["idade"]) . " anos" : "Idade não informada";
+    $sexo = e($animal["sexo"] ?? "Não informado");
+    $porte = e($animal["porte"] ?? "Não informado");
     $descricao = e($animal["descricao"] ?? "Pet especial aguardando um lar.");
-    $abrigo = !empty($animal["abrigo_nome"]) ? e($animal["abrigo_nome"]) : "Nao informado";
+    $abrigo = !empty($animal["abrigo_nome"]) ? e($animal["abrigo_nome"]) : "Não informado";
     $foto = !empty($animal["ds_img"]) ? "uploads/" . e($animal["ds_img"]) : "uploads/not_image.png";
+    $status = trim((string) ($animal["status_adocao"] ?? "Disponível"));
+    $statusClasse = obterClasseStatusQuiz($status);
+    $linkDetalhes = $idAnimal > 0 ? "adocao.php?pet={$idAnimal}" : "adocao.php";
 
-    $especieNormalizada = mb_strtolower(trim((string) ($animal["especie"] ?? "")), "UTF-8");
+    $especieNormalizada = function_exists('mb_strtolower')
+        ? mb_strtolower(trim((string) ($animal["especie"] ?? "")), "UTF-8")
+        : strtolower(trim((string) ($animal["especie"] ?? "")));
+
     $tagClasse = $especieNormalizada === "gato" ? "tag-gato" : "tag-cachorro";
     $tipoLabel = $especieNormalizada === "gato" ? "Gato" : "Cachorro";
 
@@ -25,6 +57,7 @@ function renderCardAnimal(array $animal): string
         <article class="pet-card">
           <div class="card-img-wrapper">
             <img src="{$foto}" alt="{$nome}, {$raca}" loading="lazy">
+            <span class="badge-status-adocao {$statusClasse} badge-status-quiz">{$status}</span>
           </div>
           <div class="card-body">
             <h3 class="pet-nome">{$nome}</h3>
@@ -35,6 +68,9 @@ function renderCardAnimal(array $animal): string
               {$abrigo}
             </p>
             <p class="pet-descricao-quiz">{$descricao}</p>
+            <a href="{$linkDetalhes}" class="btn-detalhes btn-detalhes-quiz" aria-label="Ver detalhes de {$nome}">
+              Conhecer este pet
+            </a>
           </div>
         </article>
         HTML;
@@ -162,16 +198,16 @@ function processarQuiz(PDO $pdo, array $respostas): string
     if ($perfil === "Gato") {
         $tituloResultado = '<i class="fa-solid fa-cat"></i> Seu perfil combina mais com gatos';
     } elseif ($perfil === "Cachorro") {
-        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina mais com caes';
+        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina mais com cães';
     } else {
-        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina com caes e gatos <i class="fa-solid fa-cat"></i>';
+        $tituloResultado = '<i class="fa-solid fa-dog"></i> Seu perfil combina com cães e gatos <i class="fa-solid fa-cat"></i>';
     }
 
     ob_start();
     ?>
     <div class="resultado-quiz">
         <h1 class="titulo-resultado"><?= $tituloResultado ?></h1>
-        <p class="subtitulo-resultado">Confira os animais disponiveis que combinam com seu perfil.</p>
+        <p class="subtitulo-resultado">Confira os animais disponíveis que combinam com seu perfil.</p>
 
         <?php if (empty($animais)): ?>
             <div class="sem-resultados-quiz">
@@ -209,7 +245,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
 
     if (!is_array($respostas) || count($respostas) < 8) {
         http_response_code(400);
-        echo '<p class="erro-quiz">Nao foi possivel processar suas respostas. Tente novamente.</p>';
+        echo '<p class="erro-quiz">Não foi possível processar suas respostas. Tente novamente.</p>';
         exit;
     }
 
@@ -218,12 +254,12 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Quiz - Descubra o pet ideal para voce | Pet Vida</title>
-    <meta name="description" content="Responda algumas perguntas rapidas e descubra qual pet combina mais com a sua rotina e seu estilo de vida.">
+    <title>Pet Quiz - Descubra o pet ideal para você | Pet Vida</title>
+    <meta name="description" content="Responda algumas perguntas rápidas e descubra qual pet combina mais com a sua rotina e seu estilo de vida.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -286,7 +322,9 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             transition: var(--transition);
         }
 
-        .circulo.ativo { background: var(--laranja); }
+        .circulo.ativo {
+            background: var(--laranja);
+        }
 
         #pergunta {
             font-family: 'Fraunces', serif;
@@ -301,7 +339,9 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             gap: 10px;
         }
 
-        .opcoes.shake { animation: shakeOpcoes .35s ease; }
+        .opcoes.shake {
+            animation: shakeOpcoes .35s ease;
+        }
 
         @keyframes shakeOpcoes {
             0%, 100% { transform: translateX(0); }
@@ -334,10 +374,12 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
 
         .opcao.selecionada {
             border-color: var(--laranja);
-            background: rgba(224,123,57,.08);
+            background: rgba(224, 123, 57, .08);
         }
 
-        .opcao.selecionada i { color: var(--laranja); }
+        .opcao.selecionada i {
+            color: var(--laranja);
+        }
 
         .opcao p {
             font-size: .95rem;
@@ -361,7 +403,9 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             font-size: .9rem;
         }
 
-        #voltar:hover { color: var(--verde-esc); }
+        #voltar:hover {
+            color: var(--verde-esc);
+        }
 
         #btnResultado {
             background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-esc) 100%);
@@ -389,23 +433,67 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             align-items: center;
             justify-content: center;
             padding: 80px 20px;
-            gap: 16px;
+            gap: 18px;
         }
 
-        .carregando-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid var(--bege-esc);
-            border-top-color: var(--laranja);
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
+        .carregando-patinhas {
+            position: relative;
+            width: 148px;
+            height: 74px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .patinha {
+            position: absolute;
+            font-size: 1.7rem;
+            color: var(--laranja);
+            opacity: 0;
+            animation: patinhas 1.35s ease-in-out infinite;
+            filter: drop-shadow(0 10px 12px rgba(224, 123, 57, .18));
         }
 
-        .carregando-wrapper p { color: var(--texto-leve); }
+        .patinha:nth-child(1) {
+            top: 22px;
+            left: 0;
+            animation-delay: 0s;
+        }
+
+        .patinha:nth-child(2) {
+            top: 0;
+            left: 36px;
+            animation-delay: .18s;
+        }
+
+        .patinha:nth-child(3) {
+            top: 28px;
+            left: 72px;
+            animation-delay: .36s;
+        }
+
+        .patinha:nth-child(4) {
+            top: 6px;
+            left: 108px;
+            animation-delay: .54s;
+        }
+
+        @keyframes patinhas {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(.82) rotate(-8deg);
+            }
+            35% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10px) scale(.92) rotate(6deg);
+            }
+        }
+
+        .carregando-wrapper p {
+            color: var(--texto-leve);
+            text-align: center;
+        }
 
         .resultado-quiz {
             max-width: 1280px;
@@ -423,7 +511,9 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             gap: 12px;
         }
 
-        .titulo-resultado i { color: var(--laranja); }
+        .titulo-resultado i {
+            color: var(--laranja);
+        }
 
         .subtitulo-resultado {
             text-align: center;
@@ -437,6 +527,19 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             color: var(--texto-leve);
             margin-top: 6px;
             line-height: 1.5;
+        }
+
+        .badge-status-quiz {
+            top: 14px;
+            right: 14px;
+        }
+
+        .btn-detalhes-quiz {
+            margin-top: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .sem-resultados-quiz {
@@ -460,7 +563,9 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             color: var(--verde-esc);
         }
 
-        .sem-resultados-quiz p { color: var(--cinza); }
+        .sem-resultados-quiz p {
+            color: var(--cinza);
+        }
 
         .acoes-resultado-quiz {
             display: flex;
@@ -501,7 +606,9 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             color: var(--verde-esc);
         }
 
-        .botao-secundario-quiz:hover { background: var(--cinza-claro); }
+        .botao-secundario-quiz:hover {
+            background: var(--cinza-claro);
+        }
 
         .erro-quiz {
             text-align: center;
@@ -509,10 +616,24 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             padding: 40px 20px;
         }
 
-        #area-resultado { margin-top: 32px; }
+        #area-resultado {
+            margin-top: 32px;
+        }
 
         @media (max-width: 600px) {
-            .quiz-card { padding: 24px 18px; }
+            .quiz-card {
+                padding: 24px 18px;
+            }
+
+            .botoes {
+                flex-direction: column-reverse;
+                align-items: stretch;
+                gap: 14px;
+            }
+
+            #btnResultado {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -528,7 +649,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
 
     <header role="banner">
         <div class="header-inner">
-            <a href="adocao.php" class="logo" aria-label="Pagina inicial">
+            <a href="adocao.php" class="logo" aria-label="Página inicial">
                 <img src="assets/img/logo/logo_petvida.png" alt="Pet Vida" class="logo-img">
                 <span class="logo-text">Pet <em>Vida</em></span>
             </a>
@@ -548,7 +669,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             <h1 class="titulo-quiz">Pet Quiz</h1>
             <p class="subtitulo-quiz">Descubra quais pets combinam com seu perfil</p>
 
-            <section class="quiz-card" aria-label="Formulario do Pet Quiz">
+            <section class="quiz-card" aria-label="Formulário do Pet Quiz">
                 <div class="topo">
                     <span id="contador">Pergunta 1 de 8</span>
                     <div class="linha-progresso" id="linhaProgresso"></div>
@@ -579,13 +700,13 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             </div>
             <div class="footer-links">
                 <h4>Institucional</h4>
-                <a href="adocao.php">Sobre nos</a>
+                <a href="adocao.php">Sobre nós</a>
                 <a href="adocao.php">Como adotar</a>
-                <a href="adocao.php">Politica de privacidade</a>
+                <a href="adocao.php">Política de privacidade</a>
             </div>
             <div class="footer-links">
                 <h4>Ajuda</h4>
-                <a href="adocao.php">Duvidas frequentes</a>
+                <a href="adocao.php">Dúvidas frequentes</a>
                 <a href="mailto:contato@petvida.org.br">Fale conosco</a>
             </div>
             <div class="footer-contato">
@@ -728,6 +849,20 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             window.location.href = "adocao.php";
         }
 
+        function obterHtmlCarregamento() {
+            return `
+                <div class="carregando-wrapper">
+                    <div class="carregando-patinhas" aria-hidden="true">
+                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
+                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
+                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
+                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
+                    </div>
+                    <p>Buscando os melhores pets para você...</p>
+                </div>
+            `;
+        }
+
         function finalizarQuiz() {
             if (!respostas[perguntaAtual]) return;
 
@@ -735,12 +870,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             const areaResultado = document.getElementById("area-resultado");
 
             areaQuiz.style.display = "none";
-            areaResultado.innerHTML = `
-                <div class="carregando-wrapper">
-                    <div class="carregando-spinner"></div>
-                    <p>Buscando os melhores pets para você...</p>
-                </div>
-            `;
+            areaResultado.innerHTML = obterHtmlCarregamento();
 
             fetch("quiz.php", {
                 method: "POST",
@@ -762,6 +892,5 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             });
         }
     </script>
-
 </body>
 </html>

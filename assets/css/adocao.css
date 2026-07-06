@@ -632,6 +632,15 @@ header {
   letter-spacing: .04em;
   text-transform: uppercase;
   color: var(--branco);
+  border: 1px solid transparent;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .12);
+}
+
+.badge-status-adocao.status-disponivel {
+  background: rgba(82, 183, 136, .14);
+  color: var(--verde-esc);
+  border-color: rgba(82, 183, 136, .4);
+  box-shadow: inset 0 0 0 1px rgba(82, 183, 136, .12), 0 10px 20px rgba(82, 183, 136, .18);
 }
 
 .badge-status-adocao.status-processo { background: var(--laranja); }

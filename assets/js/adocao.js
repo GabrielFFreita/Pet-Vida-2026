@@ -26,6 +26,7 @@ let mostrandoFavoritos = false;
 
 // ── Dados dos abrigos (vindos do banco de verdade, injetados pelo PHP) ──
 const abrigos = window.ABRIGOS_DADOS || {};
+const petAutoOpenId = Number(window.PET_AUTO_OPEN_ID) > 0 ? String(window.PET_AUTO_OPEN_ID) : '';
 
 // ── Helpers ──────────────────────────────────────────────────
 function qs(selector, root = document) { return root.querySelector(selector); }
@@ -33,6 +34,31 @@ function qsa(selector, root = document) { return [...root.querySelectorAll(selec
 
 function setAriaHidden(el, hidden) {
   el.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+}
+
+function atualizarUrlDetalhes(id) {
+  const url = new URL(window.location.href);
+
+  if (id) {
+    url.searchParams.set('pet', id);
+  } else {
+    url.searchParams.delete('pet');
+  }
+
+  window.history.replaceState({}, '', url);
+}
+
+function abrirPetDaUrlSeExistir() {
+  if (!petAutoOpenId) return;
+
+  const card = qs(`.pet-card[data-id="${petAutoOpenId}"]`);
+  if (!card) {
+    atualizarUrlDetalhes(null);
+    return;
+  }
+
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  window.setTimeout(() => verDetalhes(card), 180);
 }
 
 // ── Inicialização ────────────────────────────────────────────
@@ -49,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavMobile();
   aplicarFiltros();
   atualizarContadorFavoritos();
+  abrirPetDaUrlSeExistir();
 });
 
 // ── Loading de imagens ───────────────────────────────────────
@@ -400,6 +427,8 @@ function initDetalhes() {
 }
 
 function verDetalhes(card) {
+  if (!card) return;
+
   petCardAtivo = card;
   const abrigoId = card.dataset.abrigo;
   let fotos = [];
@@ -422,7 +451,7 @@ function verDetalhes(card) {
     tipo:       card.dataset.tipo        || 'Não informado',
     raca:       card.dataset.raca        || 'Não informada',
     sexo:       card.dataset.sexo        || 'Não informado',
-    weight:     card.dataset.peso        || 'Não informado',
+    peso:       card.dataset.peso        || 'Não informado',
     idade:      card.dataset.idade       || 'Não informada',
     porte:      card.dataset.porte       || 'Não informado',
     vacinado:   card.dataset.vacinado    || 'Sim',
@@ -457,6 +486,7 @@ function verDetalhes(card) {
   setAriaHidden(tela, false);
   document.body.style.overflow = 'hidden';
   tela.scrollTo(0, 0);
+  atualizarUrlDetalhes(petEscolhido.id || null);
   qs('#btn-voltar-det').focus();
 }
 
@@ -479,6 +509,7 @@ function voltarParaLista() {
   tela.style.display = 'none';
   setAriaHidden(tela, true);
   document.body.style.overflow = '';
+  atualizarUrlDetalhes(null);
 }
 
 // ── Carrossel ────────────────────────────────────────────────

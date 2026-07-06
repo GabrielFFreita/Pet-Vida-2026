@@ -174,7 +174,7 @@ async function carregarAnimais(containerId, limite = null, filtros = {}) {
     if (limite) animais = animais.slice(0, limite);
 
     if (!animais || animais.length === 0) {
-        container.innerHTML = '<p style="text-align:center;">Nenhum animal disponivel para adocao no momento.</p>';
+        container.innerHTML = '<p style="text-align:center;">Nenhum animal disponível para adoção no momento.</p>';
         return;
     }
 
@@ -216,7 +216,7 @@ function criarCardAnimal(animal) {
 
 async function toggleFavorito(idAnimal, elemento) {
     if (!usuarioLogado) {
-        alert('Voce precisa fazer login para favoritar animais.');
+        alert('Você precisa fazer login para favoritar animais.');
         redirecionarParaLogin();
         return;
     }
@@ -266,7 +266,7 @@ async function carregarFavoritos() {
     }
 
     if (result.length === 0) {
-        container.innerHTML = '<p style="text-align:center;">Voce nao tem animais favoritados.</p>';
+        container.innerHTML = '<p style="text-align:center;">Você não tem animais favoritados.</p>';
         return;
     }
 
@@ -353,7 +353,7 @@ function selecionarTipoDoacao(tipo, elemento) {
 
 async function enviarDoacao() {
     if (!usuarioLogado) {
-        alert('Voce precisa fazer login para realizar uma doacao.');
+        alert('Você precisa fazer login para realizar uma doação.');
         fecharModalDoacao();
         redirecionarParaLogin();
         return;
@@ -382,13 +382,13 @@ async function enviarDoacao() {
     } else if (tipoDoacaoSelecionado === 'Outro') {
         descricao = document.getElementById('descricaoOutro')?.value?.trim() || '';
         if (!descricao) {
-            alert('Descreva o que voce deseja doar.');
+            alert('Descreva o que você deseja doar.');
             return;
         }
     } else {
         const detalhe = document.getElementById('detalheDoacao')?.value?.trim() || '';
         if (!detalhe) {
-            alert('Descreva o que voce vai enviar.');
+            alert('Descreva o que você vai enviar.');
             return;
         }
         descricao = `Doacao de ${tipoDoacaoSelecionado}: ${detalhe}`;
@@ -432,9 +432,9 @@ async function abrirDetalhesAnimal(id) {
     document.getElementById('modalAnimalIdade').textContent = animalSelecionado.idade || '?';
     document.getElementById('modalAnimalEspecie').innerHTML = `<i class="fas fa-${animalSelecionado.especie === 'Cachorro' ? 'dog' : 'cat'}"></i> ${animalSelecionado.especie}`;
     document.getElementById('modalAnimalPeso').textContent = animalSelecionado.peso || '?';
-    document.getElementById('modalAnimalPorte').textContent = animalSelecionado.porte || 'Nao informado';
-    document.getElementById('modalAnimalVacinado').innerHTML = animalSelecionado.vacinado ? '<i class="fas fa-check-circle" style="color:#4caf50"></i> Sim' : '<i class="fas fa-times-circle" style="color:#f44336"></i> Nao';
-    document.getElementById('modalAnimalDescricao').textContent = animalSelecionado.descricao || 'Sem descricao disponivel.';
+    document.getElementById('modalAnimalPorte').textContent = animalSelecionado.porte || 'Não informado';
+    document.getElementById('modalAnimalVacinado').innerHTML = animalSelecionado.vacinado ? '<i class="fas fa-check-circle" style="color:#4caf50"></i> Sim' : '<i class="fas fa-times-circle" style="color:#f44336"></i> Não';
+    document.getElementById('modalAnimalDescricao').textContent = animalSelecionado.descricao || 'Sem descrição disponível.';
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -469,7 +469,7 @@ function fecharModalAnimal() {
 
 async function solicitarAdocao() {
     if (!usuarioLogado) {
-        alert('Voce precisa fazer login para solicitar uma adocao.');
+        alert('Você precisa fazer login para solicitar uma adoção.');
         fecharModalAnimal();
         redirecionarParaLogin();
         return;
@@ -477,7 +477,7 @@ async function solicitarAdocao() {
 
     if (!animalSelecionado) return;
 
-    const confirmar = confirm(`Voce realmente deseja adotar ${animalSelecionado.nome}?`);
+    const confirmar = confirm(`Você realmente deseja adotar ${animalSelecionado.nome}?`);
     if (!confirmar) return;
 
     const result = await fetchAPI('api.php?acao=solicitar_adocao', {
@@ -489,7 +489,7 @@ async function solicitarAdocao() {
     });
 
     if (result.success) {
-        alert('Solicitacao de adocao enviada com sucesso!');
+        alert('Solicitação de adoção enviada com sucesso!');
         fecharModalAnimal();
         carregarAnimais('gradeAnimaisDestaque', 4);
         if (document.getElementById('gradeTodosAnimais')) {
@@ -519,7 +519,7 @@ function irParaAdocao(e) {
     if (e?.preventDefault) e.preventDefault();
 
     if (!usuarioLogado) {
-        alert('Voce precisa se cadastrar para ver os animais disponiveis para adocao.');
+        alert('Você precisa se cadastrar para ver os animais disponíveis para adoção.');
         redirecionarParaLogin('adocao.php');
         return false;
     }
@@ -756,7 +756,7 @@ async function fazerLogout() {
 
     const result = await fetchAPI('api.php?acao=logout');
     if (!result.success) {
-        alert(result.error || 'Nao foi possivel encerrar a sessao.');
+        alert(result.error || 'Não foi possível encerrar a sessão.');
         return;
     }
 

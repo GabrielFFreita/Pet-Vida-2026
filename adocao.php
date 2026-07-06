@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . "/config/conexao.php";
 
+$petAutoOpenId = filter_input(INPUT_GET, 'pet', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: null;
+
 $sqlAbrigos = "SELECT id, nome, localizacao FROM abrigos ORDER BY nome";
 $stmtAbrigos = $pdo->prepare($sqlAbrigos);
 $stmtAbrigos->execute();
@@ -448,6 +450,7 @@ foreach ($abrigos as $abrigo) {
 
   <script>
     window.ABRIGOS_DADOS = <?= json_encode($abrigosJs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    window.PET_AUTO_OPEN_ID = <?= json_encode($petAutoOpenId, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
   </script>
   <script src="assets/js/adocao.js"></script>
 </body>
