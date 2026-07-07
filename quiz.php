@@ -427,72 +427,64 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             box-shadow: var(--shadow);
         }
 
-        .carregando-wrapper {
-            display: flex;
-            flex-direction: column;
+        .carregando-wrapper-total {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
             align-items: center;
             justify-content: center;
-            padding: 80px 20px;
-            gap: 18px;
+            background: rgba(252, 247, 240, .94);
+            backdrop-filter: blur(4px);
         }
 
-        .carregando-patinhas {
-            position: relative;
-            width: 148px;
-            height: 74px;
+        .pata-svg-gigante {
+            width: min(220px, 52vw);
+            height: auto;
+            overflow: visible;
+            filter: drop-shadow(0 18px 30px rgba(224, 123, 57, .18));
         }
 
-        .patinha {
-            position: absolute;
-            font-size: 1.7rem;
-            color: var(--laranja);
-            opacity: 0;
-            animation: patinhas 1.35s ease-in-out infinite;
-            filter: drop-shadow(0 10px 12px rgba(224, 123, 57, .18));
+        .pata-svg-gigante .dedo,
+        .pata-svg-gigante .almofada-central {
+            fill: var(--verde);
+            transform-box: fill-box;
+            transform-origin: center;
         }
 
-        .patinha:nth-child(1) {
-            top: 22px;
-            left: 0;
-            animation-delay: 0s;
+        .pata-svg-gigante .dedo {
+            animation: pulsarDedo 2s ease-in-out infinite;
         }
 
-        .patinha:nth-child(2) {
-            top: 0;
-            left: 36px;
-            animation-delay: .18s;
+        .pata-svg-gigante #d1 { animation-delay: 0s; }
+        .pata-svg-gigante #d2 { animation-delay: .28s; }
+        .pata-svg-gigante #d3 { animation-delay: .56s; }
+        .pata-svg-gigante #d4 { animation-delay: .84s; }
+
+        .pata-svg-gigante .almofada-central {
+            animation: pulsarAlmofada 2s ease-in-out infinite .42s;
         }
 
-        .patinha:nth-child(3) {
-            top: 28px;
-            left: 72px;
-            animation-delay: .36s;
-        }
-
-        .patinha:nth-child(4) {
-            top: 6px;
-            left: 108px;
-            animation-delay: .54s;
-        }
-
-        @keyframes patinhas {
-            0% {
-                opacity: 0;
-                transform: translateY(10px) scale(.82) rotate(-8deg);
+        @keyframes pulsarDedo {
+            0%, 100% {
+                opacity: .38;
+                transform: scale(.92);
             }
-            35% {
+            50% {
                 opacity: 1;
-                transform: translateY(0) scale(1) rotate(0deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-10px) scale(.92) rotate(6deg);
+                transform: scale(1);
             }
         }
 
-        .carregando-wrapper p {
-            color: var(--texto-leve);
-            text-align: center;
+        @keyframes pulsarAlmofada {
+            0%, 100% {
+                opacity: .45;
+                transform: scale(.96);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
         }
 
         .resultado-quiz {
@@ -692,6 +684,22 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
         <div id="area-resultado" aria-live="polite"></div>
     </main>
 
+    <div class="carregando-wrapper-total" id="loadingScreen" style="display:none;">
+        <svg class="pata-svg-gigante" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse class="dedo" id="d1" cx="13.5" cy="44" rx="13.5" ry="17.5" />
+            <ellipse class="dedo" id="d2" cx="34.5" cy="17.5" rx="13.5" ry="17.5" />
+            <ellipse class="dedo" id="d3" cx="65.5" cy="17.5" rx="13.5" ry="17.5" />
+            <ellipse class="dedo" id="d4" cx="86.5" cy="44" rx="13.5" ry="17.5" />
+            <path class="almofada-central" d="M 50,40.5 
+                 C 34.5,40.5 27.5,53.5 27.5,60.5
+                 C 27.5,67 15,75.5 15,86
+                 C 15,96 32,100 50,93.5
+                 C 68,100 85,96 85,86
+                 C 85,75.5 72.5,67 72.5,60.5
+                 C 72.5,53.5 65.5,40.5 50,40.5 Z" />
+        </svg>
+    </div>
+
     <footer role="contentinfo">
         <div class="footer-inner">
             <div class="footer-marca">
@@ -767,6 +775,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
 
         let perguntaAtual = 0;
         let respostas = [];
+        const loadingScreen = document.getElementById("loadingScreen");
 
         carregarPergunta();
 
@@ -849,47 +858,45 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             window.location.href = "adocao.php";
         }
 
-        function obterHtmlCarregamento() {
-            return `
-                <div class="carregando-wrapper">
-                    <div class="carregando-patinhas" aria-hidden="true">
-                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
-                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
-                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
-                        <span class="patinha"><i class="fa-solid fa-paw"></i></span>
-                    </div>
-                    <p>Buscando os melhores pets para você...</p>
-                </div>
-            `;
-        }
-
         function finalizarQuiz() {
-            if (!respostas[perguntaAtual]) return;
+            if (!respostas[perguntaAtual]) {
+                document.getElementById("opcoes").classList.add("shake");
+                setTimeout(() => document.getElementById("opcoes").classList.remove("shake"), 400);
+                return;
+            }
 
             const areaQuiz = document.getElementById("area-quiz");
             const areaResultado = document.getElementById("area-resultado");
 
             areaQuiz.style.display = "none";
-            areaResultado.innerHTML = obterHtmlCarregamento();
+            areaResultado.innerHTML = "";
+            loadingScreen.style.display = "flex";
+            document.body.style.overflow = "hidden";
 
-            fetch("quiz.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(respostas)
-            })
-            .then(r => r.text())
-            .then(html => {
-                areaResultado.innerHTML = html;
-                areaResultado.scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => {
+                fetch("quiz.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(respostas)
+                })
+                .then(r => r.text())
+                .then(html => {
+                    loadingScreen.style.display = "none";
+                    document.body.style.overflow = "";
+                    areaResultado.innerHTML = html;
+                    areaResultado.scrollIntoView({ behavior: "smooth", block: "start" });
 
-                const btnRefazer = document.getElementById("btn-refazer-quiz");
-                if (btnRefazer) {
-                    btnRefazer.addEventListener("click", () => window.location.reload());
-                }
-            })
-            .catch(() => {
-                areaResultado.innerHTML = `<p class="erro-quiz">Ocorreu um erro ao buscar os pets. Tente novamente.</p>`;
-            });
+                    const btnRefazer = document.getElementById("btn-refazer-quiz");
+                    if (btnRefazer) {
+                        btnRefazer.addEventListener("click", () => window.location.reload());
+                    }
+                })
+                .catch(() => {
+                    loadingScreen.style.display = "none";
+                    document.body.style.overflow = "";
+                    areaResultado.innerHTML = `<p class="erro-quiz">Ocorreu um erro ao buscar os pets. Tente novamente.</p>`;
+                });
+            }, 3000);
         }
     </script>
 </body>
