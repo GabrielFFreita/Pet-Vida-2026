@@ -5,8 +5,8 @@
 |--------------------------------------------------------------------------
 | Tela principal de gerenciamento de usuarios do painel administrativo.
 | Esta feature reorganiza a listagem, destaca metricas resumidas e
-| centraliza os acessos para edicao e exclusao sem permitir inclusao
-| de novos usuarios nesta pagina.
+| centraliza os acessos para consulta e exclusao sem permitir
+| inclusao ou edicao cadastral nesta pagina.
 |--------------------------------------------------------------------------
 */
 require_once __DIR__ . "/../config/conexao.php";
@@ -35,12 +35,10 @@ $tipoMensagem = "sucesso";
 if (isset($_GET["status"])) {
     $status = $_GET["status"];
 
-    if ($status === "editado") {
-        $mensagem = "Dados do usuário atualizados com sucesso.";
-    } elseif ($status === "excluido") {
-        $mensagem = "Usuário removido com sucesso.";
+    if ($status === "excluido") {
+        $mensagem = "Usuario removido com sucesso.";
     } elseif ($status === "erro") {
-        $mensagem = "Não foi possível concluir a operação informada.";
+        $mensagem = "Nao foi possivel concluir a operacao informada.";
         $tipoMensagem = "erro";
     }
 }
@@ -70,7 +68,7 @@ try {
     $metricas["com_adocao"] = fetchTotalUsuarios($pdo, "SELECT COUNT(DISTINCT id_usuario) FROM adocao");
 } catch (PDOException $e) {
     $usuarios = [];
-    $mensagem = "Não foi possível carregar a listagem de usuários.";
+    $mensagem = "Nao foi possivel carregar a listagem de usuarios.";
     $tipoMensagem = "erro";
 }
 ?>
@@ -79,7 +77,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Usuários | Pet Vida</title>
+    <title>Gerenciar Usuarios | Pet Vida</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -92,8 +90,8 @@ try {
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
             <div>
-                <h1>Gerenciar Usuários</h1>
-                <p class="subtitulo">Acompanhe a base cadastrada, ajuste dados de perfil e remova usuários sem dependências ativas.</p>
+                <h1>Gerenciar Usuarios</h1>
+                <p class="subtitulo">Acompanhe a base cadastrada, consulte os dados e remova usuarios sem dependencias ativas.</p>
             </div>
         </div>
 
@@ -105,9 +103,9 @@ try {
 
         <section class="dashboard-grid">
             <article class="card-metrica">
-                <h3>Total de Usuários</h3>
+                <h3>Total de Usuarios</h3>
                 <div class="valor-metrica"><?php echo $metricas["total"]; ?></div>
-                <span class="legenda-metrica">Registros disponíveis para administração</span>
+                <span class="legenda-metrica">Registros disponiveis para administracao</span>
             </article>
             <article class="card-metrica">
                 <h3>Administradores</h3>
@@ -115,22 +113,22 @@ try {
                 <span class="legenda-metrica">Perfis com acesso ao painel</span>
             </article>
             <article class="card-metrica">
-                <h3>Usuários Comuns</h3>
+                <h3>Usuarios Comuns</h3>
                 <div class="valor-metrica"><?php echo $metricas["comuns"]; ?></div>
-                <span class="legenda-metrica">Perfis de uso padrão da plataforma</span>
+                <span class="legenda-metrica">Perfis de uso padrao da plataforma</span>
             </article>
             <article class="card-metrica">
-                <h3>Com Solicitações</h3>
+                <h3>Com Solicitacoes</h3>
                 <div class="valor-metrica"><?php echo $metricas["com_adocao"]; ?></div>
-                <span class="legenda-metrica">Usuários vinculados a adoções</span>
+                <span class="legenda-metrica">Usuarios vinculados a adocoes</span>
             </article>
         </section>
 
         <section class="painel-card painel-card--usuarios">
             <div class="painel-card-topo">
                 <div>
-                    <h2>Base de usuários</h2>
-                    <p>Listagem centralizada para consulta rápida, manutenção cadastral e exclusão segura.</p>
+                    <h2>Base de usuarios</h2>
+                    <p>Listagem centralizada para consulta rapida e exclusao segura.</p>
                 </div>
                 <div class="painel-resumo-pill">
                     <?php echo count($usuarios); ?> registro(s)
@@ -141,19 +139,19 @@ try {
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Usuário</th>
+                            <th>Usuario</th>
                             <th>Contato</th>
                             <th>Localidade</th>
                             <th>Perfil</th>
-                            <th>Adoções</th>
-                            <th>Ações</th>
+                            <th>Adocoes</th>
+                            <th>Acoes</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($usuarios)): ?>
                             <tr>
                                 <td colspan="6" class="estado-vazio-tabela">
-                                    Nenhum usuário encontrado no sistema.
+                                    Nenhum usuario encontrado no sistema.
                                 </td>
                             </tr>
                         <?php else: ?>
@@ -167,7 +165,7 @@ try {
                                     <td>
                                         <div class="usuario-celula">
                                             <strong><?php echo htmlspecialchars($user["email"], ENT_QUOTES, "UTF-8"); ?></strong>
-                                            <span><?php echo htmlspecialchars($user["telefone"] ?: "Não informado", ENT_QUOTES, "UTF-8"); ?></span>
+                                            <span><?php echo htmlspecialchars($user["telefone"] ?: "Nao informado", ENT_QUOTES, "UTF-8"); ?></span>
                                         </div>
                                     </td>
                                     <td>
@@ -175,13 +173,13 @@ try {
                                         $cidade = trim((string) ($user["cidade"] ?? ""));
                                         $estado = trim((string) ($user["estado"] ?? ""));
                                         $localidade = trim($cidade . ($cidade !== "" && $estado !== "" ? " - " : "") . $estado);
-                                        echo htmlspecialchars($localidade !== "" ? $localidade : "Não informada", ENT_QUOTES, "UTF-8");
+                                        echo htmlspecialchars($localidade !== "" ? $localidade : "Nao informada", ENT_QUOTES, "UTF-8");
                                         ?>
                                     </td>
                                     <td>
                                         <?php $perfil = strtolower((string) ($user["perfil"] ?? "user")); ?>
                                         <span class="user-badge <?php echo $perfil === "admin" ? "badge-admin" : "badge-user"; ?>">
-                                            <?php echo htmlspecialchars($perfil === "admin" ? "Administrador" : "Usuário", ENT_QUOTES, "UTF-8"); ?>
+                                            <?php echo htmlspecialchars($perfil === "admin" ? "Administrador" : "Usuario", ENT_QUOTES, "UTF-8"); ?>
                                         </span>
                                     </td>
                                     <td>
@@ -189,7 +187,7 @@ try {
                                     </td>
                                     <td>
                                         <div class="table-acoes">
-                                            <a href="usuario-editar.php?id=<?php echo (int) $user["id_usuario"]; ?>" class="btn-table btn-table-editar">Editar</a>
+                                            <a href="usuario-editar.php?id=<?php echo (int) $user["id_usuario"]; ?>" class="btn-table btn-table-editar">Visualizar</a>
                                             <?php if ((int) ($_SESSION["id_usuario"] ?? 0) !== (int) $user["id_usuario"]): ?>
                                                 <a href="usuario-excluir.php?id=<?php echo (int) $user["id_usuario"]; ?>" class="btn-table btn-table-excluir">Excluir</a>
                                             <?php endif; ?>
