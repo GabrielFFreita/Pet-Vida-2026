@@ -19,11 +19,18 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #fffef8;
     color: var(--texto);
     line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Cabeçalho */
@@ -964,7 +971,8 @@ body {
     background: var(--primaria);
     color: rgba(255, 255, 255, 0.75);
     padding: 50px 0 0;
-    margin-top: 40px;
+    margin-top: auto;
+    flex-shrink: 0;
 }
 
 .conteudo-rodape {
