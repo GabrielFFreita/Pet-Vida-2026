@@ -114,14 +114,13 @@ function initBusca() {
 
 // ── Filtros horizontais (barra de pills) ─────────────────────
 function initFiltros() {
-  // Filtros por abrigo
-  qsa('[data-filtro-abrigo]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      filtrosAtivos.abrigo = btn.dataset.filtroAbrigo;
-      atualizarBotoesAtivos('abrigo', btn);
+  const filtroAbrigo = qs('#filtro-abrigo');
+  if (filtroAbrigo) {
+    filtroAbrigo.addEventListener('change', () => {
+      filtrosAtivos.abrigo = filtroAbrigo.value;
       aplicarFiltros();
     });
-  });
+  }
 
   // Filtros por tipo
   qsa('[data-filtro-tipo]').forEach(btn => {
@@ -157,10 +156,10 @@ function initFiltros() {
 
 function atualizarBotoesAtivos(grupo, btnAtivo) {
   let seletor;
-  if (grupo === 'abrigo') seletor = '[data-filtro-abrigo]';
-  else if (grupo === 'tipo') seletor = '[data-filtro-tipo]';
+  if (grupo === 'tipo') seletor = '[data-filtro-tipo]';
   else if (grupo === 'sexo') seletor = '[data-filtro-sexo]'; // [ALTERADO #2]
-  else seletor = '[data-filtro-raca]'; // [ALTERADO #8]
+  else if (grupo === 'raca') seletor = '[data-filtro-raca]'; // [ALTERADO #8]
+  else return;
 
   qsa(seletor).forEach(b => b.classList.remove('filtro-ativo'));
   btnAtivo.classList.add('filtro-ativo');
@@ -169,13 +168,14 @@ function atualizarBotoesAtivos(grupo, btnAtivo) {
 function limparFiltros() {
   filtrosAtivos = { abrigo: 'todos', tipo: 'todos', sexo: 'todos', raca: 'todos' }; // [ALTERADO #2, #8]
 
-  qs('#filtro-todos').classList.add('filtro-ativo');
+  const filtroAbrigo = qs('#filtro-abrigo');
+  if (filtroAbrigo) filtroAbrigo.value = 'todos';
+
   qs('#filtro-tipo-todos').classList.add('filtro-ativo');
   qs('#filtro-sexo-todos').classList.add('filtro-ativo'); // [ALTERADO #2]
   const filtroRacaTodos = qs('#filtro-raca-todos'); // [ALTERADO #8] só existe se houver raças
   if (filtroRacaTodos) filtroRacaTodos.classList.add('filtro-ativo');
 
-  qsa('[data-filtro-abrigo]:not(#filtro-todos)').forEach(b => b.classList.remove('filtro-ativo'));
   qsa('[data-filtro-tipo]:not(#filtro-tipo-todos)').forEach(b => b.classList.remove('filtro-ativo'));
   qsa('[data-filtro-sexo]:not(#filtro-sexo-todos)').forEach(b => b.classList.remove('filtro-ativo')); // [ALTERADO #2]
   qsa('[data-filtro-raca]:not(#filtro-raca-todos)').forEach(b => b.classList.remove('filtro-ativo')); // [ALTERADO #8]

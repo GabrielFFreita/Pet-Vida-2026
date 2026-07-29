@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/../config/conexao.php";
 require_once __DIR__ . "/../config/sessao.php";
+require_once __DIR__ . "/../includes/animal-admin-helpers.php";
 verificarAdmin();
 
 // 1. VERIFICAÇÃO E BUSCA DOS DADOS DO ABRIGO
@@ -27,34 +28,7 @@ try {
 // 2. PROCESSAMENTO DO CADASTRO DO ANIMAL
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'cadastrar_animal') {
     
-    $fotosAnimal = [];
-    $extensoesPermitidas = ["jpg", "jpeg", "png", "webp"];
-    $pasta = __DIR__ . "/../uploads/";
-
-    if (!is_dir($pasta)) {
-        mkdir($pasta, 0777, true);
-    }
-
-    if (isset($_FILES['images']) && is_array($_FILES['images']['name'])) {
-        foreach ($_FILES['images']['name'] as $indice => $nomeOriginal) {
-            if ($_FILES['images']['error'][$indice] !== UPLOAD_ERR_OK || empty($nomeOriginal)) {
-                continue;
-            }
-
-            $extensao = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
-
-            if (!in_array($extensao, $extensoesPermitidas)) {
-                continue;
-            }
-
-            $nomeSeguro = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($nomeOriginal));
-            $nomeFoto = uniqid('', true) . "_" . $nomeSeguro;
-
-            if (move_uploaded_file($_FILES['images']['tmp_name'][$indice], $pasta . $nomeFoto)) {
-                $fotosAnimal[] = $nomeFoto;
-            }
-        }
-    }
+    $fotosAnimal = animalAdminProcessarNovasFotos($_FILES['images'] ?? $_FILES['image'] ?? []);
 
     if (empty($fotosAnimal)) {
         $fotosAnimal[] = 'not_image.png';
@@ -283,7 +257,7 @@ try {
                     </div>
                     <div class="form-grupo">
                         <label for="images">Fotos do Animal</label>
-                        <input type="file" id="images" name="images[]" accept="image/*" multiple>
+                        <input type="file" id="images" name="images[]" accept=".jpg,.jpeg,.png,.webp,.avif,image/*" multiple>
                     </div>
                 </div>
 
