@@ -353,6 +353,57 @@ header {
   align-items: center;
 }
 
+.filtro-label {
+  color: var(--texto-leve);
+  font-family: 'Inter', sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.filtro-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filtro-select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: var(--texto-leve);
+  font-size: .8rem;
+}
+
+.filtro-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: var(--bege);
+  color: var(--texto-leve);
+  border: 1.5px solid var(--bege-esc);
+  border-radius: 999px;
+  padding: 7px 36px 7px 14px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: .8125rem;
+  font-weight: 500;
+  transition: var(--transition);
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  min-width: 180px;
+}
+
+.filtro-select:hover,
+.filtro-select:focus {
+  background: var(--branco);
+  color: var(--verde);
+  border-color: var(--verde-claro);
+  box-shadow: 0 3px 10px rgba(45,106,79,.12);
+  outline: none;
+}
+
 /* [ALTERADO #2] Pills redesenhadas — modernas, sofisticadas, sem emojis */
 .filtro-pill {
   display: inline-flex;

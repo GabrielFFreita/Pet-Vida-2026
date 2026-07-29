@@ -112,22 +112,56 @@ function animalAdminRemoverFotoPadraoSeHouver(PDO $pdo, int $idAnimal): void
     ]);
 }
 
+function animalAdminNormalizarArquivosUpload(array $arquivos): array
+{
+    if (!isset($arquivos["name"])) {
+        return [];
+    }
+
+    if (!is_array($arquivos["name"])) {
+        return [[
+            "name" => (string) ($arquivos["name"] ?? ""),
+            "tmp_name" => (string) ($arquivos["tmp_name"] ?? ""),
+            "error" => isset($arquivos["error"]) ? (int) $arquivos["error"] : UPLOAD_ERR_NO_FILE,
+        ]];
+    }
+
+    $arquivosNormalizados = [];
+
+    foreach ($arquivos["name"] as $indice => $nomeOriginal) {
+        $arquivosNormalizados[] = [
+            "name" => (string) $nomeOriginal,
+            "tmp_name" => isset($arquivos["tmp_name"][$indice]) ? (string) $arquivos["tmp_name"][$indice] : "",
+            "error" => isset($arquivos["error"][$indice]) ? (int) $arquivos["error"][$indice] : UPLOAD_ERR_NO_FILE,
+        ];
+    }
+
+    return $arquivosNormalizados;
+}
+
 function animalAdminProcessarNovasFotos(array $arquivos): array
 {
     animalAdminEnsureUploadDir();
 
-    if (
-        !isset($arquivos["name"], $arquivos["tmp_name"], $arquivos["error"])
-        || !is_array($arquivos["name"])
-    ) {
+    $arquivosNormalizados = animalAdminNormalizarArquivosUpload($arquivos);
+
+    if ($arquivosNormalizados === []) {
         return [];
     }
 
-    $extensoesPermitidas = ["jpg", "jpeg", "png", "webp"];
+    $extensoesPermitidas = ["jpg", "jpeg", "png", "webp", "avif"];
     $fotosSalvas = [];
 
-    foreach ($arquivos["name"] as $indice => $nomeOriginal) {
-        if (($arquivos["error"][$indice] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($nomeOriginal)) {
+    foreach ($arquivosNormalizados as $arquivo) {
+        $nomeOriginal = trim((string) ($arquivo["name"] ?? ""));
+        $tmpName = (string) ($arquivo["tmp_name"] ?? "");
+        $erro = (int) ($arquivo["error"] ?? UPLOAD_ERR_NO_FILE);
+
+        if ($erro !== UPLOAD_ERR_OK || $nomeOriginal === "" || $tmpName === "") {
+            continue;
+        }
+
+        if (!is_uploaded_file($tmpName)) {
             continue;
         }
 
@@ -141,7 +175,7 @@ function animalAdminProcessarNovasFotos(array $arquivos): array
         $nomeArquivo = uniqid("", true) . "_" . $nomeSeguro;
         $destino = animalAdminUploadDir() . DIRECTORY_SEPARATOR . $nomeArquivo;
 
-        if (move_uploaded_file($arquivos["tmp_name"][$indice], $destino)) {
+        if (move_uploaded_file($tmpName, $destino)) {
             $fotosSalvas[] = $nomeArquivo;
         }
     }

@@ -118,18 +118,22 @@ foreach ($abrigos as $abrigo) {
     <div class="filtros-bar-inner">
 
       <div class="filtros-grupo" role="group" aria-label="Filtrar por abrigo">
-        <button data-filtro-abrigo="todos" class="filtro-pill filtro-ativo" id="filtro-todos">Todos os abrigos</button>
-        <?php foreach ($abrigos as $abrigo): ?>
-          <?php
-            // Remove o prefixo "Abrigo " só na exibição do filtro (o nome
-            // completo continua intacto em qualquer outro lugar da página),
-            // pra caber tudo numa linha só como no mockup.
-            $nomeFiltro = preg_replace('/^Abrigo\s+/i', '', $abrigo['nome']);
-          ?>
-          <button data-filtro-abrigo="<?= htmlspecialchars($abrigo['id'], ENT_QUOTES, 'UTF-8') ?>" class="filtro-pill">
-            <?= htmlspecialchars($nomeFiltro, ENT_QUOTES, 'UTF-8') ?>
-          </button>
-        <?php endforeach; ?>
+        <label class="filtro-label" for="filtro-abrigo">Abrigo</label>
+        <div class="filtro-select-wrapper">
+          <select id="filtro-abrigo" class="filtro-select" data-filtro-abrigo="todos" aria-label="Filtrar por abrigo">
+            <option value="todos">Todos os abrigos</option>
+            <?php foreach ($abrigos as $abrigo): ?>
+              <?php
+                // Remove o prefixo "Abrigo " só na exibição do filtro (o nome
+                // completo continua intacto em qualquer outro lugar da página).
+                $nomeFiltro = preg_replace('/^Abrigo\s+/i', '', $abrigo['nome']);
+              ?>
+              <option value="<?= htmlspecialchars($abrigo['id'], ENT_QUOTES, 'UTF-8') ?>">
+                <?= htmlspecialchars($nomeFiltro, ENT_QUOTES, 'UTF-8') ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
       </div>
 
       <div class="filtros-separador" aria-hidden="true"></div>

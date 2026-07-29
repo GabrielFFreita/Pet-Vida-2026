@@ -265,6 +265,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/adocao.css">
+    <link rel="stylesheet" href="assets/css/quiz.css">
     <style>
         .quiz-main {
             max-width: 720px;
@@ -726,6 +727,23 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
         </div>
     </footer>
 
+    <!-- Tela de carregamento (patinha) - inicialmente oculta -->
+    <div class="carregando-wrapper-total" id="loadingScreen" style="display:none;">
+        <svg class="pata-svg-gigante" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <ellipse class="dedo" id="d1" cx="13.5" cy="44" rx="13.5" ry="17.5" />
+            <ellipse class="dedo" id="d2" cx="34.5" cy="17.5" rx="13.5" ry="17.5" />
+            <ellipse class="dedo" id="d3" cx="65.5" cy="17.5" rx="13.5" ry="17.5" />
+            <ellipse class="dedo" id="d4" cx="86.5" cy="44" rx="13.5" ry="17.5" />
+            <path class="almofada-central" d="M 50,40.5 
+                     C 34.5,40.5 27.5,53.5 27.5,60.5
+                     C 27.5,67 15,75.5 15,86
+                     C 15,96 32,100 50,93.5
+                     C 68,100 85,96 85,86
+                     C 85,75.5 72.5,67 72.5,60.5
+                     C 72.5,53.5 65.5,40.5 50,40.5 Z" />
+        </svg>
+    </div>
+
     <script>
         const perguntas = [
             { pergunta: "Como é sua rotina durante a semana?", opcoes: ["Muito corrida", "Moderada", "Tranquila"] },
@@ -868,9 +886,14 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
 
             const areaQuiz = document.getElementById("area-quiz");
             const areaResultado = document.getElementById("area-resultado");
+            const loadingScreen = document.getElementById("loadingScreen");
 
             areaQuiz.style.display = "none";
             areaResultado.innerHTML = obterHtmlCarregamento();
+
+            // Mostra a animação da patinha
+            loadingScreen.style.display = "flex";
+            document.body.style.overflow = "hidden";
 
             fetch("quiz.php", {
                 method: "POST",
@@ -879,6 +902,10 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
             })
             .then(r => r.text())
             .then(html => {
+                // Esconde a animação da patinha
+                loadingScreen.style.display = "none";
+                document.body.style.overflow = "";
+
                 areaResultado.innerHTML = html;
                 areaResultado.scrollIntoView({ behavior: "smooth", block: "start" });
 
@@ -888,6 +915,10 @@ if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST") {
                 }
             })
             .catch(() => {
+                // Esconde a animação da patinha em caso de erro
+                loadingScreen.style.display = "none";
+                document.body.style.overflow = "";
+
                 areaResultado.innerHTML = `<p class="erro-quiz">Ocorreu um erro ao buscar os pets. Tente novamente.</p>`;
             });
         }
