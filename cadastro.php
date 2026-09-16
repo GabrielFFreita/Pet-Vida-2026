@@ -99,7 +99,7 @@ require __DIR__ . '/includes/header.php';
         </form>
 
         <div class="auth-footer">
-            Ja tem conta? <a href="login.php" class="link">Faca Login</a>
+            Ja tem conta? <a href="index.php" class="link">Faca Login</a>
         </div>
     </section>
 </main>
