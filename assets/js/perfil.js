@@ -85,8 +85,8 @@ async function salvarPerfilUsuario(event) {
         nome: document.getElementById('perfilNome')?.value?.trim() || '',
         idade: document.getElementById('perfilIdade')?.value || '',
         email: document.getElementById('perfilEmail')?.value?.trim() || '',
-        telefone: document.getElementById('perfilTelefone')?.value?.trim() || '',
-        cpf: document.getElementById('perfilCpf')?.value?.trim() || '',
+        telefone: (document.getElementById('perfilTelefone')?.value || '').replace(/\D/g, ''),
+        cpf: (document.getElementById('perfilCpf')?.value || '').replace(/\D/g, ''),
         data_nascimento: document.getElementById('perfilDataNascimento')?.value || '',
         endereco: document.getElementById('perfilEndereco')?.value?.trim() || '',
         cidade: document.getElementById('perfilCidade')?.value?.trim() || '',
@@ -123,10 +123,62 @@ async function salvarPerfilUsuario(event) {
     botaoSalvar.textContent = 'Salvar alteracoes';
 }
 
+// ── Máscaras de input ────────────────────────────────────────────────────────
+
+function aplicarMascaraTelefone(input) {
+    input.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 10) {
+            v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+        } else if (v.length > 6) {
+            v = v.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+        } else if (v.length > 2) {
+            v = v.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+        } else if (v.length > 0) {
+            v = v.replace(/^(\d{0,2})$/, '($1');
+        }
+        this.value = v;
+    });
+}
+
+function aplicarMascaraCpf(input) {
+    input.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 9) {
+            v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})$/, '$1.$2.$3-$4');
+        } else if (v.length > 6) {
+            v = v.replace(/^(\d{3})(\d{3})(\d{0,3})$/, '$1.$2.$3');
+        } else if (v.length > 3) {
+            v = v.replace(/^(\d{3})(\d{0,3})$/, '$1.$2');
+        }
+        this.value = v;
+    });
+}
+
+function aplicarMascaraEstado(input) {
+    input.setAttribute('maxlength', '2');
+    input.addEventListener('input', function () {
+        this.value = this.value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 2);
+    });
+}
+
+function inicializarMascaras() {
+    const telefone = document.getElementById('perfilTelefone');
+    const cpf      = document.getElementById('perfilCpf');
+    const estado   = document.getElementById('perfilEstado');
+
+    if (telefone) aplicarMascaraTelefone(telefone);
+    if (cpf)      aplicarMascaraCpf(cpf);
+    if (estado)   aplicarMascaraEstado(estado);
+}
+
+// ── Bootstrap ────────────────────────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('perfilForm');
     if (!form) return;
 
+    inicializarMascaras();
     carregarPerfilUsuario();
     form.addEventListener('submit', salvarPerfilUsuario);
 });
