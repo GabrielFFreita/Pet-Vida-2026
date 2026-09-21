@@ -64,7 +64,7 @@ require __DIR__ . '/includes/header.php';
 
                     <div class="form-group">
                         <label for="perfilDataNascimento">Data de Nascimento</label>
-                        <input type="date" class="form-control" id="perfilDataNascimento">
+                        <input type="date" class="form-control" id="perfilDataNascimento" min="1900-01-01" max="<?php echo date('Y-m-d'); ?>">
                     </div>
 
                     <div class="form-group form-group--full">

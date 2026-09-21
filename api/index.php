@@ -197,6 +197,22 @@ function solicitarAdocao() {
         echo json_encode(['success' => false, 'message' => 'Não foi possível enviar sua solicitação. Tente novamente.']);
     }
 }
+// Retorna a mensagem de erro, ou null se a data for válida (ou vazia)
+function dataNascimentoInvalida(string $data): ?string {
+    if ($data === '') return null;
+
+    $dt = DateTime::createFromFormat('!Y-m-d', $data);
+    if (!$dt || $dt->format('Y-m-d') !== $data || $dt < new DateTime('1900-01-01')) {
+        return 'Informe uma data de nascimento válida.';
+    }
+
+    if ($dt > new DateTime('today')) {
+        return 'A data de nascimento não pode ser no futuro.';
+    }
+
+    return null;
+}
+
 function cadastrarUsuario() {
     global $pdo;
     try {
@@ -221,6 +237,12 @@ function cadastrarUsuario() {
         // Validação dos campos essenciais
         if (empty($nome) || empty($email) || empty($senha)) {
             echo json_encode(['success' => false, 'message' => 'Preencha os campos obrigatórios (Nome, E-mail e Senha)!']);
+            return;
+        }
+
+        $erroData = dataNascimentoInvalida($data_nascimento);
+        if ($erroData !== null) {
+            echo json_encode(['success' => false, 'message' => $erroData]);
             return;
         }
 
@@ -490,6 +512,12 @@ function atualizarUsuario() {
 
         if ($idade !== null && $idade < 0) {
             echo json_encode(['success' => false, 'message' => 'Informe uma idade válida.']);
+            return;
+        }
+
+        $erroData = dataNascimentoInvalida($dataNascimento);
+        if ($erroData !== null) {
+            echo json_encode(['success' => false, 'message' => $erroData]);
             return;
         }
 
