@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $novoStatus = $_POST['status'] ?? 'Adotado';
 
     if (!$id_animal) {
-        header("Location: ../adocao.php?erro=id_invalido");
+        header("Location: ../admin/animais.php?status=erro");
         exit;
     }
 
@@ -34,15 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         if ($sucesso) {
-            header("Location: ../adocao.php?sucesso=status_atualizado");
+            header("Location: ../admin/animais.php?status=editado");
             exit;
         } else {
-            header("Location: ../adocao.php?erro=falha_execucao");
+            header("Location: ../admin/animais.php?status=erro");
             exit;
         }
 
     } catch (PDOException $e) {
-        die("Erro crítico no banco de dados ao mudar o status do pet: " . $e->getMessage());
+        error_log('[Pet-Vida] Erro crítico ao mudar status do pet: ' . $e->getMessage());
+        header("Location: ../admin/animais.php?status=erro");
+        exit;
     }
 } else {
     header("Location: ../adocao.php");

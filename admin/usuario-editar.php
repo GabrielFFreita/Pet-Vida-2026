@@ -42,6 +42,7 @@ try {
         exit;
     }
 } catch (PDOException $e) {
+    error_log('[Pet-Vida] Erro ao carregar usuário: ' . $e->getMessage());
     header("Location: usuarios.php?status=erro");
     exit;
 }

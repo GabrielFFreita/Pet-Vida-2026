@@ -4,6 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+define('PV_JSON_CONTEXT', true);
 require_once __DIR__ . "/../config/conexao.php";
 session_start();
 
@@ -54,7 +55,7 @@ switch($acao) {
         listarFavoritos();
         break;
     default:
-        echo json_encode(['error' => 'Ação inválida']);
+        echo json_encode(['success' => false, 'message' => 'Ação inválida.']);
 }
 function listarAnimais() {
     global $pdo;
@@ -62,18 +63,18 @@ function listarAnimais() {
         $especie = isset($_GET['especie']) ? $_GET['especie'] : '';
         $sexo = isset($_GET['sexo']) ? $_GET['sexo'] : '';
         $porte = isset($_GET['porte']) ? $_GET['porte'] : '';
-        
+
         // CORREÇÃO FINAL: Tiramos o "animais_adocao." de dentro do WHERE e ORDER BY
-        $sql = "SELECT animais_adocao.*, fp.ds_img 
-                FROM animais_adocao 
+        $sql = "SELECT animais_adocao.*, fp.ds_img
+                FROM animais_adocao
                 LEFT JOIN (
                     SELECT id_animal, MIN(ds_img) AS ds_img
                     FROM foto_animal
                     GROUP BY id_animal
-                ) fp ON animais_adocao.id_animal = fp.id_animal 
+                ) fp ON animais_adocao.id_animal = fp.id_animal
                 WHERE status_adocao = 'Disponível'";
         $params = [];
-        
+
         if (!empty($especie)) {
             $sql .= " AND especie = :especie";
             $params[':especie'] = $especie;
@@ -86,16 +87,17 @@ function listarAnimais() {
             $sql .= " AND porte = :porte";
             $params[':porte'] = $porte;
         }
-        
+
         $sql .= " ORDER BY animais_adocao.id_animal DESC";
-        
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $animais = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         echo json_encode($animais);
     } catch (PDOException $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        error_log('[Pet-Vida] listarAnimais: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível carregar os animais. Tente novamente.']);
     }
 }
 
@@ -103,56 +105,58 @@ function listarFavoritos() {
     global $pdo;
     try {
         $id_usuario = isset($_GET['id_usuario']) ? $_GET['id_usuario'] : null;
-        
+
         if (!$id_usuario) {
-            echo json_encode(['error' => 'Usuário não informado']);
+            echo json_encode(['success' => false, 'message' => 'Usuário não informado.']);
             return;
         }
-        
+
         // CORREÇÃO FINAL: Tiramos o prefixo do status_adocao aqui também
-        $sql = "SELECT animais_adocao.*, fp.ds_img 
-                FROM animais_adocao 
-                INNER JOIN favoritos ON animais_adocao.id_animal = favoritos.id_animal 
+        $sql = "SELECT animais_adocao.*, fp.ds_img
+                FROM animais_adocao
+                INNER JOIN favoritos ON animais_adocao.id_animal = favoritos.id_animal
                 LEFT JOIN (
                     SELECT id_animal, MIN(ds_img) AS ds_img
                     FROM foto_animal
                     GROUP BY id_animal
                 ) fp ON animais_adocao.id_animal = fp.id_animal
                 WHERE favoritos.id_usuario = :id_usuario AND status_adocao = 'Disponível'";
-        
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id_usuario' => $id_usuario]);
         $animais = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         echo json_encode($animais);
     } catch (PDOException $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        error_log('[Pet-Vida] listarFavoritos: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível carregar os favoritos. Tente novamente.']);
     }
 }
 function buscarAnimal() {
     global $pdo;
     try {
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-        
+
         // CORREÇÃO: Adicionado LEFT JOIN para que o modal de detalhes também encontre a foto
-        $sql = "SELECT a.*, fp.ds_img FROM animais_adocao a 
+        $sql = "SELECT a.*, fp.ds_img FROM animais_adocao a
                 LEFT JOIN (
                     SELECT id_animal, MIN(ds_img) AS ds_img
                     FROM foto_animal
                     GROUP BY id_animal
-                ) fp ON a.id_animal = fp.id_animal 
+                ) fp ON a.id_animal = fp.id_animal
                 WHERE a.id_animal = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
         $animal = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         if ($animal) {
             echo json_encode($animal);
         } else {
-            echo json_encode(['error' => 'Animal não encontrado']);
+            echo json_encode(['success' => false, 'message' => 'Animal não encontrado.']);
         }
     } catch (PDOException $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        error_log('[Pet-Vida] buscarAnimal: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível carregar os dados do animal. Tente novamente.']);
     }
 }
 
@@ -160,38 +164,55 @@ function solicitarAdocao() {
     global $pdo;
     try {
         $data = json_decode(file_get_contents('php://input'), true);
-        
+
         if (!isset($data['id_usuario']) || !isset($data['id_animal'])) {
-            echo json_encode(['success' => false, 'error' => 'Dados incompletos']);
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos.']);
             return;
         }
-        
+
         // Iniciar transação
         $pdo->beginTransaction();
-        
+
         // Inserir solicitação
-        $sql = "INSERT INTO solicitacoes_adocao (id_usuario, id_animal, data_solicitacao, status_solicitacao) 
+        $sql = "INSERT INTO solicitacoes_adocao (id_usuario, id_animal, data_solicitacao, status_solicitacao)
                 VALUES (:id_usuario, :id_animal, CURDATE(), 'Pendente')";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':id_usuario' => $data['id_usuario'],
             ':id_animal' => $data['id_animal']
         ]);
-        
+
         // Atualizar status do animal
         $sql_update = "UPDATE animais_adocao SET status_adocao = 'Em Análise' WHERE id_animal = :id_animal";
         $stmt_update = $pdo->prepare($sql_update);
         $stmt_update->execute([':id_animal' => $data['id_animal']]);
-        
+
         $pdo->commit();
         echo json_encode(['success' => true]);
     } catch (PDOException $e) {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        error_log('[Pet-Vida] solicitarAdocao: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível enviar sua solicitação. Tente novamente.']);
     }
 }
+// Retorna a mensagem de erro, ou null se a data for válida (ou vazia)
+function dataNascimentoInvalida(string $data): ?string {
+    if ($data === '') return null;
+
+    $dt = DateTime::createFromFormat('!Y-m-d', $data);
+    if (!$dt || $dt->format('Y-m-d') !== $data || $dt < new DateTime('1900-01-01')) {
+        return 'Informe uma data de nascimento válida.';
+    }
+
+    if ($dt > new DateTime('today')) {
+        return 'A data de nascimento não pode ser no futuro.';
+    }
+
+    return null;
+}
+
 function cadastrarUsuario() {
     global $pdo;
     try {
@@ -199,10 +220,10 @@ function cadastrarUsuario() {
         if (ob_get_length()) ob_clean();
 
         $data = json_decode(file_get_contents("php://input"), true);
-        
+
         // Coleta ABSOLUTAMENTE TODOS os campos enviados pelo JavaScript
         $nome            = trim($data['nome_usuario'] ?? "");
-       
+
         $idade           = !empty($data['idade']) ? intval($data['idade']) : null;
         $email           = trim($data['email'] ?? "");
         $senha           = trim($data['senha'] ?? "");
@@ -215,7 +236,13 @@ function cadastrarUsuario() {
 
         // Validação dos campos essenciais
         if (empty($nome) || empty($email) || empty($senha)) {
-            echo json_encode(['success' => false, 'error' => 'Preencha os campos obrigatórios (Nome, E-mail e Senha)!']);
+            echo json_encode(['success' => false, 'message' => 'Preencha os campos obrigatórios (Nome, E-mail e Senha)!']);
+            return;
+        }
+
+        $erroData = dataNascimentoInvalida($data_nascimento);
+        if ($erroData !== null) {
+            echo json_encode(['success' => false, 'message' => $erroData]);
             return;
         }
 
@@ -223,14 +250,14 @@ function cadastrarUsuario() {
         $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
         // SQL COMPLETO: Incluindo todas as colunas da sua especificação
-        $sql = "INSERT INTO usuarios (nome, idade, email, senha, telefone, cpf, data_nascimento, endereco, cidade, estado,  perfil) 
+        $sql = "INSERT INTO usuarios (nome, idade, email, senha, telefone, cpf, data_nascimento, endereco, cidade, estado,  perfil)
                 VALUES (:nome,  :idade, :email, :senha, :telefone, :cpf, :data_nascimento, :endereco, :cidade, :estado, 'user')";
 
         $stmt = $pdo->prepare($sql);
-        
+
         // Vinculando todos os parâmetros um por um
         $stmt->bindParam(":nome", $nome);
-       
+
         $stmt->bindParam(":idade", $idade, PDO::PARAM_INT);
         $stmt->bindParam(":email", $email);
         $stmt->bindParam(":senha", $senhaHash);
@@ -249,7 +276,7 @@ function cadastrarUsuario() {
         $_SESSION["email"] = $email;
         $_SESSION["perfil"] = 'user';
         $_SESSION['ultima_atividade'] = time();
-        
+
         echo json_encode([
             "success" => true,
             "usuario" => [
@@ -261,7 +288,11 @@ function cadastrarUsuario() {
             ]
         ]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Erro no banco de dados: ' . $e->getMessage()]);
+        error_log('[Pet-Vida] cadastrarUsuario: ' . $e->getMessage());
+        $mensagem = str_contains($e->getMessage(), 'Duplicate entry')
+            ? 'Este e-mail já está cadastrado.'
+            : 'Não foi possível concluir o cadastro. Tente novamente.';
+        echo json_encode(['success' => false, 'message' => $mensagem]);
     }
     exit;
 }
@@ -276,7 +307,7 @@ function login() {
         $senha = trim($data['senha'] ?? "");
 
         if (empty($email) || empty($senha)) {
-            echo json_encode(['success' => false, 'error' => 'Preencha e-mail e senha!']);
+            echo json_encode(['success' => false, 'message' => 'Preencha e-mail e senha!']);
             return;
         }
 
@@ -287,7 +318,7 @@ function login() {
 
         // Verifica se o usuário existe e se a senha descriptografada bate
         if ($usuario && password_verify($senha, $usuario['senha'])) {
-            
+
             // Grava os dados na sessão (importante para manter o usuário logado)
             $_SESSION["id_usuario"] = $usuario['id_usuario'];
             $_SESSION["nome_usuario"] = $usuario['nome'];
@@ -307,10 +338,11 @@ function login() {
                 ]
             ]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'E-mail ou senha incorretos!']);
+            echo json_encode(['success' => false, 'message' => 'E-mail ou senha incorretos!']);
         }
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Erro no banco de dados: ' . $e->getMessage()]);
+        error_log('[Pet-Vida] login: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível entrar. Tente novamente.']);
     }
     exit; // Impede que qualquer código depois imprima algo e quebre o JSON
 }
@@ -332,7 +364,8 @@ function logout() {
         session_destroy();
         echo json_encode(["success" => true]);
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        error_log('[Pet-Vida] logout: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível encerrar a sessão. Tente novamente.']);
     }
     exit;
 }
@@ -344,7 +377,7 @@ function verificarSessao() {
 
         // Verifica se a sessão com o ID do usuário está ativa
         if (isset($_SESSION['id_usuario'])) {
-            
+
             // Busca os dados atualizados usando 'id_usuario' que é o nome real da sua coluna
             $stmt = $pdo->prepare("SELECT id_usuario, nome, email, perfil FROM usuarios WHERE id_usuario = :id");
             $stmt->execute([':id' => $_SESSION['id_usuario']]);
@@ -377,7 +410,8 @@ function verificarSessao() {
         echo json_encode(["success" => true, "logged_in" => false]);
 
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Erro na sessão: ' . $e->getMessage()]);
+        error_log('[Pet-Vida] verificarSessao: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível verificar a sessão.']);
     }
     exit;
 }
@@ -389,7 +423,7 @@ function meusDados() {
         if (ob_get_length()) ob_clean();
 
         if (!isset($_SESSION['id_usuario'])) {
-            echo json_encode(['success' => false, 'error' => 'Usuário não autenticado.']);
+            echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
             return;
         }
 
@@ -403,7 +437,7 @@ function meusDados() {
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$usuario) {
-            echo json_encode(['success' => false, 'error' => 'Usuário não encontrado.']);
+            echo json_encode(['success' => false, 'message' => 'Usuário não encontrado.']);
             return;
         }
 
@@ -429,7 +463,8 @@ function meusDados() {
             ]
         ]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Erro ao buscar dados do usuário: ' . $e->getMessage()]);
+        error_log('[Pet-Vida] meusDados: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível carregar seus dados. Tente novamente.']);
     }
 
     exit;
@@ -442,13 +477,13 @@ function atualizarUsuario() {
         if (ob_get_length()) ob_clean();
 
         if (!isset($_SESSION['id_usuario'])) {
-            echo json_encode(['success' => false, 'error' => 'Usuário não autenticado.']);
+            echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
             return;
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
         if (!is_array($data)) {
-            echo json_encode(['success' => false, 'error' => 'Corpo da requisição inválido.']);
+            echo json_encode(['success' => false, 'message' => 'Corpo da requisição inválido.']);
             return;
         }
 
@@ -466,28 +501,34 @@ function atualizarUsuario() {
         $confirmarSenha = (string) ($data['confirmar_senha'] ?? '');
 
         if ($nome === '' || $email === '') {
-            echo json_encode(['success' => false, 'error' => 'Nome e e-mail são obrigatórios.']);
+            echo json_encode(['success' => false, 'message' => 'Nome e e-mail são obrigatórios.']);
             return;
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(['success' => false, 'error' => 'Informe um e-mail válido.']);
+            echo json_encode(['success' => false, 'message' => 'Informe um e-mail válido.']);
             return;
         }
 
         if ($idade !== null && $idade < 0) {
-            echo json_encode(['success' => false, 'error' => 'Informe uma idade válida.']);
+            echo json_encode(['success' => false, 'message' => 'Informe uma idade válida.']);
+            return;
+        }
+
+        $erroData = dataNascimentoInvalida($dataNascimento);
+        if ($erroData !== null) {
+            echo json_encode(['success' => false, 'message' => $erroData]);
             return;
         }
 
         if ($novaSenha !== '' || $confirmarSenha !== '') {
             if ($novaSenha !== $confirmarSenha) {
-                echo json_encode(['success' => false, 'error' => 'A confirmação de senha não confere.']);
+                echo json_encode(['success' => false, 'message' => 'A confirmação de senha não confere.']);
                 return;
             }
 
             if (strlen($novaSenha) < 6) {
-                echo json_encode(['success' => false, 'error' => 'A nova senha deve ter ao menos 6 caracteres.']);
+                echo json_encode(['success' => false, 'message' => 'A nova senha deve ter ao menos 6 caracteres.']);
                 return;
             }
         }
@@ -499,7 +540,7 @@ function atualizarUsuario() {
         ]);
 
         if ((int) $stmtEmail->fetchColumn() > 0) {
-            echo json_encode(['success' => false, 'error' => 'Já existe outro usuário com este e-mail.']);
+            echo json_encode(['success' => false, 'message' => 'Já existe outro usuário com este e-mail.']);
             return;
         }
 
@@ -571,7 +612,8 @@ function atualizarUsuario() {
             ]
         ]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Erro ao atualizar usuário: ' . $e->getMessage()]);
+        error_log('[Pet-Vida] atualizarUsuario: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível atualizar seus dados. Tente novamente.']);
     }
 
     exit;
@@ -580,8 +622,8 @@ function registrarDoacao() {
     global $pdo;
     try {
         $data = json_decode(file_get_contents('php://input'), true);
-        
-        $sql = "INSERT INTO doacoes (id_usuario, tipo_doacao, descricao, valor, data_doacao) 
+
+        $sql = "INSERT INTO doacoes (id_usuario, tipo_doacao, descricao, valor, data_doacao)
                 VALUES (:id_usuario, :tipo_doacao, :descricao, :valor, CURDATE())";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -590,10 +632,11 @@ function registrarDoacao() {
             ':descricao' => $data['descricao'],
             ':valor' => $data['valor']
         ]);
-        
+
         echo json_encode(['success' => true]);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        error_log('[Pet-Vida] registrarDoacao: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível registrar sua doação. Tente novamente.']);
     }
 }
 
@@ -603,11 +646,11 @@ function toggleFavorito() {
         $data = json_decode(file_get_contents('php://input'), true);
         $id_usuario = $data['id_usuario'];
         $id_animal = $data['id_animal'];
-        
+
         $stmt = $pdo->prepare("SELECT id_favorito FROM favoritos WHERE id_usuario = :id_usuario AND id_animal = :id_animal");
         $stmt->execute([':id_usuario' => $id_usuario, ':id_animal' => $id_animal]);
         $favorito = $stmt->fetch();
-        
+
         if ($favorito) {
             $deleteStmt = $pdo->prepare("DELETE FROM favoritos WHERE id_favorito = :id");
             $deleteStmt->execute([':id' => $favorito['id_favorito']]);
@@ -618,7 +661,8 @@ function toggleFavorito() {
             echo json_encode(['success' => true, 'favoritado' => true]);
         }
     } catch (PDOException $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        error_log('[Pet-Vida] toggleFavorito: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível atualizar seus favoritos. Tente novamente.']);
     }
 }
 
@@ -627,18 +671,18 @@ function verificarFavorito() {
     try {
         $id_usuario = isset($_GET['id_usuario']) ? $_GET['id_usuario'] : null;
         $id_animal = isset($_GET['id_animal']) ? $_GET['id_animal'] : null;
-        
+
         if (!$id_usuario || !$id_animal) {
             echo json_encode(['success' => false, 'favoritado' => false]);
             return;
         }
-        
+
         $stmt = $pdo->prepare("SELECT id_favorito FROM favoritos WHERE id_usuario = :id_usuario AND id_animal = :id_animal");
         $stmt->execute([':id_usuario' => $id_usuario, ':id_animal' => $id_animal]);
-        
+
         echo json_encode(['success' => true, 'favoritado' => $stmt->fetch() ? true : false]);
     } catch (PDOException $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        error_log('[Pet-Vida] verificarFavorito: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Não foi possível verificar seus favoritos.']);
     }
 }
-

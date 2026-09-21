@@ -2,6 +2,7 @@
 // Buffer de saída: previne que qualquer aviso/notice quebre o formato do JSON
 ob_start();
 
+define('PV_JSON_CONTEXT', true);
 require_once __DIR__ . "/../config/conexao.php";
 require_once __DIR__ . "/../config/sessao.php";
 
@@ -11,12 +12,13 @@ header('Content-Type: application/json; charset=utf-8');
 register_shutdown_function(function () {
     $erro = error_get_last();
     if ($erro && in_array($erro['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        error_log('[Pet-Vida] solicitar-adocao fatal: ' . $erro['message'] . ' (linha ' . $erro['line'] . ')');
         while (ob_get_level() > 0) { ob_end_clean(); }
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
-            'sucesso'  => false,
-            'mensagem' => 'Erro interno no servidor: ' . $erro['message'] . ' (linha ' . $erro['line'] . ')'
+            'success' => false,
+            'message' => 'Erro interno no servidor. Tente novamente em instantes.'
         ]);
     }
 });
@@ -26,9 +28,9 @@ if (!isset($_SESSION['nome_usuario']) || !isset($_SESSION['id_usuario'])) {
     ob_end_clean();
     http_response_code(401);
     echo json_encode([
-        'sucesso' => false,
+        'success' => false,
         'motivo'  => 'nao_logado',
-        'mensagem' => 'Você precisa estar logado para solicitar uma adoção.'
+        'message' => 'Você precisa estar logado para solicitar uma adoção.'
     ]);
     exit;
 }
@@ -36,7 +38,7 @@ if (!isset($_SESSION['nome_usuario']) || !isset($_SESSION['id_usuario'])) {
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ob_end_clean();
     http_response_code(405);
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Método não permitido.']);
+    echo json_encode(['success' => false, 'message' => 'Método não permitido.']);
     exit;
 }
 
@@ -46,7 +48,7 @@ $idAnimal  = filter_input(INPUT_POST, 'id_animal', FILTER_VALIDATE_INT);
 if (!$idAnimal) {
     ob_end_clean();
     http_response_code(400);
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Pet inválido.']);
+    echo json_encode(['success' => false, 'message' => 'Pet inválido.']);
     exit;
 }
 
@@ -59,16 +61,16 @@ try {
     if (!$animal) {
         ob_end_clean();
         http_response_code(404);
-        echo json_encode(['sucesso' => false, 'mensagem' => 'Pet não encontrado no sistema.']);
+        echo json_encode(['success' => false, 'message' => 'Pet não encontrado no sistema.']);
         exit;
     }
 
     if ($animal['status_adocao'] !== 'Disponível') {
         ob_end_clean();
         echo json_encode([
-            'sucesso' => false,
+            'success' => false,
             'motivo'  => 'ja_adotado',
-            'mensagem' => 'Este pet já recebeu uma solicitação ou já foi adotado por outra pessoa.'
+            'message' => 'Este pet já recebeu uma solicitação ou já foi adotado por outra pessoa.'
         ]);
         exit;
     }
@@ -83,9 +85,9 @@ try {
     if ($stmtDuplicado->fetch()) {
         ob_end_clean();
         echo json_encode([
-            'sucesso' => false,
+            'success' => false,
             'motivo'  => 'ja_solicitado',
-            'mensagem' => 'Você já enviou um pedido para este pet. Aguarde o retorno do abrigo.'
+            'message' => 'Você já enviou um pedido para este pet. Aguarde o retorno do abrigo.'
         ]);
         exit;
     }
@@ -105,8 +107,8 @@ try {
 
     // 5. CRUCIAL: Atualiza o status do pet na tabela principal para 'Em processo'
     $stmtUpdatePet = $pdo->prepare("
-        UPDATE animais_adocao 
-        SET status_adocao = 'Em processo' 
+        UPDATE animais_adocao
+        SET status_adocao = 'Em processo'
         WHERE id_animal = :id_animal
     ");
     $stmtUpdatePet->execute([':id_animal' => $idAnimal]);
@@ -116,8 +118,8 @@ try {
 
     ob_end_clean();
     echo json_encode([
-        'sucesso'  => true,
-        'mensagem' => 'Sua solicitação de adoção foi enviada com sucesso!'
+        'success' => true,
+        'message' => 'Sua solicitação de adoção foi enviada com sucesso!'
     ]);
     exit;
 
@@ -125,11 +127,12 @@ try {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
+    error_log('[Pet-Vida] solicitar-adocao: ' . $e->getMessage());
     ob_end_clean();
     http_response_code(500);
     echo json_encode([
-        'sucesso'  => false,
-        'mensagem' => 'Erro ao processar requisição no banco: ' . $e->getMessage()
+        'success' => false,
+        'message' => 'Não foi possível processar sua solicitação. Tente novamente.'
     ]);
     exit;
 }

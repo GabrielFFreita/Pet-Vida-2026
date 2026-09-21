@@ -237,7 +237,8 @@ $extraScripts = $extraScripts ?? [];
         </div>
     </div>
 
-    <script src="<?php echo htmlspecialchars(assetPath('js/site.js?v=13'), ENT_QUOTES, 'UTF-8'); ?>"></script>
+    <script src="<?php echo htmlspecialchars(assetPath('js/toast.js?v=2'), ENT_QUOTES, 'UTF-8'); ?>"></script>
+    <script src="<?php echo htmlspecialchars(assetPath('js/site.js?v=14'), ENT_QUOTES, 'UTF-8'); ?>"></script>
 <?php foreach ($extraScripts as $scriptPath): ?>
     <script src="<?php echo htmlspecialchars($scriptPath, ENT_QUOTES, 'UTF-8'); ?>"></script>
 <?php endforeach; ?>

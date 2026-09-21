@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
         //Essa é a url final
         $urlImagem = $resultado['data']['url'];
         
-        echo "<script>alert('Animal cadastrado com sucesso!')</script>";
+        echo json_encode(['success' => true, 'url' => $urlImagem]);
         
         // DICA: É essa variável $urlImagem que você guardaria no seu banco de dados,
         // ou usaria para renderizar na tela depois.

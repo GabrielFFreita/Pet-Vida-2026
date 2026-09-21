@@ -22,6 +22,8 @@ if (isset($_GET["status"])) {
         $mensagem = "Animal atualizado com sucesso.";
     } elseif ($status === "excluido") {
         $mensagem = "Animal removido com sucesso.";
+    } elseif ($status === "cadastrado") {
+        $mensagem = "Animal cadastrado com sucesso.";
     } elseif ($status === "erro") {
         $mensagem = "Não foi possível concluir a operação solicitada.";
         $tipoMensagem = "erro";
@@ -57,6 +59,7 @@ try {
     $metricas["em_processo"] = (int) $pdo->query("SELECT COUNT(*) FROM animais_adocao WHERE status_adocao = 'Em processo'")->fetchColumn();
     $metricas["com_deficiencia"] = (int) $pdo->query("SELECT COUNT(*) FROM animais_adocao WHERE deficiencia IS NOT NULL AND TRIM(deficiencia) <> ''")->fetchColumn();
 } catch (PDOException $e) {
+    error_log('[Pet-Vida] Erro ao carregar listagem de animais: ' . $e->getMessage());
     $mensagem = "Não foi possível carregar a listagem de animais.";
     $tipoMensagem = "erro";
 }
@@ -75,6 +78,7 @@ try {
 <body>
 
     <?php $adminActivePage = 'animais'; require __DIR__ . '/../includes/menu-admin.php'; ?>
+    <?php renderToastFlash($mensagem, $tipoMensagem); ?>
 
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
@@ -83,12 +87,6 @@ try {
                 <p class="subtitulo">Consulte os cadastros, atualize dados do perfil do animal e remova registros sem vínculos ativos.</p>
             </div>
         </div>
-
-        <?php if ($mensagem !== null): ?>
-            <div class="alerta-admin <?php echo $tipoMensagem === "erro" ? "alerta-admin--erro" : "alerta-admin--sucesso"; ?>">
-                <?php echo htmlspecialchars($mensagem, ENT_QUOTES, "UTF-8"); ?>
-            </div>
-        <?php endif; ?>
 
         <section class="dashboard-grid">
             <article class="card-metrica">

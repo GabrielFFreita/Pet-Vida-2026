@@ -10,6 +10,8 @@ $adminMenuItems = [
     "usuarios" => ["label" => "Usuários", "href" => "usuarios.php"],
 ];
 ?>
+<link rel="stylesheet" href="<?php echo htmlspecialchars(assetPath("css/toast.css?v=2"), ENT_QUOTES, "UTF-8"); ?>">
+<script src="<?php echo htmlspecialchars(assetPath("js/toast.js?v=2"), ENT_QUOTES, "UTF-8"); ?>"></script>
 <div vw class="enabled">
     <div vw-access-button class="active"></div>
     <div vw-plugin-wrapper>
