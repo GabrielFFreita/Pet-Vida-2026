@@ -43,18 +43,9 @@ function preencherFormularioPerfil(usuario) {
     document.getElementById('perfilEstado').value = usuario.estado || '';
 }
 
-function mostrarFeedbackPerfil(mensagem, tipo) {
-    const feedback = document.getElementById('perfilFeedback');
-    if (!feedback) return;
-
-    feedback.className = `perfil-feedback ${tipo}`;
-    feedback.textContent = mensagem;
-}
-
 async function carregarPerfilUsuario() {
     const resultado = await fetchAPI('api.php?acao=meus_dados');
     if (!resultado.success || !resultado.usuario) {
-        mostrarFeedbackPerfil(resultado.error || 'Nao foi possivel carregar seus dados.', 'erro');
         return;
     }
 
@@ -79,7 +70,6 @@ async function salvarPerfilUsuario(event) {
 
     botaoSalvar.disabled = true;
     botaoSalvar.textContent = 'Salvando...';
-    mostrarFeedbackPerfil('', '');
 
     const payload = {
         nome: document.getElementById('perfilNome')?.value?.trim() || '',
@@ -114,9 +104,7 @@ async function salvarPerfilUsuario(event) {
         preencherFormularioPerfil(resultado.usuario);
         document.getElementById('perfilNovaSenha').value = '';
         document.getElementById('perfilConfirmarSenha').value = '';
-        mostrarFeedbackPerfil('Dados atualizados com sucesso.', 'sucesso');
-    } else {
-        mostrarFeedbackPerfil(resultado.error || 'Nao foi possivel salvar suas alteracoes.', 'erro');
+        mostrarToast('Dados atualizados com sucesso.', 'sucesso');
     }
 
     botaoSalvar.disabled = false;

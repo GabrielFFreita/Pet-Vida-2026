@@ -221,7 +221,9 @@ function finalizarQuiz() {
         .catch(err => {
             loadingScreen.style.display = "none";
             document.body.style.overflow = "";
-            alert("Ocorreu um erro ao processar o quiz. Tente novamente.");
+            if (typeof mostrarToast === 'function') {
+                mostrarToast("Ocorreu um erro ao processar o quiz. Tente novamente.", "erro");
+            }
             console.error(err);
         });
     }, 3000); // 3 segundos de animação da patinha carregando

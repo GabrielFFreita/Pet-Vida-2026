@@ -633,12 +633,6 @@ function abrirModalConfirmacao() {
 
   const abrigo = abrigos[petEscolhido.abrigoId] || {};
 
-  const msgErro = qs('#mensagem-erro-adocao');
-  if (msgErro) {
-    msgErro.style.display = 'none';
-    msgErro.textContent   = '';
-  }
-
   qs('#info-adocao').innerHTML = `
     <p><strong>Pet:</strong> ${petEscolhido.nome} (${petEscolhido.raca})</p>
     <p><strong>Abrigo:</strong> ${abrigo.nome || '—'}</p>
@@ -658,12 +652,7 @@ function confirmarAdocao() {
   if (!petEscolhido) return;
 
   const btnConfirmar = qs('#btn-confirmar-adocao');
-  const msgErro       = qs('#mensagem-erro-adocao');
 
-  if (msgErro) {
-    msgErro.style.display = 'none';
-    msgErro.textContent   = '';
-  }
   if (btnConfirmar) {
     btnConfirmar.disabled    = true;
     btnConfirmar.textContent = 'Enviando...';
@@ -680,11 +669,8 @@ function confirmarAdocao() {
     .then(({ ok, dados }) => {
       
 
-      if (!dados.sucesso) {
-        if (msgErro) {
-          msgErro.textContent   = dados.mensagem || 'Não foi possível enviar seu pedido.';
-          msgErro.style.display = 'block';
-        }
+      if (!dados.success) {
+        mostrarToast(dados.message || 'Não foi possível enviar seu pedido.', 'erro');
         return;
       }
 
@@ -732,10 +718,7 @@ function confirmarAdocao() {
       }, 340);
     })
     .catch(() => {
-      if (msgErro) {
-        msgErro.textContent   = 'Erro de conexão. Tente novamente.';
-        msgErro.style.display = 'block';
-      }
+      mostrarToast('Erro de conexão. Tente novamente.', 'erro');
     })
     .finally(() => {
       if (btnConfirmar) {

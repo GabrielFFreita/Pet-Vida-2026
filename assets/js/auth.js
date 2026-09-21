@@ -1,11 +1,3 @@
-function limparMensagem(id) {
-    const elemento = document.getElementById(id);
-    if (elemento) {
-        elemento.textContent = '';
-        elemento.style.display = 'none';
-    }
-}
-
 function preencherNomeLogin() {
     const nomeLogin = document.getElementById('nome_login');
     const email = document.getElementById('email');
@@ -31,7 +23,6 @@ async function inicializarCadastro() {
 
     cadastroForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        limparMensagem('cadastroSuccess');
         preencherNomeLogin();
 
         const btn = cadastroForm.querySelector('.btn');
@@ -60,20 +51,14 @@ async function inicializarCadastro() {
         });
 
         if (result.success) {
-            const successMsg = document.getElementById('cadastroSuccess');
-            if (successMsg) {
-                successMsg.textContent = 'Cadastro realizado com sucesso! Redirecionando para o login...';
-                successMsg.style.display = 'block';
-            }
+            mostrarToast('Cadastro realizado com sucesso! Redirecionando para o login...', 'sucesso');
 
-            await fetchAPI('api.php?acao=logout');
+            await fetchAPI('api.php?acao=logout', { silencioso: true });
             cadastroForm.reset();
 
             window.setTimeout(() => {
                 window.location.href = 'login.php';
             }, 1800);
-        } else {
-            alert(result.error || 'Erro ao realizar cadastro.');
         }
 
         btn.disabled = false;
@@ -87,12 +72,6 @@ async function inicializarLogin() {
 
     loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        limparMensagem('loginSuccess');
-
-        const emailError = document.getElementById('loginEmailError');
-        const senhaError = document.getElementById('loginSenhaError');
-        if (emailError) emailError.textContent = '';
-        if (senhaError) senhaError.textContent = '';
 
         const btn = loginForm.querySelector('.btn');
         if (!btn) return;
@@ -112,17 +91,11 @@ async function inicializarLogin() {
             usuarioLogado = result.usuario;
             atualizarInterfaceUsuario();
 
-            const successMsg = document.getElementById('loginSuccess');
-            if (successMsg) {
-                successMsg.textContent = 'Login realizado com sucesso!';
-                successMsg.style.display = 'block';
-            }
+            mostrarToast('Login realizado com sucesso!', 'sucesso');
 
             window.setTimeout(() => {
                 window.location.href = obterRedirectPosLogin();
             }, 400);
-        } else if (senhaError) {
-            senhaError.textContent = result.error || 'E-mail ou senha invalidos';
         }
 
         btn.disabled = false;

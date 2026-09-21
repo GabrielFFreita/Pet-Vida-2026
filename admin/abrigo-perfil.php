@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../config/conexao.php";
 require_once __DIR__ . "/../config/sessao.php";
 require_once __DIR__ . "/../includes/animal-admin-helpers.php";
+require_once __DIR__ . "/../includes/helpers.php";
 verificarAdmin();
 
 // 1. VERIFICAÇÃO E BUSCA DOS DADOS DO ABRIGO
@@ -19,10 +20,27 @@ try {
     $abrigo = $stmt_abrigo->fetch(PDO::FETCH_ASSOC);
 
     if (!$abrigo) {
-        die("Abrigo não encontrado.");
+        header("Location: abrigos.php?status=erro");
+        exit;
     }
 } catch (PDOException $e) {
-    die("Erro ao buscar abrigo: " . $e->getMessage());
+    error_log('[Pet-Vida] Erro ao buscar abrigo: ' . $e->getMessage());
+    header("Location: abrigos.php?status=erro");
+    exit;
+}
+
+$mensagem = null;
+$tipoMensagem = "sucesso";
+
+if (isset($_GET["status"])) {
+    $status = (string) $_GET["status"];
+
+    if ($status === "cadastrado") {
+        $mensagem = "Animal cadastrado com sucesso.";
+    } elseif ($status === "erro") {
+        $mensagem = "Não foi possível concluir a operação solicitada.";
+        $tipoMensagem = "erro";
+    }
 }
 
 // 2. PROCESSAMENTO DO CADASTRO DO ANIMAL
@@ -85,9 +103,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             ]);
         }
 
-        echo "<script>alert('Animal cadastrado com sucesso!'); window.location.href='abrigo-perfil.php?id=$id_abrigo';</script>";
+        header("Location: abrigo-perfil.php?id=$id_abrigo&status=cadastrado");
+        exit;
     } catch (PDOException $e) {
-        die('Erro ao salvar no banco: ' . $e->getMessage());
+        error_log('[Pet-Vida] Erro ao cadastrar animal no abrigo: ' . $e->getMessage());
+        header("Location: abrigo-perfil.php?id=$id_abrigo&status=erro");
+        exit;
     }
 }
 
@@ -120,6 +141,7 @@ try {
 <body>
 
     <?php $adminActivePage = 'abrigos'; require __DIR__ . '/../includes/menu-admin.php'; ?>
+    <?php renderToastFlash($mensagem, $tipoMensagem); ?>
 
     <main class="content">
         <div class="header-acoes-admin">

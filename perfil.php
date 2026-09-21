@@ -7,7 +7,7 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 $pageTitle = 'Pet Vida - Minha Conta';
-$extraScripts = ['assets/js/perfil.js?v=1'];
+$extraScripts = ['assets/js/perfil.js?v=2'];
 require __DIR__ . '/includes/header.php';
 ?>
 

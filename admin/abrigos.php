@@ -1,7 +1,20 @@
 <?php
 require_once __DIR__ . "/../config/conexao.php";
 require_once __DIR__ . "/../config/sessao.php";
+require_once __DIR__ . "/../includes/helpers.php";
 verificarAdmin();
+
+$mensagem = null;
+$tipoMensagem = "sucesso";
+
+if (isset($_GET["status"])) {
+    $status = (string) $_GET["status"];
+
+    if ($status === "erro") {
+        $mensagem = "Não foi possível concluir a operação solicitada.";
+        $tipoMensagem = "erro";
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = filter_input(INPUT_POST, 'nome', FILTER_UNSAFE_RAW);
@@ -24,7 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: abrigos.php");
             exit;
         } catch (PDOException $e) {
-            $erro = "Erro ao cadastrar abrigo: " . $e->getMessage();
+            error_log('[Pet-Vida] Erro ao cadastrar abrigo: ' . $e->getMessage());
+            $mensagem = "Não foi possível cadastrar o abrigo. Tente novamente.";
+            $tipoMensagem = "erro";
         }
     }
 }
@@ -34,7 +49,10 @@ try {
     $stmt = $pdo->query($sql);
     $abrigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
+    error_log('[Pet-Vida] Erro ao listar abrigos: ' . $e->getMessage());
     $abrigos = [];
+    $mensagem = "Não foi possível carregar a lista de abrigos.";
+    $tipoMensagem = "erro";
 }
 ?>
 <!DOCTYPE html>
@@ -51,6 +69,7 @@ try {
 <body>
 
     <?php $adminActivePage = 'abrigos'; require __DIR__ . '/../includes/menu-admin.php'; ?>
+    <?php renderToastFlash($mensagem, $tipoMensagem); ?>
 
     <main class="content">
         <div class="header-acoes-admin">
@@ -62,12 +81,6 @@ try {
                 <span>+</span> Novo Abrigo
             </button>
         </div>
-
-        <?php if (isset($erro)): ?>
-            <div style="background-color: #FEF2F2; color: #DC2626; padding: 15px; border-radius: var(--raio); margin-bottom: 20px; border: 1px solid #FEE2E2; width: 100%;">
-                <?php echo htmlspecialchars($erro); ?>
-            </div>
-        <?php endif; ?>
 
         <section class="grid-cards">
             <?php if (empty($abrigos)): ?>
