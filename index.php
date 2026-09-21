@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . "/config/conexao.php";
 session_start();
 
@@ -26,6 +26,7 @@ try {
                 FROM foto_animal
                 GROUP BY id_animal
             ) fotos ON a.id_animal = fotos.id_animal
+            WHERE a.status_adocao = 'Disponível'
             ORDER BY RAND()
             LIMIT 5";
     $stmt = $pdo->query($sql);

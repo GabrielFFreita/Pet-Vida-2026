@@ -24,7 +24,8 @@ LEFT JOIN (
         GROUP_CONCAT(ds_img ORDER BY ds_img SEPARATOR '||') AS fotos
     FROM foto_animal
     GROUP BY id_animal
-) fotos ON a.id_animal = fotos.id_animal";
+) fotos ON a.id_animal = fotos.id_animal
+WHERE a.status_adocao = 'Disponível'";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
@@ -429,6 +430,7 @@ foreach ($abrigos as $abrigo) {
       <h3 id="modal-titulo">Confirmar interesse</h3>
       <p>Você escolheu adotar este pet. Confirmar?</p>
       <div class="info-adocao" id="info-adocao"></div>
+      <p id="mensagem-erro-adocao" role="alert" style="display:none; color:#c0392b; font-size:.9rem; margin-top:.5rem; text-align:center;"></p>
       <div class="modal-acoes">
         <button class="btn-sim" id="btn-confirmar-adocao">Sim, quero adotar!</button>
         <button class="btn-nao" id="btn-cancelar-modal">Cancelar</button>
