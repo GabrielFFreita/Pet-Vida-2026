@@ -212,11 +212,11 @@ $chartBarColors = ["#2D6A4F", "#52B788", "#95D5B2", "#E07B39", "#D9C7AE", "#6B72
                 <div class="valor"><?= $metricas["abrigos_cadastrados"]; ?></div>
                 <span class="legenda">Parceiros ativos na base</span>
             </div>
-            <div class="card-metrica">
+            <a href="adocoes.php?filtro=Pendente" class="card-metrica" style="text-decoration: none; color: inherit; cursor: pointer;">
                 <h3>Pedidos Pendentes</h3>
-                <div class="valor"><?= $metricas["pedidos_pendentes"]; ?></div>
-                <span class="legenda">Aguardando decisão</span>
-            </div>
+                <div class="valor" style="color: var(--laranja);"><?= $metricas["pedidos_pendentes"]; ?></div>
+                <span class="legenda">Ver solicitações em análise &rarr;</span>
+            </a>
         </section>
 
         <section class="dashboard-analitico">

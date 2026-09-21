@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/config/conexao.php";
+require_once __DIR__ . "/config/sessao.php";
 
 $petAutoOpenId = filter_input(INPUT_GET, 'pet', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: null;
 
@@ -106,6 +107,9 @@ foreach ($abrigos as $abrigo) {
           <span class="favoritos-count" id="favoritos-count" hidden>0</span>
         </button>
 
+        <a href="minhas-adocoes.php" class="btn-cta" style="background: #2D6A4F; color: #fff;" aria-label="Minhas Adoções">
+          Minhas Adoções
+        </a>
         <a href="quiz.php" class="btn-cta" aria-label="Pet Quiz">
           Pet Quiz
         </a>

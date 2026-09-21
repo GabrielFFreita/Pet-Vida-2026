@@ -1,4 +1,4 @@
-﻿let usuarioLogado = null;
+let usuarioLogado = null;
 let animalSelecionado = null;
 let slideAtual = 0;
 let intervaloCarrossel;
@@ -631,6 +631,10 @@ function atualizarInterfaceUsuario() {
                     <p class="usuario-dropdown-nome">${escaparHtml(dadosUsuario.nomeCompleto)}</p>
                     <p class="usuario-dropdown-email">${escaparHtml(dadosUsuario.email || 'E-mail n\u00e3o informado')}</p>
                 </div>
+                <button type="button" class="usuario-dropdown-item" role="menuitem" onclick="irParaMinhasAdocoes()">
+                    <i class="fas fa-paw" aria-hidden="true"></i>
+                    <span>Minhas Adoções</span>
+                </button>
                 <button type="button" class="usuario-dropdown-item" role="menuitem" onclick="irParaPerfil()">
                     <i class="fas fa-user-edit" aria-hidden="true"></i>
                     <span>Alterar meus dados</span>
@@ -739,6 +743,11 @@ function toggleMenuUsuario() {
     }
 
     abrirMenuUsuario();
+}
+
+function irParaMinhasAdocoes() {
+    fecharMenuUsuario();
+    window.location.href = 'minhas-adocoes.php';
 }
 
 function irParaPerfil() {
