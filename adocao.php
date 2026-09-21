@@ -63,6 +63,7 @@ foreach ($abrigos as $abrigo) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/adocao.css">
+  <link rel="stylesheet" href="assets/css/toast.css?v=2">
 </head>
 <body>
   <div vw class="enabled">
@@ -456,6 +457,7 @@ foreach ($abrigos as $abrigo) {
     window.ABRIGOS_DADOS = <?= json_encode($abrigosJs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     window.PET_AUTO_OPEN_ID = <?= json_encode($petAutoOpenId, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
   </script>
-  <script src="assets/js/adocao.js"></script>
+  <script src="assets/js/toast.js?v=2"></script>
+  <script src="assets/js/adocao.js?v=2"></script>
 </body>
 </html>

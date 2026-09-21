@@ -131,15 +131,27 @@ function pararCarrossel() {
 }
 
 async function fetchAPI(endpoint, options = {}) {
+    const silencioso = options.silencioso === true;
+    const fetchOptions = { ...options };
+    delete fetchOptions.silencioso;
+
     try {
         const response = await fetch(endpoint, {
             headers: { 'Content-Type': 'application/json' },
-            ...options
+            ...fetchOptions
         });
-        return await response.json();
+        const dados = await response.json();
+
+        if (dados && dados.success === false && !silencioso) {
+            mostrarToast(dados.message || 'Ocorreu um erro. Tente novamente.', 'erro');
+        }
+
+        return dados;
     } catch (error) {
         console.error('Erro na API:', error);
-        return { error: error.message };
+        const erroDados = { success: false, message: 'Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.' };
+        if (!silencioso) mostrarToast(erroDados.message, 'erro');
+        return erroDados;
     }
 }
 
@@ -165,7 +177,7 @@ async function carregarAnimais(containerId, limite = null, filtros = {}) {
 
     const result = await fetchAPI(url);
 
-    if (result.error) {
+    if (result.success === false) {
         container.innerHTML = '<p style="text-align:center; color:red;">Erro ao carregar animais.</p>';
         return;
     }
@@ -216,7 +228,7 @@ function criarCardAnimal(animal) {
 
 async function toggleFavorito(idAnimal, elemento) {
     if (!usuarioLogado) {
-        alert('Voc\u00ea precisa fazer login para favoritar animais.');
+        mostrarToast('Voc\u00ea precisa fazer login para favoritar animais.', 'erro');
         redirecionarParaLogin();
         return;
     }
@@ -231,15 +243,13 @@ async function toggleFavorito(idAnimal, elemento) {
 
     if (result.success) {
         elemento.classList.toggle('favoritado', !!result.favoritado);
-    } else {
-        alert('Erro ao favoritar. Tente novamente.');
     }
 }
 
 async function atualizarIconeFavorito(idAnimal) {
     if (!usuarioLogado) return;
 
-    const result = await fetchAPI(`api.php?acao=verificar_favorito&id_usuario=${usuarioLogado.id_usuario}&id_animal=${idAnimal}`);
+    const result = await fetchAPI(`api.php?acao=verificar_favorito&id_usuario=${usuarioLogado.id_usuario}&id_animal=${idAnimal}`, { silencioso: true });
 
     if (result.success && result.favoritado) {
         const botoes = document.querySelectorAll(`.cartao-animal[data-id="${idAnimal}"] .btn-favorito`);
@@ -260,7 +270,7 @@ async function carregarFavoritos() {
 
     const result = await fetchAPI(`api.php?acao=listar_favoritos&id_usuario=${usuarioLogado.id_usuario}`);
 
-    if (result.error) {
+    if (result.success === false) {
         container.innerHTML = '<p style="text-align:center;">Erro ao carregar favoritos.</p>';
         return;
     }
@@ -311,11 +321,11 @@ function copiarChavePix() {
     if (!campo) return;
 
     navigator.clipboard.writeText(campo.value).then(() => {
-        alert('Chave Pix copiada!');
+        mostrarToast('Chave Pix copiada!', 'sucesso', 2500);
     }).catch(() => {
         campo.select();
         document.execCommand('copy');
-        alert('Chave Pix copiada!');
+        mostrarToast('Chave Pix copiada!', 'sucesso', 2500);
     });
 }
 
@@ -353,14 +363,14 @@ function selecionarTipoDoacao(tipo, elemento) {
 
 async function enviarDoacao() {
     if (!usuarioLogado) {
-        alert('Voc\u00ea precisa fazer login para realizar uma doa\u00e7\u00e3o.');
+        mostrarToast('Voc\u00ea precisa fazer login para realizar uma doa\u00e7\u00e3o.', 'erro');
         fecharModalDoacao();
         redirecionarParaLogin();
         return;
     }
 
     if (!tipoDoacaoSelecionado) {
-        alert('Selecione um tipo de doa\u00e7\u00e3o.');
+        mostrarToast('Selecione um tipo de doa\u00e7\u00e3o.', 'erro');
         return;
     }
 
@@ -372,7 +382,7 @@ async function enviarDoacao() {
         if (valorInformado) {
             valor = parseFloat(valorInformado);
             if (Number.isNaN(valor) || valor <= 0) {
-                alert('Informe um valor v\u00e1lido para doa\u00e7\u00e3o.');
+                mostrarToast('Informe um valor v\u00e1lido para doa\u00e7\u00e3o.', 'erro');
                 return;
             }
             descricao = `Doa\u00e7\u00e3o via Pix de R$ ${valor.toFixed(2)}`;
@@ -382,13 +392,13 @@ async function enviarDoacao() {
     } else if (tipoDoacaoSelecionado === 'Outro') {
         descricao = document.getElementById('descricaoOutro')?.value?.trim() || '';
         if (!descricao) {
-            alert('Descreva o que voc\u00ea deseja doar.');
+            mostrarToast('Descreva o que voc\u00ea deseja doar.', 'erro');
             return;
         }
     } else {
         const detalhe = document.getElementById('detalheDoacao')?.value?.trim() || '';
         if (!detalhe) {
-            alert('Descreva o que voc\u00ea vai enviar.');
+            mostrarToast('Descreva o que voc\u00ea vai enviar.', 'erro');
             return;
         }
         descricao = `Doa\u00e7\u00e3o de ${tipoDoacaoSelecionado}: ${detalhe}`;
@@ -405,17 +415,14 @@ async function enviarDoacao() {
     });
 
     if (result.success) {
-        alert('Doa\u00e7\u00e3o registrada com sucesso! Muito obrigado!');
+        mostrarToast('Doa\u00e7\u00e3o registrada com sucesso! Muito obrigado!', 'sucesso');
         fecharModalDoacao();
-    } else {
-        alert('Erro ao registrar doa\u00e7\u00e3o. Tente novamente.');
     }
 }
 
 async function abrirDetalhesAnimal(id) {
     const result = await fetchAPI(`api.php?acao=buscar_animal&id=${id}`);
-    if (result.error) {
-        alert('Erro ao carregar detalhes do animal.');
+    if (result.success === false) {
         return;
     }
 
@@ -469,7 +476,7 @@ function fecharModalAnimal() {
 
 async function solicitarAdocao() {
     if (!usuarioLogado) {
-        alert('Voc\u00ea precisa fazer login para solicitar uma ado\u00e7\u00e3o.');
+        mostrarToast('Voc\u00ea precisa fazer login para solicitar uma ado\u00e7\u00e3o.', 'erro');
         fecharModalAnimal();
         redirecionarParaLogin();
         return;
@@ -489,14 +496,12 @@ async function solicitarAdocao() {
     });
 
     if (result.success) {
-        alert('Solicita\u00e7\u00e3o de ado\u00e7\u00e3o enviada com sucesso!');
+        mostrarToast('Solicita\u00e7\u00e3o de ado\u00e7\u00e3o enviada com sucesso!', 'sucesso');
         fecharModalAnimal();
         carregarAnimais('gradeAnimaisDestaque', 4);
         if (document.getElementById('gradeTodosAnimais')) {
             carregarAnimais('gradeTodosAnimais');
         }
-    } else {
-        alert('Erro ao enviar solicita\u00e7\u00e3o. Tente novamente.');
     }
 }
 
@@ -519,7 +524,7 @@ function irParaAdocao(e) {
     if (e?.preventDefault) e.preventDefault();
 
     if (!usuarioLogado) {
-        alert('Voc\u00ea precisa se cadastrar para ver os animais dispon\u00edveis para ado\u00e7\u00e3o.');
+        mostrarToast('Voc\u00ea precisa se cadastrar para ver os animais dispon\u00edveis para ado\u00e7\u00e3o.', 'erro');
         redirecionarParaLogin('adocao.php');
         return false;
     }
@@ -549,7 +554,7 @@ function verTodosAnimais() {
 
 function verFavoritos() {
     if (!usuarioLogado) {
-        alert('Fa\u00e7a login para ver seus favoritos.');
+        mostrarToast('Fa\u00e7a login para ver seus favoritos.', 'erro');
         redirecionarParaLogin();
         return;
     }
@@ -756,13 +761,12 @@ async function fazerLogout() {
 
     const result = await fetchAPI('api.php?acao=logout');
     if (!result.success) {
-        alert(result.error || 'N\u00e3o foi poss\u00edvel encerrar a sess\u00e3o.');
         return;
     }
 
     usuarioLogado = null;
     atualizarInterfaceUsuario();
-    alert('Sessao encerrada com sucesso!');
+    mostrarToast('Sess\u00e3o encerrada com sucesso!', 'sucesso');
     window.location.href = 'index.php';
 }
 
@@ -799,7 +803,7 @@ function abrirEmail() {
 }
 
 function abrirHorarioAtendimento() {
-    alert('Horario de Atendimento:\nSegunda a Sexta: 8h as 18h\nSabado: 9h as 13h');
+    mostrarToast('Horário de Atendimento: Segunda a Sexta, 8h às 18h | Sábado, 9h às 13h', 'sucesso', 8000);
 }
 
 function abrirSobreNos() {
@@ -828,7 +832,7 @@ async function buscarAnimais() {
 
     window.setTimeout(async () => {
         const result = await fetchAPI('api.php?acao=listar_animais');
-        if (result.error) return;
+        if (result.success === false) return;
 
         const filtrados = result.filter((animal) =>
             animal.nome.toLowerCase().includes(termo) ||

@@ -93,15 +93,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             $stmtFoto->execute();
         }
 
-        echo "
-        <script>
-            alert('Animal cadastrado com sucesso!');
-            window.location.href='dashboard.php';
-        </script>
-        ";
+        header("Location: animais.php?status=cadastrado");
+        exit;
 
     } catch (PDOException $e) {
-        die('Erro ao salvar no banco: ' . $e->getMessage());
+        error_log('[Pet-Vida] Erro ao cadastrar animal: ' . $e->getMessage());
+        header("Location: animais.php?status=erro");
+        exit;
     }
 }
 ?>

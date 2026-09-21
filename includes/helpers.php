@@ -25,3 +25,18 @@ function adminPath(string $path): string
         ? $normalizedPath
         : "admin/" . $normalizedPath;
 }
+
+function renderToastFlash(?string $mensagem, string $tipo = "sucesso"): void
+{
+    if ($mensagem === null || $mensagem === "") {
+        return;
+    }
+
+    $tipoSeguro = $tipo === "erro" ? "erro" : "sucesso";
+    $mensagemJson = json_encode($mensagem, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    $tipoJson = json_encode($tipoSeguro);
+
+    echo "<script>document.addEventListener(\"DOMContentLoaded\", function () {"
+        . " if (window.mostrarToast) { mostrarToast(" . $mensagemJson . ", " . $tipoJson . "); }"
+        . " });</script>\n";
+}

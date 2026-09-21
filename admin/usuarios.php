@@ -67,6 +67,7 @@ try {
     $metricas["comuns"] = fetchTotalUsuarios($pdo, "SELECT COUNT(*) FROM usuarios WHERE perfil = 'user' OR perfil IS NULL");
     $metricas["com_adocao"] = fetchTotalUsuarios($pdo, "SELECT COUNT(DISTINCT id_usuario) FROM adocao");
 } catch (PDOException $e) {
+    error_log('[Pet-Vida] Erro ao carregar listagem de usuarios: ' . $e->getMessage());
     $usuarios = [];
     $mensagem = "Nao foi possivel carregar a listagem de usuarios.";
     $tipoMensagem = "erro";
@@ -86,6 +87,7 @@ try {
 <body>
 
     <?php $adminActivePage = 'usuarios'; require __DIR__ . '/../includes/menu-admin.php'; ?>
+    <?php renderToastFlash($mensagem, $tipoMensagem); ?>
 
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
@@ -94,12 +96,6 @@ try {
                 <p class="subtitulo">Acompanhe a base cadastrada, consulte os dados e remova usuarios sem dependencias ativas.</p>
             </div>
         </div>
-
-        <?php if ($mensagem !== null): ?>
-            <div class="alerta-admin <?php echo $tipoMensagem === "erro" ? "alerta-admin--erro" : "alerta-admin--sucesso"; ?>">
-                <?php echo htmlspecialchars($mensagem, ENT_QUOTES, "UTF-8"); ?>
-            </div>
-        <?php endif; ?>
 
         <section class="dashboard-grid">
             <article class="card-metrica">

@@ -187,6 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
+            error_log('[Pet-Vida] Erro ao salvar alterações do animal: ' . $e->getMessage());
             $erro = "Não foi possível salvar as alterações do animal.";
         }
     }
@@ -218,6 +219,7 @@ try {
 <body>
 
     <?php $adminActivePage = 'animais'; require __DIR__ . '/../includes/menu-admin.php'; ?>
+    <?php renderToastFlash($erro, 'erro'); ?>
 
     <main class="content">
         <div class="header-acoes-admin header-acoes-admin--stack">
@@ -227,12 +229,6 @@ try {
             </div>
             <a href="animais.php" class="btn-admin btn-editar btn-admin--voltar">Voltar para a listagem</a>
         </div>
-
-        <?php if ($erro !== null): ?>
-            <div class="alerta-admin alerta-admin--erro">
-                <?php echo htmlspecialchars($erro, ENT_QUOTES, "UTF-8"); ?>
-            </div>
-        <?php endif; ?>
 
         <section class="painel-card painel-card--formulario">
             <div class="painel-card-topo">
