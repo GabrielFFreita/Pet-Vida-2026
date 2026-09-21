@@ -20,6 +20,40 @@ function obterRedirectPosLogin() {
     return params.get('redirect') || 'index.php';
 }
 
+function aplicarMascaraCpf(input) {
+    if (!input) return;
+    input.addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 9) {
+            v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        } else if (v.length > 6) {
+            v = v.replace(/^(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+        } else if (v.length > 3) {
+            v = v.replace(/^(\d{3})(\d{1,3})/, '$1.$2');
+        }
+        e.target.value = v;
+    });
+}
+
+function aplicarMascaraTelefone(input) {
+    if (!input) return;
+    input.addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 10) {
+            // Celular com 9 dígitos: (XX) XXXXX-XXXX
+            v = v.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        } else if (v.length > 6) {
+            // Telefone fixo ou digitando: (XX) XXXX-XXXX
+            v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+        } else if (v.length > 2) {
+            v = v.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+        } else if (v.length > 0) {
+            v = v.replace(/^(\d*)/, '($1');
+        }
+        e.target.value = v;
+    });
+}
+
 async function inicializarCadastro() {
     const cadastroForm = document.getElementById('cadastroForm');
     if (!cadastroForm) return;
@@ -27,6 +61,16 @@ async function inicializarCadastro() {
     const email = document.getElementById('email');
     if (email) {
         email.addEventListener('input', preencherNomeLogin);
+    }
+
+    const cpfInput = document.getElementById('cpf');
+    if (cpfInput) {
+        aplicarMascaraCpf(cpfInput);
+    }
+
+    const telInput = document.getElementById('telefone');
+    if (telInput) {
+        aplicarMascaraTelefone(telInput);
     }
 
     cadastroForm.addEventListener('submit', async function (e) {
@@ -40,12 +84,40 @@ async function inicializarCadastro() {
         btn.disabled = true;
         btn.textContent = 'Cadastrando...';
 
+        const telefoneLimpo = (document.getElementById('telefone')?.value || '').replace(/\D/g, '');
+        const cpfLimpo = (document.getElementById('cpf')?.value || '').replace(/\D/g, '');
+        const senhaValor = document.getElementById('senha')?.value || '';
+
+        if (cpfLimpo.length !== 11) {
+            alert('Por favor, informe um CPF válido com 11 dígitos.');
+            btn.disabled = false;
+            btn.textContent = 'Cadastrar';
+            document.getElementById('cpf')?.focus();
+            return;
+        }
+
+        if (telefoneLimpo.length < 10) {
+            alert('Por favor, informe um telefone válido com DDD (mínimo 10 dígitos).');
+            btn.disabled = false;
+            btn.textContent = 'Cadastrar';
+            document.getElementById('telefone')?.focus();
+            return;
+        }
+
+        if (senhaValor.length < 6) {
+            alert('A senha deve conter no mínimo 6 caracteres.');
+            btn.disabled = false;
+            btn.textContent = 'Cadastrar';
+            document.getElementById('senha')?.focus();
+            return;
+        }
+
         const dadosCadastro = {
             nome_usuario: document.getElementById('nome')?.value?.trim() || '',
             nome_login: document.getElementById('nome_login')?.value?.trim() || document.getElementById('email')?.value?.trim() || '',
             idade: document.getElementById('idade')?.value || '',
             email: document.getElementById('email')?.value?.trim() || '',
-            senha: document.getElementById('senha')?.value || '',
+            senha: senhaValor,
             telefone: document.getElementById('telefone')?.value?.trim() || '',
             cpf: document.getElementById('cpf')?.value?.trim() || '',
             data_nascimento: document.getElementById('data_nascimento')?.value || '',

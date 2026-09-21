@@ -14,50 +14,50 @@ require __DIR__ . '/includes/header.php';
 
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
-                <input type="text" class="form-control" id="nome" required>
+                <input type="text" class="form-control" id="nome" required maxlength="100" placeholder="Seu nome completo">
                 <span class="error-msg" id="nomeError"></span>
             </div>
 
             <div class="form-group">
                 <label for="idade">Idade</label>
-                <input type="number" class="form-control" id="idade" min="0" max="120">
+                <input type="number" class="form-control" id="idade" min="1" max="120" oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);" placeholder="Ex: 25">
             </div>
 
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" class="form-control" id="email" required>
+                <input type="email" class="form-control" id="email" required maxlength="100" placeholder="seuemail@exemplo.com">
                 <span class="error-msg" id="emailError"></span>
             </div>
 
             <div class="form-group">
                 <label for="senha">Senha</label>
-                <input type="password" class="form-control" id="senha" required>
+                <input type="password" class="form-control" id="senha" required minlength="6" maxlength="60" placeholder="Mínimo 6 caracteres">
                 <span class="error-msg" id="senhaError"></span>
             </div>
 
             <div class="form-group">
-                <label for="telefone">Telefone</label>
-                <input type="text" class="form-control" id="telefone" required placeholder="(00) 00000-0000">
+                <label for="telefone">Telefone / WhatsApp</label>
+                <input type="text" class="form-control" id="telefone" required maxlength="15" placeholder="(00) 00000-0000">
             </div>
 
             <div class="form-group">
                 <label for="cpf">CPF</label>
-                <input type="text" class="form-control" id="cpf" required placeholder="000.000.000-00">
+                <input type="text" class="form-control" id="cpf" required maxlength="14" placeholder="000.000.000-00">
             </div>
 
             <div class="form-group">
                 <label for="data_nascimento">Data de Nascimento</label>
-                <input type="date" class="form-control" id="data_nascimento" required>
+                <input type="date" class="form-control" id="data_nascimento" required max="<?= date('Y-m-d') ?>">
             </div>
 
             <div class="form-group">
-                <label for="endereco">Endereco</label>
-                <input type="text" class="form-control" id="endereco" required placeholder="Rua, numero e bairro">
+                <label for="endereco">Endereço</label>
+                <input type="text" class="form-control" id="endereco" required maxlength="150" placeholder="Rua, número e bairro">
             </div>
 
             <div class="form-group">
                 <label for="cidade">Cidade</label>
-                <input type="text" class="form-control" id="cidade" required>
+                <input type="text" class="form-control" id="cidade" required maxlength="100" placeholder="Sua cidade">
             </div>
 
             <div class="form-group">
