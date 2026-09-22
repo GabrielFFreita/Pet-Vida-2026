@@ -6,6 +6,7 @@ $adminActivePage = $adminActivePage ?? "";
 $adminMenuItems = [
     "dashboard" => ["label" => "Visão Geral", "href" => "dashboard.php"],
     "animais" => ["label" => "Animais", "href" => "animais.php"],
+    "adocoes" => ["label" => "Adoções", "href" => "adocoes.php"],
     "abrigos" => ["label" => "Abrigos", "href" => "abrigos.php"],
     "usuarios" => ["label" => "Usuários", "href" => "usuarios.php"],
 ];

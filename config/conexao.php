@@ -9,9 +9,9 @@ error_reporting(E_ALL);
 
 // Isso aqui em cima liga os "erros", pq senão o php quando der erro aparece apenas uma tela branca.
 
-$host = "tini.click";
+$host = "localhost";
 $dbname = "petvida_db";
-$usuario = "petvida_db";
+$usuario = "root";
 $senha = '';
 
 try {
