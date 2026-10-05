@@ -10,14 +10,14 @@ $extraScripts = $extraScripts ?? [];
                 <ul class="links-rodape">
                     <li><a onclick="abrirSobreNos()">Sobre nós</a></li>
                     <li><a href="<?php echo htmlspecialchars(rootPath('adocao.php'), ENT_QUOTES, 'UTF-8'); ?>">Como adotar</a></li>
-                    <li><a href="#">Política de privacidade</a></li>
+                    <li><a onclick="abrirPoliticaPrivacidade()" style="cursor:pointer;">Política de privacidade</a></li>
                 </ul>
             </div>
             <div class="coluna-rodape">
                 <h3>Ajuda</h3>
                 <ul class="links-rodape">
                     <li><a onclick="abrirCentralAjuda()">Dúvidas frequentes</a></li>
-                    <li><a href="#">Fale conosco</a></li>
+                    <li><a onclick="abrirFaleConosco()" style="cursor:pointer;">Fale conosco</a></li>
                 </ul>
             </div>
             <div class="coluna-rodape">
@@ -234,6 +234,132 @@ $extraScripts = $extraScripts ?? [];
             <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: #666;">
                 <i class="fas fa-heart" style="color: #ff4444;"></i> Sua doação faz a diferença!
             </p>
+        </div>
+    </div>
+
+
+    <!-- Modal: Política de Privacidade -->
+    <div id="modalPoliticaPrivacidade" class="modal">
+        <div class="modal-box" style="max-width: 660px; max-height: 85vh; overflow-y: auto;">
+            <button class="close" onclick="fecharModal('modalPoliticaPrivacidade')">&times;</button>
+            <h2 class="modal-title"><i class="fas fa-shield-alt"></i> Política de Privacidade</h2>
+            <div class="conteudo-modal">
+                <p style="font-size:0.85rem; color:#888; margin-bottom:18px;">Última atualização: outubro de 2025</p>
+
+                <div class="valores-sobre">
+                    <h3><i class="fas fa-database"></i> Coleta de Dados</h3>
+                    <p>Coletamos apenas as informações necessárias para o funcionamento da plataforma, como nome, e-mail e dados de contato fornecidos voluntariamente no cadastro ou nos formulários do site.</p>
+                </div>
+
+                <div class="valores-sobre">
+                    <h3><i class="fas fa-cogs"></i> Uso das Informações</h3>
+                    <p>Suas informações são utilizadas exclusivamente para:</p>
+                    <ul>
+                        <li>Gerenciar seu cadastro e autenticação na plataforma;</li>
+                        <li>Processar solicitações de adoção e doações;</li>
+                        <li>Enviar comunicados relacionados ao seu interesse em adoção;</li>
+                        <li>Melhorar a experiência de uso do site.</li>
+                    </ul>
+                </div>
+
+                <div class="valores-sobre">
+                    <h3><i class="fas fa-cookie-bite"></i> Cookies</h3>
+                    <p>Utilizamos cookies de sessão para manter você autenticado durante a navegação. Não utilizamos cookies de rastreamento ou publicidade de terceiros.</p>
+                </div>
+
+                <div class="valores-sobre">
+                    <h3><i class="fas fa-lock"></i> Segurança dos Dados</h3>
+                    <p>Adotamos medidas técnicas e organizacionais para proteger suas informações contra acesso não autorizado, perda ou uso indevido. Seus dados são armazenados em servidores seguros e acessados somente por pessoal autorizado.</p>
+                </div>
+
+                <div class="valores-sobre">
+                    <h3><i class="fas fa-user-shield"></i> Seus Direitos (LGPD)</h3>
+                    <p>Em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você tem direito a:</p>
+                    <ul>
+                        <li>Confirmar a existência de tratamento dos seus dados;</li>
+                        <li>Acessar, corrigir ou excluir suas informações;</li>
+                        <li>Revogar o consentimento a qualquer momento;</li>
+                        <li>Solicitar a portabilidade dos dados.</li>
+                    </ul>
+                </div>
+
+                <div class="valores-sobre">
+                    <h3><i class="fas fa-envelope"></i> Contato</h3>
+                    <p>Para exercer seus direitos ou tirar dúvidas sobre esta política, entre em contato: <a href="mailto:privacidade@petvida.org.br" style="color: var(--primaria);">privacidade@petvida.org.br</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Fale Conosco -->
+    <div id="modalFaleConosco" class="modal">
+        <div class="modal-box" style="max-width: 600px;">
+            <button class="close" onclick="fecharModal('modalFaleConosco')">&times;</button>
+            <h2 class="modal-title"><i class="fas fa-comments"></i> Fale Conosco</h2>
+            <div class="conteudo-modal">
+
+                <div class="secao-contato" style="margin-bottom: 24px;">
+                    <h3><i class="fas fa-headset"></i> Canais de Atendimento</h3>
+                    <div class="opcoes-contato">
+                        <div class="opcao-contato" onclick="abrirWhatsApp()">
+                            <i class="fab fa-whatsapp"></i>
+                            <div>
+                                <strong>WhatsApp (SAC)</strong>
+                                <p>(47) 99756-5199</p>
+                                <small style="color:#666;">Atendimento rápido</small>
+                            </div>
+                        </div>
+                        <div class="opcao-contato" onclick="abrirEmail()">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>E-mail</strong>
+                                <p>sac@petvida.org.br</p>
+                                <small style="color:#666;">Respondemos em até 24h</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="secao-duvidas">
+                    <h3><i class="fas fa-paper-plane"></i> Envie sua Mensagem</h3>
+                    <form id="formFaleConosco" onsubmit="enviarMensagemContato(event)">
+                        <div class="form-group">
+                            <label for="contatoNome">Seu nome</label>
+                            <input type="text" id="contatoNome" class="form-control" placeholder="Ex: João da Silva" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contatoEmail">Seu e-mail</label>
+                            <input type="email" id="contatoEmail" class="form-control" placeholder="Ex: joao@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contatoAssunto">Assunto</label>
+                            <select id="contatoAssunto" class="form-control">
+                                <option value="Dúvida sobre adoção">Dúvida sobre adoção</option>
+                                <option value="Doação">Doação</option>
+                                <option value="Voluntariado">Voluntariado</option>
+                                <option value="Denúncia de maus-tratos">Denúncia de maus-tratos</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contatoMensagem">Mensagem</label>
+                            <textarea id="contatoMensagem" class="form-control" rows="4" placeholder="Escreva sua mensagem aqui..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="background: var(--primaria); width: 100%;">
+                            <i class="fas fa-paper-plane"></i> Enviar mensagem
+                        </button>
+                    </form>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: var(--clara); border-radius: var(--raio);">
+                    <h4 style="color: var(--primaria); margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Informações Importantes</h4>
+                    <p style="font-size: 0.9rem; color: #666;">
+                        <strong>Endereço:</strong> Rua dos Animais, 123 - Centro, Petrópolis/RJ<br>
+                        <strong>Horário de Atendimento:</strong> Segunda a Sexta, 8h às 18h · Sábado, 9h às 13h<br>
+                        <strong>CNPJ:</strong> 12.345.678/0001-90
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
