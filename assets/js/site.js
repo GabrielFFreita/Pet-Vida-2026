@@ -1,4 +1,4 @@
-﻿let usuarioLogado = null;
+let usuarioLogado = null;
 let animalSelecionado = null;
 let slideAtual = 0;
 let intervaloCarrossel;
@@ -805,6 +805,40 @@ function abrirHorarioAtendimento() {
 function abrirSobreNos() {
     const modal = document.getElementById('modalSobre');
     if (modal) modal.style.display = 'flex';
+}
+
+function abrirPoliticaPrivacidade() {
+    const modal = document.getElementById('modalPoliticaPrivacidade');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function abrirFaleConosco() {
+    const modal = document.getElementById('modalFaleConosco');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function enviarMensagemContato(event) {
+    event.preventDefault();
+    const nome = document.getElementById('contatoNome')?.value?.trim() || '';
+    const email = document.getElementById('contatoEmail')?.value?.trim() || '';
+    const assunto = document.getElementById('contatoAssunto')?.value || '';
+    const mensagem = document.getElementById('contatoMensagem')?.value?.trim() || '';
+
+    if (!nome || !email || !mensagem) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
+    }
+
+    const corpo = encodeURIComponent(`Nome: ${nome}\nE-mail: ${email}\n\nMensagem:\n${mensagem}`);
+    const assuntoCodificado = encodeURIComponent(`[Pet Vida] ${assunto}`);
+    window.location.href = `mailto:sac@petvida.org.br?subject=${assuntoCodificado}&body=${corpo}`;
+
+    fecharModal('modalFaleConosco');
+    document.getElementById('formFaleConosco')?.reset();
 }
 
 async function filtrarAnimais() {
