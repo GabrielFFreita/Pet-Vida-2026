@@ -1,4 +1,5 @@
 .env
+.env.credentials
 # uploads/*
 !uploads/.gitkeep
 .DS_Store

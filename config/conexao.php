@@ -1,21 +1,40 @@
 <?php
-// Essa página é dedicada a fazer a conexão com o banco de dados.
-// (Comentário movido pra dentro das tags PHP — texto fora do <?php 
-// é impresso literalmente na tela, o que quebra endpoints que precisam
-// devolver JSON puro, como o solicitar_adocao.php e o dashboard.
 
-ini_set('display_errors', 1);
+ini_set('display_errors', getenv('APP_DEBUG') === '1' ? '1' : '0');
 error_reporting(E_ALL);
 
-// Isso aqui em cima liga os "erros", pq senão o php quando der erro aparece apenas uma tela branca.
+/**
+ * Obtém uma variável obrigatória de conexão sem expor seu valor em mensagens.
+ */
+function obterVariavelBancoObrigatoria(string $nome): string
+{
+    $valor = getenv($nome);
 
-$host = "tini.click";
-$dbname = "petvida_db";
-$usuario = "petvida_db";
-$senha = '';
+    if ($valor === false || $valor === '') {
+        error_log('Configuração obrigatória do banco de dados ausente: ' . $nome);
+        http_response_code(500);
+        exit('Configuração do banco de dados indisponível.');
+    }
+
+    return $valor;
+}
+
+$host = obterVariavelBancoObrigatoria('DB_HOST');
+$porta = getenv('DB_PORT') ?: '3306';
+$dbname = getenv('DB_NAME') ?: 'petvida_db';
+$usuario = getenv('DB_USER') ?: 'petvida_db';
+$senha = getenv('DB_PASSWORD')?: ''; 
+
+if ($senha === false) {
+    $senha = '';
+}
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $usuario, $senha);
+    $pdo = new PDO(
+        "mysql:host=$host;port=$porta;dbname=$dbname;charset=utf8mb4",
+        $usuario,
+        $senha
+    );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Erro na conexão: " . $e->getMessage());

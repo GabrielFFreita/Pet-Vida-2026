@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/helpers.php';
 
 $pageTitle = $pageTitle ?? 'Pet Vida - Adote um Amigo';

@@ -4,7 +4,7 @@
 // ============================================================
 require_once __DIR__ . "/../config/conexao.php";
 require_once __DIR__ . "/../config/sessao.php";
-verificarLogado(); // Proteção para garantir privilégios de acesso
+verificarAdmin(); // Proteção para garantir privilégios de acesso
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Filtro rígido para aceitar apenas os três status válidos do banco
-    $statusPermitidos = ['Disponível', 'Em Processo', 'Adotado'];
+$statusPermitidos = ['Disponível', 'Em processo', 'Adotado'];
     if (!in_array($novoStatus, $statusPermitidos)) {
         $novoStatus = 'Adotado';
     }

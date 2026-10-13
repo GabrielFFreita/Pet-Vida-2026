@@ -1245,6 +1245,19 @@ footer {
 
 .info-adocao p strong { color: var(--texto); }
 
+.mensagem-erro-adocao {
+  margin: 16px 0 0;
+  color: #9b2c2c;
+  font-size: .9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-adotar:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
 .modal-acoes {
   display: flex;
   gap: 10px;

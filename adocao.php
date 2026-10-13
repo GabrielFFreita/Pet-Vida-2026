@@ -429,6 +429,7 @@ foreach ($abrigos as $abrigo) {
       <h3 id="modal-titulo">Confirmar interesse</h3>
       <p>Você escolheu adotar este pet. Confirmar?</p>
       <div class="info-adocao" id="info-adocao"></div>
+      <p id="mensagem-erro-adocao" class="mensagem-erro-adocao" role="alert" aria-live="assertive" hidden></p>
       <div class="modal-acoes">
         <button class="btn-sim" id="btn-confirmar-adocao">Sim, quero adotar!</button>
         <button class="btn-nao" id="btn-cancelar-modal">Cancelar</button>

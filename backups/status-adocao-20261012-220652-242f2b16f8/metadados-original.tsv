@@ -1,0 +1,37 @@
+abrigos	CREATE TABLE `abrigos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cnpj` varchar(18) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `localizacao` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cep` varchar(9) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descricao` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cnpj` (`cnpj`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+animais_adocao	CREATE TABLE `animais_adocao` (
+  `id_animal` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `idade` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `especie` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `raca` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sexo` enum('Macho','FÃªmea') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `porte` enum('Pequeno','MÃ©dio','Grande') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descricao` text COLLATE utf8mb4_unicode_ci,
+  `deficiencia` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_adocao` enum('DisponÃ­vel','Em processo','Adotado') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'DisponÃ­vel',
+  `castrado` tinyint(1) DEFAULT NULL,
+  `vacinado` tinyint(1) DEFAULT NULL,
+  `peso` decimal(5,2) DEFAULT NULL,
+  `abrigo` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `data_cadastro` date DEFAULT NULL,
+  `id_abrigo` int NOT NULL,
+  PRIMARY KEY (`id_animal`),
+  KEY `fk_animal_abrigo` (`id_abrigo`),
+  CONSTRAINT `fk_animal_abrigo` FOREIGN KEY (`id_abrigo`) REFERENCES `abrigos` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+abrigos	cnpj	0	1	cnpj	A	BTREE
+abrigos	PRIMARY	0	1	id	A	BTREE
+animais_adocao	fk_animal_abrigo	1	1	id_abrigo	A	BTREE
+animais_adocao	PRIMARY	0	1	id_animal	A	BTREE
+animais_adocao	fk_animal_abrigo	id_abrigo	abrigos	id
+enum('DisponÃ­vel','Em processo','Adotado')	DisponÃ­vel	NO	utf8mb4	utf8mb4_unicode_ci

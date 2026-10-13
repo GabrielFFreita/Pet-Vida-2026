@@ -1,0 +1,22 @@
+name: petvida2026
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: petvida2026-app:local
+    container_name: petvida2026-app
+    env_file:
+      - path: .env.credentials
+        required: true
+        format: raw
+    ports:
+      - "${APP_PORT:-8080}:80"
+    environment:
+      DB_HOST: "${DB_HOST:?Defina DB_HOST no arquivo .env}"
+      DB_PORT: "${DB_PORT:-3306}"
+      DB_NAME: "${DB_NAME:?Defina DB_NAME no arquivo .env}"
+      DB_USER: "${DB_USER:?Defina DB_USER no arquivo .env}"
+      APP_DEBUG: "${APP_DEBUG:-0}"
+    restart: unless-stopped

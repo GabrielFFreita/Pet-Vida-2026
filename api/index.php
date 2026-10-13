@@ -5,6 +5,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 require_once __DIR__ . "/../config/conexao.php";
+require_once __DIR__ . "/adocao-service.php";
 session_start();
 
 $acao = isset($_GET['acao']) ? $_GET['acao'] : '';
@@ -158,38 +159,34 @@ function buscarAnimal() {
 
 function solicitarAdocao() {
     global $pdo;
+
+    if (!isset($_SESSION['id_usuario'], $_SESSION['nome_usuario'])) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'mensagem' => 'Você precisa estar logado para solicitar uma adoção.']);
+        return;
+    }
+
     try {
         $data = json_decode(file_get_contents('php://input'), true);
-        
-        if (!isset($data['id_usuario']) || !isset($data['id_animal'])) {
-            echo json_encode(['success' => false, 'error' => 'Dados incompletos']);
+        $idAnimal = filter_var($data['id_animal'] ?? null, FILTER_VALIDATE_INT);
+
+        if (!$idAnimal) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'mensagem' => 'Pet inválido.']);
             return;
         }
-        
-        // Iniciar transação
-        $pdo->beginTransaction();
-        
-        // Inserir solicitação
-        $sql = "INSERT INTO solicitacoes_adocao (id_usuario, id_animal, data_solicitacao, status_solicitacao) 
-                VALUES (:id_usuario, :id_animal, CURDATE(), 'Pendente')";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ':id_usuario' => $data['id_usuario'],
-            ':id_animal' => $data['id_animal']
+
+        $resultado = criarSolicitacaoAdocao($pdo, (int) $_SESSION['id_usuario'], $idAnimal);
+        http_response_code($resultado['http_status']);
+        echo json_encode([
+            'success' => $resultado['sucesso'],
+            'motivo' => $resultado['motivo'] ?? null,
+            'mensagem' => $resultado['mensagem'],
         ]);
-        
-        // Atualizar status do animal
-        $sql_update = "UPDATE animais_adocao SET status_adocao = 'Em Análise' WHERE id_animal = :id_animal";
-        $stmt_update = $pdo->prepare($sql_update);
-        $stmt_update->execute([':id_animal' => $data['id_animal']]);
-        
-        $pdo->commit();
-        echo json_encode(['success' => true]);
-    } catch (PDOException $e) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    } catch (Throwable $e) {
+        error_log('Falha ao criar solicitação de adoção via API: ' . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['success' => false, 'mensagem' => 'Não foi possível registrar sua solicitação.']);
     }
 }
 function cadastrarUsuario() {

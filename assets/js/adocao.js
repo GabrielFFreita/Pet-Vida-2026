@@ -476,6 +476,7 @@ function verDetalhes(card) {
   qs('#detalhes-descricao').textContent   = petEscolhido.descricao;
 
   atualizarStatusBadge(petEscolhido.status);
+  atualizarAcaoAdocao(petEscolhido.status);
 
   carrosselFotos  = petEscolhido.fotos;
   indiceFotoAtual = 0;
@@ -502,6 +503,16 @@ function atualizarStatusBadge(status) {
   } else if (status.toLowerCase().includes('adotado')) {
     badge.classList.add('adotado');
   }
+}
+
+function atualizarAcaoAdocao(status) {
+  const botao = qs('#btn-adotar-det');
+  if (!botao) return;
+
+  const disponivel = status === 'Disponível';
+  botao.disabled = !disponivel;
+  botao.setAttribute('aria-disabled', String(!disponivel));
+  botao.textContent = disponivel ? 'Quero adotar' : 'Indisponível para adoção';
 }
 
 function voltarParaLista() {
@@ -635,7 +646,7 @@ function abrirModalConfirmacao() {
 
   const msgErro = qs('#mensagem-erro-adocao');
   if (msgErro) {
-    msgErro.style.display = 'none';
+    msgErro.hidden = true;
     msgErro.textContent   = '';
   }
 
@@ -661,7 +672,7 @@ function confirmarAdocao() {
   const msgErro       = qs('#mensagem-erro-adocao');
 
   if (msgErro) {
-    msgErro.style.display = 'none';
+    msgErro.hidden = true;
     msgErro.textContent   = '';
   }
   if (btnConfirmar) {
@@ -676,14 +687,17 @@ function confirmarAdocao() {
     method: 'POST',
     body: formData
   })
-    .then(res => res.json().then(dados => ({ ok: res.ok, dados })))
+    .then(async res => {
+      const dados = await res.json();
+      return { ok: res.ok, dados };
+    })
     .then(({ ok, dados }) => {
       
 
-      if (!dados.sucesso) {
+      if (!ok || !dados.sucesso) {
         if (msgErro) {
           msgErro.textContent   = dados.mensagem || 'Não foi possível enviar seu pedido.';
-          msgErro.style.display = 'block';
+          msgErro.hidden = false;
         }
         return;
       }
@@ -717,6 +731,7 @@ function confirmarAdocao() {
       }
 
       atualizarStatusBadge(statusVisual);
+      atualizarAcaoAdocao(statusVisual);
       petEscolhido.status = statusVisual;
 
       fecharModalConfirmacao();
@@ -734,7 +749,7 @@ function confirmarAdocao() {
     .catch(() => {
       if (msgErro) {
         msgErro.textContent   = 'Erro de conexão. Tente novamente.';
-        msgErro.style.display = 'block';
+        msgErro.hidden = false;
       }
     })
     .finally(() => {

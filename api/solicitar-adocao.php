@@ -4,6 +4,7 @@ ob_start();
 
 require_once __DIR__ . "/../config/conexao.php";
 require_once __DIR__ . "/../config/sessao.php";
+require_once __DIR__ . "/adocao-service.php";
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -16,7 +17,7 @@ register_shutdown_function(function () {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'sucesso'  => false,
-            'mensagem' => 'Erro interno no servidor: ' . $erro['message'] . ' (linha ' . $erro['line'] . ')'
+            'mensagem' => 'Ocorreu um erro interno. Tente novamente mais tarde.'
         ]);
     }
 });
@@ -51,85 +52,20 @@ if (!$idAnimal) {
 }
 
 try {
-    // 2. Confirma que o animal existe e se está disponível ('Em processo' ou 'Adotado' barra o pedido)
-    $stmtAnimal = $pdo->prepare("SELECT id_animal, nome, status_adocao FROM animais_adocao WHERE id_animal = :id_animal");
-    $stmtAnimal->execute([':id_animal' => $idAnimal]);
-    $animal = $stmtAnimal->fetch(PDO::FETCH_ASSOC);
-
-    if (!$animal) {
-        ob_end_clean();
-        http_response_code(404);
-        echo json_encode(['sucesso' => false, 'mensagem' => 'Pet não encontrado no sistema.']);
-        exit;
-    }
-
-    if ($animal['status_adocao'] !== 'Disponível') {
-        ob_end_clean();
-        echo json_encode([
-            'sucesso' => false,
-            'motivo'  => 'ja_adotado',
-            'mensagem' => 'Este pet já recebeu uma solicitação ou já foi adotado por outra pessoa.'
-        ]);
-        exit;
-    }
-
-    // 3. Evita pedido duplicado do mesmo usuário para o mesmo animal
-    $stmtDuplicado = $pdo->prepare("
-        SELECT id_adocao FROM adocao
-        WHERE id_usuario = :id_usuario AND id_animal = :id_animal AND status = 'Pendente'
-    ");
-    $stmtDuplicado->execute([':id_usuario' => $idUsuario, ':id_animal' => $idAnimal]);
-
-    if ($stmtDuplicado->fetch()) {
-        ob_end_clean();
-        echo json_encode([
-            'sucesso' => false,
-            'motivo'  => 'ja_solicitado',
-            'mensagem' => 'Você já enviou um pedido para este pet. Aguarde o retorno do abrigo.'
-        ]);
-        exit;
-    }
-
-    // Iniciamos uma transação para garantir atomicidade das operações seguintes
-    $pdo->beginTransaction();
-
-    // 4. Registra o pedido de adoção
-    $stmtInsert = $pdo->prepare("
-        INSERT INTO adocao (id_usuario, id_animal, data_solicitacao, status)
-        VALUES (:id_usuario, :id_animal, CURDATE(), 'Pendente')
-    ");
-    $stmtInsert->execute([
-        ':id_usuario' => $idUsuario,
-        ':id_animal'  => $idAnimal,
-    ]);
-
-    // 5. CRUCIAL: Atualiza o status do pet na tabela principal para 'Em processo'
-    $stmtUpdatePet = $pdo->prepare("
-        UPDATE animais_adocao 
-        SET status_adocao = 'Em processo' 
-        WHERE id_animal = :id_animal
-    ");
-    $stmtUpdatePet->execute([':id_animal' => $idAnimal]);
-
-    // Confirma as duas mudanças de forma simultânea no banco
-    $pdo->commit();
+    $resultado = criarSolicitacaoAdocao($pdo, $idUsuario, $idAnimal);
 
     ob_end_clean();
-    echo json_encode([
-        'sucesso'  => true,
-        'mensagem' => 'Sua solicitação de adoção foi enviada com sucesso!'
-    ]);
+    http_response_code($resultado['http_status']);
+    unset($resultado['http_status']);
+    echo json_encode($resultado);
     exit;
-
-} catch (Exception $e) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
+} catch (Throwable $e) {
+    error_log('Falha ao criar solicitação de adoção: ' . $e->getMessage());
     ob_end_clean();
     http_response_code(500);
     echo json_encode([
-        'sucesso'  => false,
-        'mensagem' => 'Erro ao processar requisição no banco: ' . $e->getMessage()
+        'sucesso' => false,
+        'mensagem' => 'Não foi possível registrar sua solicitação. Tente novamente mais tarde.'
     ]);
     exit;
 }

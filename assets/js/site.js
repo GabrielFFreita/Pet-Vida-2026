@@ -483,7 +483,6 @@ async function solicitarAdocao() {
     const result = await fetchAPI('api.php?acao=solicitar_adocao', {
         method: 'POST',
         body: JSON.stringify({
-            id_usuario: usuarioLogado.id_usuario,
             id_animal: animalSelecionado.id_animal
         })
     });
@@ -496,7 +495,7 @@ async function solicitarAdocao() {
             carregarAnimais('gradeTodosAnimais');
         }
     } else {
-        alert('Erro ao enviar solicita\u00e7\u00e3o. Tente novamente.');
+        alert(result.mensagem || 'Erro ao enviar solicita\u00e7\u00e3o. Tente novamente.');
     }
 }
 
