@@ -4,7 +4,7 @@
 
 O Docker Compose executa somente a aplicação Pet Vida em um contêiner PHP 8.2 com Apache. O banco de dados continua sendo o MySQL remoto já existente; o Compose não cria MySQL local, volumes de banco, importações SQL nem scripts de inicialização.
 
-A aplicação é publicada, por padrão, em `http://localhost:8080` e lê as variáveis de conexão do arquivo local `.env`. O MySQL Workbench pode continuar sendo usado separadamente para administrar o servidor remoto.
+A aplicação é publicada, por padrão, em `http://localhost:8080`. Os dados não sigilosos de conexão ficam no arquivo local `.env`; a senha fica separada em `secrets/db_password.txt` e é montada no contêiner como Docker secret. O MySQL Workbench pode continuar sendo usado separadamente para administrar o servidor remoto.
 
 ## Pré-requisitos
 
@@ -15,7 +15,7 @@ A aplicação é publicada, por padrão, em `http://localhost:8080` e lê as var
 
 O servidor remoto pode exigir liberação do IP, regras de firewall, usuário autorizado para acesso remoto ou configuração de TLS. A configuração Docker não altera essas regras.
 
-## Configurar o arquivo `.env`
+## Configurar o ambiente
 
 Na raiz do projeto, crie seu arquivo local a partir do modelo:
 
@@ -23,11 +23,14 @@ Na raiz do projeto, crie seu arquivo local a partir do modelo:
 Set-Location 'C:\caminho\para\Pet-Vida-2026'
 Copy-Item .env.example .env
 notepad .env
+New-Item -ItemType Directory -Force secrets
+Copy-Item secrets/db_password.txt.example secrets/db_password.txt
+notepad secrets/db_password.txt
 ```
 
-Preencha os valores reais de `DB_HOST`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`. `DB_PORT` usa `3306` como padrão e `APP_PORT` usa `8080`. Mantenha `APP_DEBUG=0` normalmente.
+Preencha `DB_HOST`, `DB_NAME` e `DB_USER` no `.env`. Grave somente a senha, sem aspas, em `secrets/db_password.txt`. `DB_PORT` usa `3306` como padrão e `APP_PORT` usa `8080`. Mantenha `APP_DEBUG=0` normalmente.
 
-Não envie o arquivo `.env` para o Git e não compartilhe suas credenciais. O arquivo é ignorado pelo Git e pelo contexto de construção da imagem.
+Não envie `.env` nem `secrets/db_password.txt` para o Git e não compartilhe suas credenciais. Ambos são ignorados pelo Git e pelo contexto de construção da imagem. O Compose monta o secret somente em `/run/secrets/db_password`, sem gravá-lo na imagem ou expô-lo como variável de ambiente.
 
 ## Validar a configuração
 
@@ -54,7 +57,13 @@ docker compose up -d
 docker compose ps
 ```
 
-Abra `http://localhost:8080` no navegador. O carregamento da página não confirma, por si só, que a rede e as credenciais do banco remoto estão corretas.
+Abra `http://localhost:8080` no navegador. O estado esperado em `docker compose ps` é `healthy`.
+
+Para testar a conexão com o banco sem revelar a senha:
+
+```powershell
+docker compose exec -T app php -r "require '/var/www/html/config/conexao.php'; echo 'Conexao OK', PHP_EOL;"
+```
 
 ## Logs e parada segura
 
@@ -69,6 +78,8 @@ Para parar a aplicação sem excluir imagens, contêineres ou dados remotos:
 ```powershell
 docker compose stop
 ```
+
+Os arquivos enviados pela aplicação permanecem na pasta local `uploads/`, montada no contêiner. O Compose não administra nem remove dados do banco remoto.
 
 ## Problemas de conexão remota
 

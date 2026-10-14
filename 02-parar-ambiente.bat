@@ -24,6 +24,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Ambiente parado. Os dados continuam no volume petvida2026_mysql_data.
+echo Ambiente parado. Os uploads continuam na pasta local uploads e o banco remoto nao foi alterado.
 popd
 endlocal

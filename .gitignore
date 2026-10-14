@@ -1,5 +1,7 @@
 .env
 .env.credentials
+secrets/*
+!secrets/db_password.txt.example
 # uploads/*
 !uploads/.gitkeep
 .DS_Store
