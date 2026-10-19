@@ -21,6 +21,8 @@
 
 html {
     height: 100%;
+    /* Evita o "efeito elástico" ao rolar além do topo, que abria um espaço acima da navbar fixa. */
+    overscroll-behavior-y: none;
 }
 
 body {
@@ -31,6 +33,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overscroll-behavior-y: none;
 }
 
 /* Cabeçalho */
@@ -981,7 +984,7 @@ body {
     padding: 0 20px 10px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
     gap: 60px;
 }
@@ -989,9 +992,9 @@ body {
 .coluna-rodape {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 .rodape-marca {
@@ -1050,6 +1053,7 @@ body {
 .rodape-contato-link {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
@@ -1065,11 +1069,11 @@ body {
 
 .rodape-contato-link:hover {
     color: #fff;
-    transform: translateX(3px);
 }
 
 .links-sociais {
     display: flex;
+    justify-content: center;
     gap: 12px;
     margin-top: 8px;
 }
